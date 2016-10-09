@@ -118,6 +118,7 @@ public class VuforiaCoordinateSystem extends OpMode {
                     OpenGLMatrix robotLocation = listener.getRobotLocation();
                     lastRobotLocation = robotLocation;
                     telemetry.addData("robot", String.valueOf(robotLocation.formatAsTransform()));
+                    //need update telemetry
                 }
             }
 

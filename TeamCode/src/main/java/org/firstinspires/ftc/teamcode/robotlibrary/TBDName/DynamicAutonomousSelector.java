@@ -2,24 +2,22 @@ package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
+import android.os.Environment;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Leo on 10/8/2016.
@@ -29,36 +27,46 @@ public class DynamicAutonomousSelector {
 
     public HashMap<String, String> selectorChoices;
 
-    private SharedPreferences pref;
+    private final static Type mapType = new TypeToken<HashMap<String, String>>() {
+    }.getType();
+
+    Context genericContext;
 
     public DynamicAutonomousSelector() {
+        HashMap<String, String> serverHashMap = new HashMap<>();
+        HashMap<String, String> fileHashMap = new HashMap<>();
         try {
-            Context context = FtcRobotControllerActivity.getContext().createPackageContext("tk.leoforney.dynamicchooser", 0);
-            pref = context.getSharedPreferences("selectorpreferences", Context.MODE_WORLD_READABLE);
             String JsonFromServer = getJsonFromServer("http://192.168.49.249:8080/");
-            if (!JsonFromServer.equals("")) {
-                Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
-                selectorChoices = new Gson().fromJson(JsonFromServer, mapType);
-            } else {
-                String JsonFromPref = pref.getString("selectionjson", null);
-                RobotLog.d(JsonFromPref);
-                selectorChoices = new HashMap<>();
-                /*
-                if (JsonFromPref == null) {
-                    selectorChoices = new HashMap<>();
-                } else {
-                    if (!JsonFromPref.equals("")) {
-                        Type mapType = new TypeToken<HashMap<String, String>>(){}.getType();
-                        selectorChoices = new Gson().fromJson(JsonFromPref, mapType);
-                    }
-                }*/
-            }
+            RobotLog.d("Json: " + JsonFromServer);
+            serverHashMap = new Gson().fromJson(JsonFromServer, mapType);
+        } catch (Exception e) {
+            RobotLog.d("Driver station doesn't have the selections :(");
+        } try {
+            File OptionsFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                    + "/FIRST/",
+                    "options.json");
+            String JsonFromFile = getJsonFromFile(OptionsFile);
+            fileHashMap = new Gson().fromJson(JsonFromFile, mapType);
+            OptionsFile.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        if (serverHashMap.size() == 0) {
+            selectorChoices = fileHashMap;
+        } else {
+            selectorChoices = serverHashMap;
+        }
+
+        RobotLog.d(fileHashMap.toString());
+        RobotLog.d(serverHashMap.toString());
+
+        if (selectorChoices == null) {
+            selectorChoices = new HashMap<>();
+        }
     }
 
-    public static String getJsonFromServer(String url) throws IOException {
+    private static String getJsonFromServer(String url) throws Exception {
 
         BufferedReader inputStream = null;
 
@@ -75,6 +83,17 @@ public class DynamicAutonomousSelector {
         String jsonResult = inputStream.readLine();
         inputStream.close();
         return jsonResult;
+    }
+
+    private static String getJsonFromFile(File file) throws Exception {
+        FileInputStream fis = new FileInputStream(file);
+        String str = "";
+        int content;
+        while ((content = fis.read()) != -1) {
+            str += (char) content;
+        }
+        fis.close();
+        return str;
     }
 
 

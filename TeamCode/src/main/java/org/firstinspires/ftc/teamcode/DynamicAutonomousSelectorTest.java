@@ -41,8 +41,6 @@ public class DynamicAutonomousSelectorTest extends OpMode {
             it.remove(); // avoids a ConcurrentModificationException
         }
 
-        RobotLog.d(selectorHashmap.toString());
-
     }
 
 }
