@@ -1,10 +1,14 @@
 package us.a7351.dynamicautonomousselector;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +21,10 @@ import android.widget.RadioGroup;
 
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -40,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     HashMap<String, String> selectedItems;
 
     final static String TAG = "MainActivity";
-
-    SharedPreferences preferences;
 
     JsonHoster hoster;
 
@@ -71,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        preferences = getSharedPreferences("selectorpreferences", MODE_WORLD_READABLE);
+        verifyStoragePermissions(this);
 
         initializeOptions();
 
@@ -149,10 +155,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void postDataUsingPref() {
         // Save the data locally on the device (for Robot controller)
-        Log.d(TAG, "Using sharedpreferences mode");
+        // Retro: Now it is named local file mode
+        Log.d(TAG, "Using local file mode");
         JSONObject jsonObject = new JSONObject(selectedItems);
         String JsonData = jsonObject.toString();
-        preferences.edit().putString("selectionjson", JsonData).apply();
+        downloadAndStoreJson(JsonData);
         Snackbar.make(coordinatorLayout,
                 "Data pushed! Now open the robot controller app " +  new String(Character.toChars(0x1F601)),
                 Snackbar.LENGTH_SHORT).show();
@@ -224,5 +231,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onDestroy() {
         super.onDestroy();
         hoster.stop();
+    }
+
+    private void downloadAndStoreJson(String jsonFileContent){
+
+        byte[] jsonArray = jsonFileContent.getBytes();
+
+        File fileToSaveJson = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/" , "options.json");
+
+        BufferedOutputStream bos;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(fileToSaveJson));
+            bos.write(jsonArray);
+            bos.flush();
+            bos.close();
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        finally {
+            jsonArray = null;
+            System.gc();
+        }
+
+    }
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
     }
 }
