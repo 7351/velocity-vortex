@@ -17,6 +17,5 @@ public class TBDName {
 
     public VuforiaSystem vuforiaSystem = new VuforiaSystem();
     public DriveTrain driveTrain = new DriveTrain(hardwareMap);
-    public DynamicAutonomousSelector dynamicAutonomousSelector = new DynamicAutonomousSelector();
 
 }
