@@ -55,12 +55,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     AlertDialog manualDialog;
 
-    // TODO: Add documentation and javadoc
+    // TODO: Add splash screen branding
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get all layout objects and create translater to inject the options to the LinearLayout
 
         mainLayout = (LinearLayout) findViewById(R.id.activity_main);
 
@@ -77,14 +79,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
+        // We want to make sure that we can write to the hard drive
         verifyStoragePermissions(this);
 
+        // Inject the options into the linearlayout
         initializeOptions();
 
     }
 
     private void initializeOptions() {
-        // Total amount of options there are
+        // Make a new ArrayList and add all of the options in UserOptions
+        // We do this so we can iterate through all options easily
         allOptions = new ArrayList<>();
         allOptions.addAll(Arrays.asList(UserOptions.options));
         translater.show(allOptions);
@@ -166,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void postDataUsingWireless() {
+        // Create a webserver on port 8080 over the wifi direct network and host the string
         Log.d(TAG, "Using server mode on IP addr. " + getDottedDecimalIP(getLocalIPAddress()));
         JSONObject jsonObject = new JSONObject(selectedItems);
         String JsonData = jsonObject.toString();
@@ -233,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hoster.stop();
     }
 
+    /**
+     * Use this function to save the options to options.json file
+     * @param jsonFileContent the string of the JSON content
+     */
     private void downloadAndStoreJson(String jsonFileContent){
 
         byte[] jsonArray = jsonFileContent.getBytes();
@@ -247,7 +257,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             bos.close();
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         finally {
