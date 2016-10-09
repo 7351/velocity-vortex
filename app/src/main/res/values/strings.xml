@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Dynamic Autonomous Selector</string>
+    <string name="push">Push</string>
+    <string name="enter_value">Enter value</string>
+</resources>

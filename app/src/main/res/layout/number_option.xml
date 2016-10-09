@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:maxLength="4"
+    android:inputType="numberDecimal"
+    android:hint="@string/enter_value">
+
+</EditText>
