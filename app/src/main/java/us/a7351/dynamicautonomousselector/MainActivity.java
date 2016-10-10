@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button pushButton;
     HashMap<String, String> selectedItems;
     JsonHoster hoster;
-
-    // TODO: Add splash screen branding
     CoordinatorLayout coordinatorLayout;
     AlertDialog manualDialog;
 
