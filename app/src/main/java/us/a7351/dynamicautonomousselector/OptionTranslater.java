@@ -34,7 +34,6 @@ class OptionTranslater {
     }
 
     /**
-     *
      * @param allOptions takes the Options in a List format, to format an array to list use Arrays.as
      */
     void show(List<Option> allOptions) {
@@ -42,7 +41,7 @@ class OptionTranslater {
             // We iterate though the list with an unspecified Option type
             Option genericOption = allOptions.get(i);
 
-            // Create a new Textview fromt he template R.layout.title_text_view and fill it with data of
+            // Create a new TextView front he template R.layout.title_text_view and fill it with data of
             TextView titleTextView = (TextView) inflater.inflate(R.layout.title_text_view, layout, false);
             titleTextView.setText(genericOption.OptionTitle);
 
@@ -50,24 +49,15 @@ class OptionTranslater {
 
             if (genericOption.getType().equals("Number")) {
                 NumberOption currentNumberOption = (NumberOption) genericOption;
-
                 EditText numberEditText = (EditText) inflater.inflate(R.layout.number_option, layout, false);
-
                 numberEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(currentNumberOption.MaxNumber)});
-
                 currentNumberOption.editText = numberEditText;
-
                 Log.d(LOG_TAG, String.valueOf("Number object created at ID " + i));
-
                 layout.addView(numberEditText);
-
-
             }
             if (genericOption.getType().equals("Radio")) {
                 RadioOption currentRadioOption = (RadioOption) genericOption;
-
                 currentRadioOption.radioButtonList = new ArrayList<>();
-
                 RadioGroup radioGroup = (RadioGroup) inflater.inflate(R.layout.radio_group_option, layout, false);
                 for (int c = 0; c < currentRadioOption.availableOptions.length; c++) {
                     String currentSelection = currentRadioOption.availableOptions[c];
@@ -76,11 +66,8 @@ class OptionTranslater {
                     radioGroup.addView(currentRadioButton);
                     currentRadioOption.radioButtonList.add(currentRadioButton);
                 }
-
                 currentRadioOption.radioGroup = radioGroup;
-
                 Log.d(LOG_TAG, String.valueOf("Radio object created at ID " + i));
-
                 layout.addView(radioGroup);
 
 
