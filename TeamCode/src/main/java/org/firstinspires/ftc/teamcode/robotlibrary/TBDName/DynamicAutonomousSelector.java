@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
 
@@ -11,8 +10,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -30,8 +27,6 @@ public class DynamicAutonomousSelector {
     private final static Type mapType = new TypeToken<HashMap<String, String>>() {
     }.getType();
 
-    Context genericContext;
-
     public DynamicAutonomousSelector() {
         HashMap<String, String> serverHashMap = new HashMap<>();
         HashMap<String, String> fileHashMap = new HashMap<>();
@@ -41,7 +36,8 @@ public class DynamicAutonomousSelector {
             serverHashMap = new Gson().fromJson(JsonFromServer, mapType);
         } catch (Exception e) {
             RobotLog.d("Driver station doesn't have the selections :(");
-        } try {
+        }
+        try {
             File OptionsFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
                     + "/FIRST/",
                     "options.json");
@@ -68,7 +64,7 @@ public class DynamicAutonomousSelector {
 
     private static String getJsonFromServer(String url) throws Exception {
 
-        BufferedReader inputStream = null;
+        BufferedReader inputStream;
 
         URL jsonUrl = new URL(url);
         URLConnection dc = jsonUrl.openConnection();
