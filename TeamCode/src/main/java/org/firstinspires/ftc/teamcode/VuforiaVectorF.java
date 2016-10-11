@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.VuforiaSystem;
 
 import java.util.List;
 
-@Autonomous(name = "VuforiaEasy", group = "concept")
+@Autonomous(name = "VuforiaEasy", group = "Testing")
 public class VuforiaVectorF extends OpMode {
 
     private TBDName tbdName;
