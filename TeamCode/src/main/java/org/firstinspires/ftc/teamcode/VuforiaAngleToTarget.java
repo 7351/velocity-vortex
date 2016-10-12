@@ -56,7 +56,7 @@ public class VuforiaAngleToTarget extends OpMode {
                 double unformattedDegrees = Math.toDegrees(Math.atan2(Opposite, Adjacent));
                 double formattedDegrees;
                 if (translationData.get(0) >= 0) {
-                    formattedDegrees = unformattedDegrees * -1;
+                    formattedDegrees = 360 - unformattedDegrees;
                 } else {
                     formattedDegrees = unformattedDegrees;
                 }
