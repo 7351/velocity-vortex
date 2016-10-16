@@ -144,7 +144,7 @@ public class RunToCapBallFarBlue extends OpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
-        if (stage == 1) {
+        if (stage == 1) {//drive for turn
             if (waitTime.time() <= 0.5) {
                 driveOnHeading(0);
             } else {
@@ -154,12 +154,12 @@ public class RunToCapBallFarBlue extends OpMode {
                 waitTime.reset();
             }
         }
-        if (stage == 2) {
+        if (stage == 2) {//wait
             if (waitTime.time() > 0.25) {
                 stage++;
             }
         }
-        if (stage == 3) {
+        if (stage == 3) {// drive to 45 degrees for 3 seconds
             if (waitTime.time() <= 3) {
                 driveOnHeading(45, 1);
             } else {

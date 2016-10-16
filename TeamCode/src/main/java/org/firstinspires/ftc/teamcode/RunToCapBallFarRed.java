@@ -137,14 +137,14 @@ public class RunToCapBallFarRed extends OpMode {
     @Override
     public void loop() {
 
-        if (stage == 0) {
+        if (stage == 0) {//calibrate
             if (!gyro.isCalibrating()) {
                 stage++;
                 waitTime.reset();
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
-        if (stage == 1) {
+        if (stage == 1) {//drive to turn
             if (waitTime.time() <= 0.5) {
                 driveOnHeading(0);
             } else {
@@ -154,12 +154,12 @@ public class RunToCapBallFarRed extends OpMode {
                 waitTime.reset();
             }
         }
-        if (stage == 2) {
+        if (stage == 2) {//wait
             if (waitTime.time() > 0.25) {
                 stage++;
             }
         }
-        if (stage == 3) {
+        if (stage == 3) {//drive 315 degrees for 2 seconds
             if (waitTime.time() <= 2) {
                 driveOnHeading(315, 1);
             } else {
