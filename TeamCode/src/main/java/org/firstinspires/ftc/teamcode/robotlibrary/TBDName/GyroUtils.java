@@ -14,8 +14,11 @@ public class GyroUtils {
     public GyroSensor gyro;
     private int TOLERANCE = 1;
     private DriveTrain driveTrain;
+    private HardwareMap hardwareMap;
 
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain) {
+        this.hardwareMap = hardwareMap;
+
         this.driveTrain = driveTrain;
         if (hardwareMap.gyroSensor.get("gyro") != null) {
             gyro = hardwareMap.gyroSensor.get("gyro");
