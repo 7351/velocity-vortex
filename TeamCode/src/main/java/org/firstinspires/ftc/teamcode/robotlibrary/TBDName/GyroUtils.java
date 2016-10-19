@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 
-import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * Created by Leo on 10/11/2016.
@@ -15,10 +17,11 @@ public class GyroUtils {
     private int TOLERANCE = 1;
     private DriveTrain driveTrain;
     private HardwareMap hardwareMap;
+    Telemetry telemetry;
 
-    public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain) {
+    public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
-
+        this.telemetry = telemetry;
         this.driveTrain = driveTrain;
         if (hardwareMap.gyroSensor.get("gyro") != null) {
             gyro = hardwareMap.gyroSensor.get("gyro");
@@ -61,6 +64,7 @@ public class GyroUtils {
 
 
     public void driveOnHeading(int desiredDegree, double power) {
+        //TODO: Fix function
         int gyroDegree = spoofedZero(desiredDegree);
         int targetDegrees = 0;
         double leftStartPower = power;
@@ -70,12 +74,13 @@ public class GyroUtils {
         if (gyroDegree > 0 && gyroDegree <= 90) {
             int error_degrees = Math.abs(targetDegrees - gyroDegree);
             double subtractivePower = error_degrees / dividerNumber;
-            DbgLog.msg(String.valueOf(subtractivePower + ", " + error_degrees));
+            RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
+            telemetry.addData("Drifting Right", String.valueOf(error_degrees));
             if (power > 0) {
-                leftStartPower = Range.clip(1 - subtractivePower, -1, 1);
+                rightStartPower = Range.clip(1 - subtractivePower, -1, 1);
             }
             if (power < 0) {
-                leftStartPower = Range.clip(1 + subtractivePower, -1, 1);
+                rightStartPower = Range.clip(1 + subtractivePower, -1, 1);
             }
 
         }
@@ -83,12 +88,13 @@ public class GyroUtils {
         if (gyroDegree >= 270 && gyroDegree < 360) {
             int error_degrees = Math.abs(90 - (gyroDegree - 270));
             double subtractivePower = error_degrees / dividerNumber;
-            DbgLog.msg(String.valueOf(subtractivePower + ", " + error_degrees));
+            RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
+            telemetry.addData("Drifting Left", String.valueOf(error_degrees));
             if (power > 0) {
-                rightStartPower = Range.clip(1 - subtractivePower, -1, 1);
+                leftStartPower = Range.clip(1 - subtractivePower, -1, 1);
             }
             if (power < 0) {
-                rightStartPower = Range.clip(1 + subtractivePower, -1, 1);
+                leftStartPower = Range.clip(1 + subtractivePower, -1, 1);
             }
 
         }

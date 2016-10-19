@@ -17,6 +17,6 @@ public class TBDName {
 
     public VuforiaSystem vuforiaSystem = new VuforiaSystem();
     public DriveTrain driveTrain = new DriveTrain(hardwareMap);
-    public GyroUtils gyroUtils = new GyroUtils(hardwareMap, driveTrain);
+    public GyroUtils gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
 
 }
