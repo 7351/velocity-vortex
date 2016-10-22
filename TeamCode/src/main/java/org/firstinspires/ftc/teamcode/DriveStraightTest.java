@@ -50,10 +50,10 @@ public class DriveStraightTest extends OpMode {
         }
 
         if (stage == 1) {
-            final double power = 0.5;
+            // We drive for 2 seconds at full power drive on heading and stop after the 2 seconds
             final double time = 2;
             if (driveTime.time() <= time) {
-                gyroUtils.driveOnHeading(0, power);
+                gyroUtils.driveOnHeading(0);
             } else {
                 driveTrain.powerRight(0);
                 driveTrain.powerLeft(0);

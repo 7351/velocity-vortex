@@ -64,18 +64,33 @@ public class GyroUtils {
 
 
     public void driveOnHeading(int desiredDegree, double power) {
-        //TODO: Fix function
+        //TODO: Straddle 0 as tight as possible with better calibration
         int gyroDegree = spoofedZero(desiredDegree);
         int targetDegrees = 0;
         double leftStartPower = power;
         double rightStartPower = power;
-        double dividerNumber = 12.5;
+        double dividerNumber = 10;
 
         if (gyroDegree > 0 && gyroDegree <= 90) {
             int error_degrees = Math.abs(targetDegrees - gyroDegree);
             double subtractivePower = error_degrees / dividerNumber;
             RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
-            telemetry.addData("Drifting Right", String.valueOf(error_degrees));
+            telemetry.addData("Drifting Right", String.valueOf(error_degrees + ", " + subtractivePower));
+            telemetry.addData("Divider", String.valueOf(dividerNumber));
+            if (power > 0) {
+                leftStartPower = Range.clip(1 - subtractivePower, -1, 1);
+            }
+            if (power < 0) {
+                leftStartPower = Range.clip(1 + subtractivePower, -1, 1);
+            }
+
+        }
+
+        if (gyroDegree >= 270 && gyroDegree < 360) {
+            int error_degrees = Math.abs(90 - (gyroDegree - 270));
+            double subtractivePower = error_degrees / dividerNumber;
+            RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
+            telemetry.addData("Drifting Left", String.valueOf(error_degrees + ", " + subtractivePower));
             if (power > 0) {
                 rightStartPower = Range.clip(1 - subtractivePower, -1, 1);
             }
@@ -85,19 +100,7 @@ public class GyroUtils {
 
         }
 
-        if (gyroDegree >= 270 && gyroDegree < 360) {
-            int error_degrees = Math.abs(90 - (gyroDegree - 270));
-            double subtractivePower = error_degrees / dividerNumber;
-            RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
-            telemetry.addData("Drifting Left", String.valueOf(error_degrees));
-            if (power > 0) {
-                leftStartPower = Range.clip(1 - subtractivePower, -1, 1);
-            }
-            if (power < 0) {
-                leftStartPower = Range.clip(1 + subtractivePower, -1, 1);
-            }
-
-        }
+        telemetry.addData("Power", "L: " + driveTrain.LeftBackMotor.getPower() + ", R: " + driveTrain.RightBackMotor.getPower());
 
         driveTrain.powerRight(rightStartPower);
         driveTrain.powerLeft(leftStartPower);
