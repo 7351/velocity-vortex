@@ -2,13 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
@@ -21,7 +17,6 @@ import java.util.List;
 /**
  * Created by Leo on 9/14/2016.
  */
-@Autonomous(name = "FTC Vuforia Test", group = "Testing")
 public class VuforiaTest extends OpMode {
 
     VuforiaLocalizer vuforia;

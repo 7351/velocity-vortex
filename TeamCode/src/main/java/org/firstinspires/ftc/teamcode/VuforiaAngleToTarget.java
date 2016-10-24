@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.ftccommon.DbgLog;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -18,7 +15,6 @@ import java.util.List;
  * Created by Leo on 10/10/2016.
  */
 
-@Autonomous(name = "VuforiaAngle", group = "Testing")
 public class VuforiaAngleToTarget extends OpMode {
 
     private TBDName tbdName;

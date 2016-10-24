@@ -52,13 +52,27 @@ public class GyroUtils {
         return degree;
     }
 
-    public void rotateUsingSpoofed(int ZeroDegree, int TargetDegree, double DivisionNumber) {
+    public enum Direction {
+        CLOCKWISE,
+        COUNTERCLOCKWISE
+    }
+
+    public void rotateUsingSpoofed(int ZeroDegree, int TargetDegree, double DivisionNumber, Direction direction) {
         int CurrentSpoofedDegree = spoofedZero(ZeroDegree); //An expected 39 gyro value from fake zero
         if (!isGyroInTolerance(TargetDegree)) {
             double DegreesOff = Math.abs(TargetDegree - CurrentSpoofedDegree);
             double RawPower = Range.clip(DegreesOff / DivisionNumber, 0, 1);
-            driveTrain.powerLeft(-RawPower);
-            driveTrain.powerRight(RawPower);
+            switch (direction) {
+                case CLOCKWISE:
+                    driveTrain.powerLeft(RawPower);
+                    driveTrain.powerRight(-RawPower);
+                    break;
+                case COUNTERCLOCKWISE:
+                    driveTrain.powerLeft(-RawPower);
+                    driveTrain.powerRight(RawPower);
+                    break;
+            }
+
         }
     }
 

@@ -39,5 +39,10 @@ public class DriveTrain {
         RightBackMotor.setPower(Range.clip(power, -1, 1));
     }
 
+    public void stopRobot() {
+        powerLeft(0);
+        powerRight(0);
+    }
+
 
 }
