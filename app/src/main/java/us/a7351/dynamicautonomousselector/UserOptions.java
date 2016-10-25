@@ -27,9 +27,8 @@ class UserOptions {
              * You would write: new RadioOption(new String[]{"Red", "Blue"}, "Alliance?", "alliance");
              * @see RadioOption
             */
+            new RadioOption(new String[]{"Red", "Blue"}, "Alliance?", "alliance"),
+            new NumberOption(2, "Delay before match?", "delay")
 
-            new NumberOption("Prox minimum", "proxkey"),
-            new RadioOption(new String[]{"Kentucky", "Hawaii", "Mountain", "Center vortex"}, "Target", "target"),
-            new RadioOption(new String[]{"Red", "Blue"}, "Alliance", "alliance")
     };
 }
