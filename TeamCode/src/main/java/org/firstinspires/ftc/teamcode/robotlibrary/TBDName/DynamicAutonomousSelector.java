@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 public class DynamicAutonomousSelector {
 
-    public HashMap<String, String> selectorChoices;
+    private HashMap<String, String> selectorChoices;
 
     private final static Type mapType = new TypeToken<HashMap<String, String>>() {
     }.getType();
@@ -60,6 +60,10 @@ public class DynamicAutonomousSelector {
         if (selectorChoices == null) {
             selectorChoices = new HashMap<>();
         }
+    }
+
+    public HashMap<String, String> getSelectorChoices() {
+        return selectorChoices;
     }
 
     private static String getJsonFromServer(String url) throws Exception {

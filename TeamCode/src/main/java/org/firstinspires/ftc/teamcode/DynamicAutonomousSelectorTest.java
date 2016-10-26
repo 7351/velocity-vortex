@@ -27,7 +27,7 @@ public class DynamicAutonomousSelectorTest extends OpMode {
         tbdName = new TBDName(hardwareMap, telemetry);
 
         DynamicAutonomousSelector das = tbdName.dynamicAutonomousSelector;
-        selectorHashmap = das.selectorChoices;
+        selectorHashmap = das.getSelectorChoices();
 
     }
 
