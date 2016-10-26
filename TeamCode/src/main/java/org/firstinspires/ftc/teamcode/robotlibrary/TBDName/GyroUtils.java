@@ -76,6 +76,26 @@ public class GyroUtils {
         }
     }
 
+    public void rotateUsingGyro(int DesiredDegree, Direction direction) {
+        int CurrentSpoofedDegree = spoofedZero(DesiredDegree); //An expected 39 gyro value from fake zero
+        if (!isGyroInTolerance(0)) {
+            double DegreesOff = Math.abs(0 - CurrentSpoofedDegree);
+            double DivisionNumber = 0;
+            double ProportionalPower = Range.clip(DegreesOff / DivisionNumber, 0, 1);
+            switch (direction) {
+                case CLOCKWISE:
+                    driveTrain.powerLeft(ProportionalPower);
+                    driveTrain.powerRight(-ProportionalPower);
+                    break;
+                case COUNTERCLOCKWISE:
+                    driveTrain.powerLeft(-ProportionalPower);
+                    driveTrain.powerRight(ProportionalPower);
+                    break;
+            }
+
+        }
+    }
+
 
     public void driveOnHeading(int desiredDegree, double power) {
         //TODO: Straddle 0 as tight as possible with better calibration
