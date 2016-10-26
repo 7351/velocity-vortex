@@ -18,15 +18,14 @@ import java.util.Map;
 @Autonomous(name = "SelectorTest", group = "concept")
 public class DynamicAutonomousSelectorTest extends OpMode {
 
-    TBDName tbdName;
     HashMap<String, String> selectorHashmap;
+
+    DynamicAutonomousSelector das;
 
     @Override
     public void init() {
 
-        tbdName = new TBDName(hardwareMap, telemetry);
-
-        DynamicAutonomousSelector das = tbdName.dynamicAutonomousSelector;
+        das = new DynamicAutonomousSelector();
         selectorHashmap = das.getSelectorChoices();
 
     }
