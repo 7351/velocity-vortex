@@ -76,11 +76,10 @@ public class GyroUtils {
         }
     }
 
-    public void rotateUsingGyro(int DesiredDegree, Direction direction) {
+    public void rotateUsingGyro(int DesiredDegree, int DivisionNumber, Direction direction) {
         int CurrentSpoofedDegree = spoofedZero(DesiredDegree); //An expected 39 gyro value from fake zero
         if (!isGyroInTolerance(0)) {
             double DegreesOff = Math.abs(0 - CurrentSpoofedDegree);
-            double DivisionNumber = 0;
             double ProportionalPower = Range.clip(DegreesOff / DivisionNumber, 0, 1);
             switch (direction) {
                 case CLOCKWISE:
@@ -93,6 +92,8 @@ public class GyroUtils {
                     break;
             }
 
+        } else {
+
         }
     }
 
@@ -103,7 +104,7 @@ public class GyroUtils {
         int targetDegrees = 0;
         double leftStartPower = power;
         double rightStartPower = power;
-        double dividerNumber = 10;
+        double dividerNumber = 16;
 
         if (gyroDegree > 0 && gyroDegree <= 90) {
             int error_degrees = Math.abs(targetDegrees - gyroDegree);
@@ -112,10 +113,10 @@ public class GyroUtils {
             telemetry.addData("Drifting Right", String.valueOf(error_degrees + ", " + subtractivePower));
             telemetry.addData("Divider", String.valueOf(dividerNumber));
             if (power > 0) {
-                leftStartPower = Range.clip(1 - subtractivePower, -1, 1);
+                leftStartPower = Range.clip(power - subtractivePower, -1, 1);
             }
             if (power < 0) {
-                leftStartPower = Range.clip(1 + subtractivePower, -1, 1);
+                leftStartPower = Range.clip(power + subtractivePower, -1, 1);
             }
 
         }
@@ -125,11 +126,12 @@ public class GyroUtils {
             double subtractivePower = error_degrees / dividerNumber;
             RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
             telemetry.addData("Drifting Left", String.valueOf(error_degrees + ", " + subtractivePower));
+            telemetry.addData("Divider", String.valueOf(dividerNumber));
             if (power > 0) {
-                rightStartPower = Range.clip(1 - subtractivePower, -1, 1);
+                rightStartPower = Range.clip(power - subtractivePower, -1, 1);
             }
             if (power < 0) {
-                rightStartPower = Range.clip(1 + subtractivePower, -1, 1);
+                rightStartPower = Range.clip(power + subtractivePower, -1, 1);
             }
 
         }

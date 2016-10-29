@@ -9,6 +9,10 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
+
 /**
  * Created by Leo on 10/16/2016.
  */
@@ -16,162 +20,90 @@ import com.qualcomm.robotcore.util.Range;
 @Autonomous(name = "CapBallTimeFarRed", group = "Testing")
 public class RunToCapBallFarRed extends OpMode {
 
-    GyroSensor gyro;
-
     int stage = 0;
+    ElapsedTime time = new ElapsedTime();
+    DriveTrain driveTrain;
+    GyroUtils gyroUtils;
+    ColorUtils colorUtils;
 
-    public DcMotor LeftFrontMotor;
-    public DcMotor RightFrontMotor;
-    public DcMotor LeftBackMotor;
-    public DcMotor RightBackMotor;
-
-    ElapsedTime waitTime = new ElapsedTime();
-
-    private int TOLERANCE = 1;
-
-    public void powerLeft(double power) {
-        LeftFrontMotor.setPower(Range.clip(power, -1, 1));
-        LeftBackMotor.setPower(Range.clip(power, -1, 1));
-    }
-
-    public void powerRight(double power) {
-        RightFrontMotor.setPower(Range.clip(power, -1, 1));
-        RightBackMotor.setPower(Range.clip(power, -1, 1));
-    }
-
-    public boolean isGyroInTolerance(int degree) {
-        boolean returnValue = false;
-        if ((gyro.getHeading() <= degree + TOLERANCE) && (gyro.getHeading() >= degree - TOLERANCE)) {
-            returnValue = true;
-        }
-        return returnValue;
-    }
-
-    private int spoofedZero(int zeroDegree) {
-        int ActualDegree = gyro.getHeading();
-        int degree = ActualDegree - zeroDegree;
-        if (degree > 360) {
-            degree = degree - 360;
-        }
-        if (degree < 0) {
-            degree = degree + 360;
-        }
-        return degree;
-    }
-
-    public void rotateUsingSpoofed(int ZeroDegree, int TargetDegree, double DivisionNumber) {
-        int CurrentSpoofedDegree = spoofedZero(ZeroDegree); //An expected 39 gyro value from fake zero
-        if (!isGyroInTolerance(TargetDegree)) {
-            double DegreesOff = Math.abs(TargetDegree - CurrentSpoofedDegree);
-            double RawPower = Range.clip(DegreesOff / DivisionNumber, 0, 1);
-            powerLeft(-RawPower);
-            powerRight(RawPower);
-        }
-    }
-
-
-    public void driveOnHeading(int desiredDegree, double power) {
-        int gyroDegree = spoofedZero(desiredDegree);
-        int targetDegrees = 0;
-        double leftStartPower = power;
-        double rightStartPower = power;
-        double dividerNumber = 12.5;
-
-        if (gyroDegree > 0 && gyroDegree <= 90) {
-            int error_degrees = Math.abs(targetDegrees - gyroDegree);
-            double subtractivePower = error_degrees / dividerNumber;
-            DbgLog.msg(String.valueOf(subtractivePower + ", " + error_degrees));
-            if (power > 0) {
-                leftStartPower = Range.clip(1 - subtractivePower, -1, 1);
-            }
-            if (power < 0) {
-                leftStartPower = Range.clip(1 + subtractivePower, -1, 1);
-            }
-
-        }
-
-        if (gyroDegree >= 270 && gyroDegree < 360) {
-            int error_degrees = Math.abs(90 - (gyroDegree - 270));
-            double subtractivePower = error_degrees / dividerNumber;
-            DbgLog.msg(String.valueOf(subtractivePower + ", " + error_degrees));
-            if (power > 0) {
-                rightStartPower = Range.clip(1 - subtractivePower, -1, 1);
-            }
-            if (power < 0) {
-                rightStartPower = Range.clip(1 + subtractivePower, -1, 1);
-            }
-
-        }
-
-        powerRight(rightStartPower);
-        powerLeft(leftStartPower);
-    }
-
-    public void driveOnHeading(int desiredDegree) {
-        driveOnHeading(desiredDegree, 1);
-    }
+    GyroSensor gyro;
 
     @Override
     public void init() {
 
-        gyro = hardwareMap.gyroSensor.get("gyro");
-
-        LeftFrontMotor = hardwareMap.dcMotor.get("LeftFrontMotor");
-        RightFrontMotor = hardwareMap.dcMotor.get("RightFrontMotor");
-        LeftBackMotor = hardwareMap.dcMotor.get("LeftBackMotor");
-        RightBackMotor = hardwareMap.dcMotor.get("RightBackMotor");
-
-        LeftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        LeftBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        driveTrain = new DriveTrain(hardwareMap);
+        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
+        colorUtils = new ColorUtils(hardwareMap);
+        gyro = gyroUtils.gyro;
         gyro.calibrate();
+
 
     }
 
     @Override
     public void start() {
         gyro.calibrate();
-        waitTime.reset();
+        colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
     public void loop() {
 
-        if (stage == 0) {//calibrate
+        if (stage == 0) { //Calibrates gyro to 0
             if (!gyro.isCalibrating()) {
                 stage++;
-                waitTime.reset();
+                time.reset();
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
-        if (stage == 1) {//drive to turn
-            if (waitTime.time() <= 0.5) {
-                driveOnHeading(0);
+        if (stage == 1) { //drives forward 0.25 seconds
+            if (time.time() <= 0.25) {
+                driveTrain.powerLeft(1);
+                driveTrain.powerRight(1);
             } else {
-                powerLeft(0);
-                powerRight(0);
+                driveTrain.powerLeft(0);
+                driveTrain.powerRight(0);
                 stage++;
-                waitTime.reset();
+                time.reset();
             }
         }
-        if (stage == 2) {//wait
-            if (waitTime.time() > 0.25) {
+        if (stage == 2) {
+            if (time.time() > 0.15) {
                 stage++;
+                time.reset();
             }
         }
-        if (stage == 3) {//drive 315 degrees for 2 seconds
-            if (waitTime.time() <= 2) {
-                driveOnHeading(315, 1);
+        if (stage == 3) {
+            if (gyro.getHeading() < (135 - 25)) {
+                driveTrain.powerLeft(0.3);
+                driveTrain.powerRight(-0.3);
+            } if (gyro.getHeading() >= (135 - 25)) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 4) {
+            if (time.time() > 0.15) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 5) {
+            if (!colorUtils.aboveRedLine()) {
+                //driveTrain.powerLeft(-0.8);
+                //driveTrain.powerRight(-0.8);
+                gyroUtils.driveOnHeading(315, 1);
             } else {
-                powerLeft(0);
-                powerRight(0);
+                driveTrain.stopRobot();
                 stage++;
             }
         }
 
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
-        telemetry.addData("Time", String.valueOf(waitTime.time()));
+        telemetry.addData("Time", String.valueOf(time.time()));
 
     }
 }
