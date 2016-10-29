@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DynamicAutonomousSelector;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 
 /**
@@ -21,6 +22,8 @@ public class DriveStraightTest extends OpMode {
 
     ElapsedTime driveTime = new ElapsedTime();
 
+    DynamicAutonomousSelector das;
+
     @Override
     public void init() {
 
@@ -28,6 +31,7 @@ public class DriveStraightTest extends OpMode {
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
 
         gyroUtils.gyro.calibrate();
+
 
     }
 
@@ -50,7 +54,7 @@ public class DriveStraightTest extends OpMode {
         }
 
         if (stage == 1) {
-            // We drive for 2 seconds at full power drive on heading and stop after the 2 seconds
+            // We drive for 1 seconds at full power drive on heading and stop after the 2 seconds
             final double time = 2;
             if (driveTime.time() <= time) {
                 gyroUtils.driveOnHeading(0);
