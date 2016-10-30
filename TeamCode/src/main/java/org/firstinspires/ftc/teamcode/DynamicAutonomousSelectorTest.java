@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DynamicAutonomousSelector;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TBDName;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -16,9 +14,8 @@ import java.util.Map;
  */
 
 @Autonomous(name = "SelectorTest", group = "concept")
+@Disabled
 public class DynamicAutonomousSelectorTest extends OpMode {
-
-    HashMap<String, String> selectorHashmap;
 
     DynamicAutonomousSelector das;
 
@@ -26,16 +23,14 @@ public class DynamicAutonomousSelectorTest extends OpMode {
     public void init() {
 
         das = new DynamicAutonomousSelector();
-        selectorHashmap = das.getSelectorChoices();
-
     }
 
     @Override
     public void loop() {
 
-        Iterator it = selectorHashmap.entrySet().iterator();
+        Iterator it = das.getSelectorChoices().entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+            Map.Entry pair = (Map.Entry) it.next();
             telemetry.addData((String) pair.getKey(), pair.getValue());
             it.remove(); // avoids a ConcurrentModificationException
         }
