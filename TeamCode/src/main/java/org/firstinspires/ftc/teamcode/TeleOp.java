@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
@@ -11,12 +12,17 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class TeleOp extends OpMode {
-
+public DcMotor flyWheel;
     DriveTrain driveTrain;
-
+boolean buttonPressed=false;
+    boolean buttoncoderan =false;
+    double startingFlyPower= .5;
+    double curentFlyPower ;
+    double amountpressed = 0;
+    double incrementpower = .05;
     @Override
     public void init() {
-
+        flyWheel = hardwareMap.dcMotor.get ("flyWheel");
         driveTrain = new DriveTrain(hardwareMap);
 
     }
@@ -43,11 +49,55 @@ public class TeleOp extends OpMode {
         left = (float) scaleInput(left);
 
         // write the values to the motors
+
         driveTrain.powerLeft(left);
         driveTrain.powerRight(right);
 
-        telemetry.addData("drive power", "L: " + String.valueOf(left) + ", R: " + String.valueOf(right));
 
+        telemetry.addData("drive power", "L: " + String.valueOf(left) + ", R: " + String.valueOf(right));
+        //incrments power by incrementalpower
+        if (gamepad1.dpad_up) {
+            if (!buttonPressed) {
+                curentFlyPower = startingFlyPower + (incrementpower * amountpressed);//incresses power by set amount if first presss amount press =0
+                curentFlyPower = Range.clip(curentFlyPower,0,1);// keep current between 0 and 1
+                flyWheel.setPower(curentFlyPower);
+                buttonPressed = true;
+                amountpressed++;
+                telemetry.addData( "curentFlyPower",curentFlyPower);
+
+
+            }
+        }
+        if (!gamepad1.dpad_up) {
+            buttonPressed = false;
+        }
+        //decrements power by incrementalpower
+        if (gamepad1.dpad_down)
+            if (!buttonPressed) {
+                amountpressed--;
+                curentFlyPower = startingFlyPower - (incrementpower * amountpressed);
+                curentFlyPower = Range.clip(curentFlyPower,0,1);
+                flyWheel.setPower(curentFlyPower);
+                buttonPressed = true;
+                telemetry.addData( "curentFlyPower",curentFlyPower);
+
+
+
+            }
+        if (!gamepad1.dpad_down) {
+            buttonPressed = false;
+
+        }
+        //kill fly power
+    if (gamepad1.dpad_right){
+        flyWheel.setPower(0);
+
+    }
+        //d pad left resets
+        if (gamepad1.dpad_left){
+            curentFlyPower= startingFlyPower;
+            amountpressed=0;
+        }
     }
 
     double scaleInput(double dVal) {
