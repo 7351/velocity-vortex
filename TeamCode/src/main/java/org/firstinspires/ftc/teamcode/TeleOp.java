@@ -12,20 +12,20 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class TeleOp extends OpMode {
-public DcMotor flyWheel;
- public DcMotor intakeA;
+    public DcMotor flyWheel;
+    public DcMotor intakeA;
     public DcMotor intakeB;
     DriveTrain driveTrain;
 
-boolean buttonPressed=false;
-    boolean buttoncoderan =false;
-    double startingFlyPower= .5;
-    double curentFlyPower ;
+    boolean buttonPressed = false;
+    double startingFlyPower = .5;
+    double curentFlyPower;
     double amountpressed = 0;
     double incrementpower = .05;
+
     @Override
     public void init() {
-        flyWheel = hardwareMap.dcMotor.get ("flyWheel");
+        flyWheel = hardwareMap.dcMotor.get("flyWheel");
         driveTrain = new DriveTrain(hardwareMap);
 
     }
@@ -62,11 +62,11 @@ boolean buttonPressed=false;
         if (gamepad1.dpad_up) {
             if (!buttonPressed) {
                 curentFlyPower = startingFlyPower + (incrementpower * amountpressed);//incresses power by set amount if first presss amount press =0
-                curentFlyPower = Range.clip(curentFlyPower,0,1);// keep current between 0 and 1
+                curentFlyPower = Range.clip(curentFlyPower, 0, 1);// keep current between 0 and 1
                 flyWheel.setPower(curentFlyPower);
                 buttonPressed = true;
                 amountpressed++;
-                telemetry.addData( "curentFlyPower",curentFlyPower);
+                telemetry.addData("curentFlyPower", curentFlyPower);
 
 
             }
@@ -79,11 +79,10 @@ boolean buttonPressed=false;
             if (!buttonPressed) {
                 amountpressed--;
                 curentFlyPower = startingFlyPower - (incrementpower * amountpressed);
-                curentFlyPower = Range.clip(curentFlyPower,0,1);
+                curentFlyPower = Range.clip(curentFlyPower, 0, 1);
                 flyWheel.setPower(curentFlyPower);
                 buttonPressed = true;
-                telemetry.addData( "curentFlyPower",curentFlyPower);
-
+                telemetry.addData("curentFlyPower", curentFlyPower);
 
 
             }
@@ -92,36 +91,35 @@ boolean buttonPressed=false;
 
         }
         //kill fly power
-    if (gamepad1.dpad_right){
-        flyWheel.setPower(0);
+        if (gamepad1.dpad_right) {
+            flyWheel.setPower(0);
 
-    }
+        }
         //d pad left resets
-        if (gamepad1.dpad_left){
-            curentFlyPower= startingFlyPower;
-            amountpressed=0;
+        if (gamepad1.dpad_left) {
+            curentFlyPower = startingFlyPower;
+            amountpressed = 0;
         }//intake a in
-   if (gamepad1.right_trigger>0){
-       intakeA.setPower(1);
+        if (gamepad1.right_trigger > 0) {
+            intakeA.setPower(1);
 
-   }
-        if (gamepad1.right_trigger==0){
+        }
+        if (gamepad1.right_trigger == 0) {
             intakeA.setPower(0);
         }//intake a out
-    if(gamepad1.left_trigger>0){
-        intakeA.setPower(-1);
-    }
-        if(gamepad1.left_trigger==0){
+        if (gamepad1.left_trigger > 0) {
+            intakeA.setPower(-1);
+        }
+        if (gamepad1.left_trigger == 0) {
             intakeA.setPower(0);
         }//intake b out
-        if (gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
             intakeB.setPower(-1);
         }//intake b in
-        if (gamepad1.right_bumper){
+        if (gamepad1.right_bumper) {
             intakeB.setPower(1);
         }
     }
-
 
 
     double scaleInput(double dVal) {
