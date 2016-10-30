@@ -18,6 +18,7 @@ public class GyroUtils {
     private DriveTrain driveTrain;
     private HardwareMap hardwareMap;
     Telemetry telemetry;
+    public double dividerNumber = 15;
 
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -104,7 +105,7 @@ public class GyroUtils {
         int targetDegrees = 0;
         double leftStartPower = power;
         double rightStartPower = power;
-        double dividerNumber = 16;
+        //double dividerNumber = 16;// With the wonky drive train, it was 16
 
         if (gyroDegree > 0 && gyroDegree <= 90) {
             int error_degrees = Math.abs(targetDegrees - gyroDegree);
@@ -116,7 +117,7 @@ public class GyroUtils {
                 leftStartPower = Range.clip(power - subtractivePower, -1, 1);
             }
             if (power < 0) {
-                rightStartPower = Range.clip(power - subtractivePower, -1, 1);
+                leftStartPower = Range.clip(power + subtractivePower, -1, 1);
             }
 
         }
@@ -131,7 +132,7 @@ public class GyroUtils {
                 rightStartPower = Range.clip(power - subtractivePower, -1, 1);
             }
             if (power < 0) {
-                leftStartPower = Range.clip(power - subtractivePower, -1, 1);
+                rightStartPower = Range.clip(power + subtractivePower, -1, 1);
             }
 
         }

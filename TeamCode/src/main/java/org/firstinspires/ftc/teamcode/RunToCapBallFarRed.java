@@ -22,8 +22,11 @@ public class RunToCapBallFarRed extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
+
     DriveTrain driveTrain;
+
     GyroUtils gyroUtils;
+
     ColorUtils colorUtils;
 
     GyroSensor gyro;
@@ -34,6 +37,8 @@ public class RunToCapBallFarRed extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
+
+
         gyro = gyroUtils.gyro;
         gyro.calibrate();
 
@@ -61,8 +66,7 @@ public class RunToCapBallFarRed extends OpMode {
                 driveTrain.powerLeft(1);
                 driveTrain.powerRight(1);
             } else {
-                driveTrain.powerLeft(0);
-                driveTrain.powerRight(0);
+                driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
@@ -73,28 +77,10 @@ public class RunToCapBallFarRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 3) {
-            if (gyro.getHeading() < (135 - 25)) {
-                driveTrain.powerLeft(0.3);
-                driveTrain.powerRight(-0.3);
-            } if (gyro.getHeading() >= (135 - 25)) {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-            }
-        }
 
-        if (stage == 4) {
-            if (time.time() > 0.15) {
-                stage++;
-                time.reset();
-            }
-        }
-        if (stage == 5) {
+        if (stage == 3) {
             if (!colorUtils.aboveRedLine()) {
-                //driveTrain.powerLeft(-0.8);
-                //driveTrain.powerRight(-0.8);
-                gyroUtils.driveOnHeading(315, 1);
+                gyroUtils.driveOnHeading(315);
             } else {
                 driveTrain.stopRobot();
                 stage++;

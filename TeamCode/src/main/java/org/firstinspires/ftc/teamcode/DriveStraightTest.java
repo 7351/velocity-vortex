@@ -27,10 +27,18 @@ public class DriveStraightTest extends OpMode {
     @Override
     public void init() {
 
+        das = new DynamicAutonomousSelector();
+
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
 
         gyroUtils.gyro.calibrate();
+        
+        if (das.getSelectorChoices().containsKey("divider")) {
+            gyroUtils.dividerNumber = Double.valueOf(das.getSelectorChoices().get("divider"));
+        }
+
+
 
 
     }
@@ -39,7 +47,6 @@ public class DriveStraightTest extends OpMode {
     public void start() {
 
         gyroUtils.gyro.calibrate();
-
 
     }
 
@@ -58,13 +65,15 @@ public class DriveStraightTest extends OpMode {
             final double time = 2;
             if (driveTime.time() <= time) {
                 gyroUtils.driveOnHeading(0);
+                //driveTrain.powerLeft(0);
+                //driveTrain.powerRight(0.5);
             } else {
-                driveTrain.powerRight(0);
-                driveTrain.powerLeft(0);
+                driveTrain.stopRobot();
             }
         }
 
         telemetry.addData("Gyro", String.valueOf(gyroUtils.gyro.getHeading()));
+        telemetry.addData("Divider", String.valueOf(gyroUtils.dividerNumber));
 
     }
 }
