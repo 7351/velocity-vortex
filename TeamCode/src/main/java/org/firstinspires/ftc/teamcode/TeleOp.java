@@ -13,7 +13,10 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class TeleOp extends OpMode {
 public DcMotor flyWheel;
+ public DcMotor intakeA;
+    public DcMotor intakeB;
     DriveTrain driveTrain;
+
 boolean buttonPressed=false;
     boolean buttoncoderan =false;
     double startingFlyPower= .5;
@@ -98,7 +101,28 @@ boolean buttonPressed=false;
             curentFlyPower= startingFlyPower;
             amountpressed=0;
         }
+   if (gamepad1.right_trigger>0){
+       intakeA.setPower(1);
+
+   }
+        if (gamepad1.right_trigger==0){
+            intakeA.setPower(0);
+        }
+    if(gamepad1.left_trigger>0){
+        intakeA.setPower(-1);
     }
+        if(gamepad1.left_trigger==0){
+            intakeA.setPower(0);
+        }
+        if (gamepad1.left_bumper){
+            intakeB.setPower(-1);
+        }
+        if (gamepad1.right_bumper){
+            intakeB.setPower(1);
+        }
+    }
+
+
 
     double scaleInput(double dVal) {
         double[] scaleArray = {0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24, 0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00};
