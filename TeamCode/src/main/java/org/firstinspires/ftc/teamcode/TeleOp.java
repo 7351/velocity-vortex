@@ -100,23 +100,23 @@ boolean buttonPressed=false;
         if (gamepad1.dpad_left){
             curentFlyPower= startingFlyPower;
             amountpressed=0;
-        }
+        }//intake a in
    if (gamepad1.right_trigger>0){
        intakeA.setPower(1);
 
    }
         if (gamepad1.right_trigger==0){
             intakeA.setPower(0);
-        }
+        }//intake a out
     if(gamepad1.left_trigger>0){
         intakeA.setPower(-1);
     }
         if(gamepad1.left_trigger==0){
             intakeA.setPower(0);
-        }
+        }//intake b out
         if (gamepad1.left_bumper){
             intakeB.setPower(-1);
-        }
+        }//intake b in
         if (gamepad1.right_bumper){
             intakeB.setPower(1);
         }

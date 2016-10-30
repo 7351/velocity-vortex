@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DynamicAutonomousSelector;
+//import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DynamicAutonomousSelector;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 
 /**
@@ -22,7 +22,7 @@ public class DriveStraightTest extends OpMode {
 
     ElapsedTime driveTime = new ElapsedTime();
 
-    DynamicAutonomousSelector das;
+    //DynamicAutonomousSelector das;
 
     @Override
     public void init() {
