@@ -7,16 +7,12 @@ import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
 
-    private HardwareMap hardwareMap;
-
     public DcMotor LeftFrontMotor;
     public DcMotor RightFrontMotor;
     public DcMotor LeftBackMotor;
     public DcMotor RightBackMotor;
 
     public DriveTrain(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
-
         if (hardwareMap != null) {
             LeftFrontMotor = hardwareMap.dcMotor.get("LeftFrontMotor");
             RightFrontMotor = hardwareMap.dcMotor.get("RightFrontMotor");
