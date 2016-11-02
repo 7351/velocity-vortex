@@ -14,11 +14,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class GyroUtils {
 
     public GyroSensor gyro;
+    public double dividerNumber = 17;
+    Telemetry telemetry;
     private int TOLERANCE = 1;
     private DriveTrain driveTrain;
     private HardwareMap hardwareMap;
-    Telemetry telemetry;
-    public double dividerNumber = 15;
 
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -33,12 +33,16 @@ public class GyroUtils {
         this.TOLERANCE = tolerance;
     }
 
-    public boolean isGyroInTolerance(int degree) {
+    public boolean isGyroInTolerance(int degree, int tolerance) {
         boolean returnValue = false;
-        if ((gyro.getHeading() <= degree + TOLERANCE) && (gyro.getHeading() >= degree - TOLERANCE)) {
+        if ((gyro.getHeading() <= degree + tolerance) && (gyro.getHeading() >= degree - tolerance)) {
             returnValue = true;
         }
         return returnValue;
+    }
+
+    public boolean isGyroInTolerance(int degree) {
+        return isGyroInTolerance(degree, TOLERANCE);
     }
 
     private int spoofedZero(int zeroDegree) {
@@ -51,11 +55,6 @@ public class GyroUtils {
             degree = degree + 360;
         }
         return degree;
-    }
-
-    public enum Direction {
-        CLOCKWISE,
-        COUNTERCLOCKWISE
     }
 
     public void rotateUsingSpoofed(int ZeroDegree, int TargetDegree, double DivisionNumber, Direction direction) {
@@ -98,7 +97,6 @@ public class GyroUtils {
         }
     }
 
-
     public void driveOnHeading(int desiredDegree, double power) {
         //TODO: Straddle 0 as tight as possible with better calibration
         int gyroDegree = spoofedZero(desiredDegree);
@@ -111,8 +109,6 @@ public class GyroUtils {
             int error_degrees = Math.abs(targetDegrees - gyroDegree);
             double subtractivePower = error_degrees / dividerNumber;
             RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
-            telemetry.addData("Drifting Right", String.valueOf(error_degrees + ", " + subtractivePower));
-            telemetry.addData("Divider", String.valueOf(dividerNumber));
             if (power > 0) {
                 leftStartPower = Range.clip(power - subtractivePower, -1, 1);
             }
@@ -126,8 +122,6 @@ public class GyroUtils {
             int error_degrees = Math.abs(90 - (gyroDegree - 270));
             double subtractivePower = error_degrees / dividerNumber;
             RobotLog.d(String.valueOf(subtractivePower + ", " + error_degrees));
-            telemetry.addData("Drifting Left", String.valueOf(error_degrees + ", " + subtractivePower));
-            telemetry.addData("Divider", String.valueOf(dividerNumber));
             if (power > 0) {
                 rightStartPower = Range.clip(power - subtractivePower, -1, 1);
             }
@@ -145,5 +139,10 @@ public class GyroUtils {
 
     public void driveOnHeading(int desiredDegree) {
         driveOnHeading(desiredDegree, 1);
+    }
+
+    public enum Direction {
+        CLOCKWISE,
+        COUNTERCLOCKWISE
     }
 }
