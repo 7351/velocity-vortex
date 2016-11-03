@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -14,18 +15,42 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class GyroUtils {
 
     public GyroSensor gyro;
+    public ModernRoboticsI2cGyro i2cGyro;
     public double dividerNumber = 17;
     Telemetry telemetry;
     private int TOLERANCE = 1;
     private DriveTrain driveTrain;
-    private HardwareMap hardwareMap;
+    private int gyroDistance = 0;
 
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
-        this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.driveTrain = driveTrain;
         if (hardwareMap.gyroSensor.get("gyro") != null) {
             gyro = hardwareMap.gyroSensor.get("gyro");
+            i2cGyro = (ModernRoboticsI2cGyro) gyro;
+        }
+    }
+
+    /*
+     * Borrowed from team 5942
+     * @See https://www.reddit.com/r/FTC/comments/44zhfu/help_programming_a_turning_method_using_the_gyro/czuc6uf/
+     */
+    public int gyroDelta() {
+        return gyroDistance - i2cGyro.getIntegratedZValue();
+    }
+
+    public void resetDelta() {
+        gyroDistance = i2cGyro.getIntegratedZValue();
+    }
+
+    public void gTurn(int degrees, double power) {
+        float direction = Math.signum(degrees); //get +/- sign of target
+
+        if (Math.abs(gyroDelta()) < Math.abs(degrees)) {
+            driveTrain.powerLeft(-direction * power);
+            driveTrain.powerRight(direction * power);
+        } else {
+            driveTrain.stopRobot();
         }
     }
 
@@ -73,6 +98,40 @@ public class GyroUtils {
                     break;
             }
 
+        }
+    }
+
+    //This function turns a number of degrees compared to where the robot is. Positive numbers trn left.
+    public void turn(int target) throws InterruptedException {
+        turnAbsolute(target + i2cGyro.getIntegratedZValue());
+    }
+
+    //This function turns a number of degrees compared to where the robot was when the program started. Positive numbers trn left.
+    public void turnAbsolute(int target) {
+        int zAccumulated = i2cGyro.getIntegratedZValue();  //Set variables to gyro readings
+        double turnSpeed;
+
+        if (Math.abs(zAccumulated - target) > 15) {
+            turnSpeed = 0.4;
+        } else {
+            turnSpeed = 0.23;
+        }
+
+        if (Math.abs(zAccumulated - target) > 3) {  //Continue while the robot direction is further than three degrees from the target
+            if (zAccumulated > target) {  //if gyro is positive, we will turn right
+                driveTrain.powerLeft(turnSpeed);
+                driveTrain.powerRight(-turnSpeed);
+            }
+
+            if (zAccumulated < target) {  //if gyro is positive, we will turn left
+                driveTrain.powerLeft(-turnSpeed);
+                driveTrain.powerRight(turnSpeed);
+            }
+
+            zAccumulated = i2cGyro.getIntegratedZValue();  //Set variables to gyro readings
+            telemetry.addData("Accumulated", String.format("%03d", zAccumulated));
+        } else {
+            driveTrain.stopRobot();
         }
     }
 

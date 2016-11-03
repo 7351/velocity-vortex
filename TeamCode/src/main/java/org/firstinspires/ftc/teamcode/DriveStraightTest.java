@@ -38,9 +38,6 @@ public class DriveStraightTest extends OpMode {
             gyroUtils.dividerNumber = Double.valueOf(das.getSelectorChoices().get("divider"));
         }
 
-
-
-
     }
 
     @Override
@@ -61,19 +58,19 @@ public class DriveStraightTest extends OpMode {
         }
 
         if (stage == 1) {
-            // We drive for 1 seconds at full power drive on heading and stop after the 2 seconds
+            // We drive for 2 seconds at full power drive on heading and stop after the 2 seconds
             final double time = 2;
             if (driveTime.time() <= time) {
-                gyroUtils.driveOnHeading(0);
-                //driveTrain.powerLeft(0);
-                //driveTrain.powerRight(0.5);
+                //gyroUtils.driveOnHeading(330);
+                driveTrain.driveStraight();
+                //gyroUtils.basicDriveWithGyro(0);
             } else {
                 driveTrain.stopRobot();
             }
         }
 
         telemetry.addData("Gyro", String.valueOf(gyroUtils.gyro.getHeading()));
-        telemetry.addData("Divider", String.valueOf(gyroUtils.dividerNumber));
+        //telemetry.addData("Divider", String.valueOf(gyroUtils.dividerNumber));
 
     }
 }

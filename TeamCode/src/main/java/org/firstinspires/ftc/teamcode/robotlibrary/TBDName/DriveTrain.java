@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
 
+    public final double DIFFERENCE = 0.04;
     public DcMotor LeftFrontMotor;
     public DcMotor RightFrontMotor;
     public DcMotor LeftBackMotor;
@@ -23,6 +24,25 @@ public class DriveTrain {
             LeftBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
+    }
+
+    public void driveStraight(double difference) {
+        if (difference > 0) {
+            powerLeft(1);
+            powerRight(1 - difference);
+        }
+        if (difference < 0) {
+            powerLeft(1 - difference);
+            powerRight(1);
+        }
+        if (difference == 0) {
+            powerLeft(1);
+            powerRight(1);
+        }
+    }
+
+    public void driveStraight() {
+        driveStraight(DIFFERENCE);
     }
 
     public void powerLeft(double power) {
