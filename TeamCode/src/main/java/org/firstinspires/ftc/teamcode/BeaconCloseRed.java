@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallTimeFarRed", group = "Testing")
-public class RunToCapBallFarRed extends OpMode {
+@Autonomous(name = "BeaconCloseRed", group = "Testing")
+public class BeaconCloseRed extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -83,7 +83,7 @@ public class RunToCapBallFarRed extends OpMode {
         }
 
         if (stage == 3){
-            if(gyro.getHeading() > 340 || gyro.getHeading() < 10)
+            if(gyro.getHeading() >= 345 || gyro.getHeading() < 10)
             {
                 driveTrain.powerLeft(-.15);
                 driveTrain.powerRight(.15);
@@ -101,7 +101,7 @@ public class RunToCapBallFarRed extends OpMode {
         }
 
         if (stage == 5) {
-            if (time.time() < 2) {
+            if (time.time() < 1.75) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
