@@ -101,14 +101,18 @@ public class RunToCapBallFarRed extends OpMode {
         }
 
         if (stage == 5) {
-            if (time.time() < 2) {
-                driveTrain.driveStraight();
+            if (colorUtils.lineColorSensor.red() == 0  || time.time() < 5) {
+                driveTrain.powerRight(.25);
+                driveTrain.powerLeft(.25);
+
+                //driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
                 stage++;
             }
         }
 
+        telemetry.addData("Color: ", String.valueOf(colorUtils.lineColorSensor.red()));
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
         telemetry.addData("Time", String.valueOf(time.time()));
