@@ -61,9 +61,11 @@ public class DriveStraightTest extends OpMode {
             // We drive for 2 seconds at full power drive on heading and stop after the 2 seconds
             final double time = 2;
             if (driveTime.time() <= time) {
-                //gyroUtils.driveOnHeading(330);
-                driveTrain.driveStraight();
-                //gyroUtils.basicDriveWithGyro(0);
+                /*
+                 * Drive straight with difference of 0.04
+                 * Tested on 11/6/16
+                 */
+                driveTrain.driveStraight(); // Drive straight with regular difference of 0.04
             } else {
                 driveTrain.stopRobot();
             }
