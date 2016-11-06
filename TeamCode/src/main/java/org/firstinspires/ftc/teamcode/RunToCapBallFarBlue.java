@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
 
 /**
  * Created by Leo on 10/16/2016.
@@ -31,11 +33,9 @@ public class RunToCapBallFarBlue extends OpMode {
 
     GyroSensor gyro;
 
-    DcMotor FlyWheelMotor;
+    Intake intake;
 
-    DcMotor IntakeB;
-
-    DcMotor IntakeA;
+    FlyWheel flyWheel;
 
 
 
@@ -45,9 +45,8 @@ public class RunToCapBallFarBlue extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
-        FlyWheelMotor = hardwareMap.dcMotor.get("FlyWheelMotor");
-        IntakeB = hardwareMap.dcMotor.get("IntakeB");
-        IntakeA = hardwareMap.dcMotor.get("IntakeA");
+        flyWheel = new FlyWheel(hardwareMap);
+        intake = new Intake(hardwareMap);
 
 
         gyro = gyroUtils.gyro;
@@ -74,7 +73,7 @@ public class RunToCapBallFarBlue extends OpMode {
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
-            if (time.time() <= 0.25) {
+            if (time.time() <= (0.25 * 2)) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
@@ -91,7 +90,7 @@ public class RunToCapBallFarBlue extends OpMode {
         }
 
         if (stage == 3){
-            if(gyro.getHeading() < 32.5 || gyro.getHeading() > 350)
+            if(gyro.getHeading() < 38 || gyro.getHeading() > 350)
             {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
@@ -110,7 +109,8 @@ public class RunToCapBallFarBlue extends OpMode {
 
         if (stage == 5)
         {
-            if (time.time() < 1.35)
+            double flyWheelLaunchPower = 0.5;
+            if (time.time() < 1.15)
             {
                 driveTrain.driveStraight();
             }
@@ -119,7 +119,7 @@ public class RunToCapBallFarBlue extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-                FlyWheelMotor.setPower(.60);
+                flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             }
         }
 
@@ -136,7 +136,7 @@ public class RunToCapBallFarBlue extends OpMode {
         {
             if(time.time() < 2)
             {
-                IntakeB.setPower(1);
+                intake.setIntakePower(Intake.IntakeSpec.B, 1);
             }
             else
             {
@@ -148,7 +148,7 @@ public class RunToCapBallFarBlue extends OpMode {
         if (stage == 8)
         {
             if (time.time() < .35)
-                IntakeA.setPower(1);
+                intake.setIntakePower(Intake.IntakeSpec.A, 1);
             else
             {
                 time.reset();
@@ -160,9 +160,9 @@ public class RunToCapBallFarBlue extends OpMode {
         {
             if(time.time() > 2)
             {
-                IntakeB.setPower(0);
-                IntakeA.setPower(0);
-                FlyWheelMotor.setPower(0);
+                intake.stopIntake(Intake.IntakeSpec.A);
+                intake.stopIntake(Intake.IntakeSpec.B);
+                flyWheel.FlyWheelMotor.setPower(0);
                 time.reset();
                 stage++;
             }
@@ -179,7 +179,7 @@ public class RunToCapBallFarBlue extends OpMode {
 
 
         if (stage == 11) {
-            if (time.time() < 1) {
+            if (/*(!colorUtils.aboveBlueLine()) || */(time.time() < 0.65)) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
@@ -189,6 +189,7 @@ public class RunToCapBallFarBlue extends OpMode {
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
         telemetry.addData("Time", String.valueOf(time.time()));
+        telemetry.addData("Blue Line", String.valueOf(colorUtils.aboveBlueLine()));
 
     }
 }
