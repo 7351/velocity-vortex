@@ -1,39 +1,150 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake.IntakeSpec;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TeleOpUtils;
 
 /**
  * Created by Dynamic Signals on 10/21/2016.
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
-@Disabled
 public class TeleOp extends OpMode {
-    public DcMotor flyWheel;
-    public DcMotor intakeA;
-    public DcMotor intakeB;
-    DriveTrain driveTrain;
 
-    boolean buttonPressed = false;
-    double startingFlyPower = .5;
-    double curentFlyPower;
-    double amountpressed = 0;
-    double incrementpower = .05;
+    boolean DPadUp = false;
+    boolean DPadDown = false;
+    boolean DPadRight = false;
+    boolean DPadLeft = false;
+    private DriveTrain driveTrain;
+    private FlyWheel flyWheel;
+    private Intake intake;
+    private TeleOpUtils teleOpUtils;
 
     @Override
     public void init() {
-        flyWheel = hardwareMap.dcMotor.get("flyWheel");
+
         driveTrain = new DriveTrain(hardwareMap);
+        flyWheel = new FlyWheel(hardwareMap);
+        intake = new Intake(hardwareMap);
+        teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
 
     }
 
     @Override
     public void loop() {
+
+        /*
+         * Controller 1 Controls --------------------------------------------------
+         */
+
+        /*
+         * Intake controls
+         * Left Trigger - Intake A sets power to -1
+         * Right Trigger - Intake A sets power to 1
+         * Left Bumper - Intake B sets power to -1
+         * Right Bumper - Intake B sets power to 1
+         */
+
+        if (gamepad1.left_trigger >= 0.5) {
+            intake.setIntakePower(IntakeSpec.A, -1);
+        }
+
+        if (gamepad1.right_trigger >= 0.5) {
+            intake.setIntakePower(IntakeSpec.A, 1);
+        }
+
+        if (gamepad1.left_trigger < 0.5 && gamepad1.right_trigger < 0.5) {
+            intake.stopIntake(IntakeSpec.A);
+        }
+
+        if (gamepad1.left_bumper) {
+            intake.setIntakePower(IntakeSpec.B, -1);
+        }
+
+        if (gamepad1.right_bumper) {
+            intake.setIntakePower(IntakeSpec.B, 1);
+        }
+
+        if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
+            intake.stopIntake(IntakeSpec.B);
+        }
+
+        /*
+         * Fly wheel controls
+         * D-pad up - Increment the power by 0.05
+         * D-pad down - Decrease the power by 0.05
+         * D-pad right - Kill the motor
+         * D-pad left - Set the power to 0.55 no-matter the position
+         */
+
+        boolean DPadUpPressed = gamepad1.dpad_up;
+        boolean DPadDownPressed = gamepad1.dpad_down;
+        boolean DPadRightPressed = gamepad1.dpad_right;
+        boolean DPadLeftPressed = gamepad1.dpad_left;
+
+        if (DPadDownPressed) {
+            if (!DPadDown) {
+                flyWheel.currentlyRunning = true;
+                flyWheel.currentPower -= flyWheel.incrementValue;
+                DPadDown = true;
+            }
+        } else {
+            DPadDown = false;
+        }
+
+        if (DPadUpPressed) {
+            if (!DPadUp) {
+                flyWheel.currentlyRunning = true;
+                flyWheel.currentPower += flyWheel.incrementValue;
+                DPadUp = true;
+            }
+        } else {
+            DPadUp = false;
+        }
+
+        if (DPadRightPressed) {
+            if (!DPadRight) {
+                flyWheel.currentlyRunning = false;
+                DPadRight = true;
+            }
+        } else {
+            DPadRight = false;
+        }
+
+        if (DPadLeftPressed) {
+            if (!DPadLeft) {
+                flyWheel.currentlyRunning = true;
+                flyWheel.currentPower = flyWheel.defaultStartingPower;
+                DPadLeft = true;
+            }
+        } else {
+            DPadLeft = false;
+        }
+
+        flyWheel.currentPower = Range.clip(flyWheel.currentPower, 0, 1);
+
+        if (flyWheel.currentPower == 0) {
+            flyWheel.currentlyRunning = false;
+        }
+
+        if (flyWheel.currentlyRunning) {
+            flyWheel.FlyWheelMotor.setPower(flyWheel.currentPower);
+        } else {
+            flyWheel.FlyWheelMotor.setPower(0);
+        }
+
+        telemetry.addData("FlyWheel", String.valueOf(flyWheel.FlyWheelMotor.getPower()));
+
+
+        /*
+         * Driving controls
+         * Right Joystick - Arcade driving takes both x and y
+         */
 
         // throttle: right_stick_y ranges from -1 to 1, where -1 is full up, and
         // 1 is full down
@@ -50,95 +161,19 @@ public class TeleOp extends OpMode {
 
         // scale the joystick value to make it easier to control
         // the robot more precisely at slower speeds.
-        right = (float) scaleInput(right);
-        left = (float) scaleInput(left);
+        right = (float) teleOpUtils.scaleInput(right);
+        left = (float) teleOpUtils.scaleInput(left);
 
         // write the values to the motors
-
         driveTrain.powerLeft(left);
         driveTrain.powerRight(right);
 
+        /* Controller 1 telemetry data */
+        telemetry.addData("Drive power", "L: " + String.valueOf(left) + ", R: " + String.valueOf(right));
 
-        telemetry.addData("drive power", "L: " + String.valueOf(left) + ", R: " + String.valueOf(right));
-        //incrments power by incrementalpower
-        if (gamepad1.dpad_up) {
-            if (!buttonPressed) {
-                curentFlyPower = startingFlyPower + (incrementpower * amountpressed);//incresses power by set amount if first presss amount press =0
-                curentFlyPower = Range.clip(curentFlyPower, 0, 1);// keep current between 0 and 1
-                flyWheel.setPower(curentFlyPower);
-                buttonPressed = true;
-                amountpressed++;
-                telemetry.addData("curentFlyPower", curentFlyPower);
+        /*
+         * Controller 2 Controls --------------------------------------------------
+         */
 
-
-            }
-        }
-        if (!gamepad1.dpad_up) {
-            buttonPressed = false;
-        }
-        //decrements power by incrementalpower
-        if (gamepad1.dpad_down)
-            if (!buttonPressed) {
-                amountpressed--;
-                curentFlyPower = startingFlyPower - (incrementpower * amountpressed);
-                curentFlyPower = Range.clip(curentFlyPower, 0, 1);
-                flyWheel.setPower(curentFlyPower);
-                buttonPressed = true;
-                telemetry.addData("curentFlyPower", curentFlyPower);
-
-
-            }
-        if (!gamepad1.dpad_down) {
-            buttonPressed = false;
-
-        }
-        //kill fly power
-        if (gamepad1.dpad_right) {
-            flyWheel.setPower(0);
-
-        }
-        //d pad left resets
-        if (gamepad1.dpad_left) {
-            curentFlyPower = startingFlyPower;
-            amountpressed = 0;
-        }//intake a in
-        if (gamepad1.right_trigger > 0) {
-            intakeA.setPower(1);
-
-        }
-        if (gamepad1.right_trigger == 0) {
-            intakeA.setPower(0);
-        }//intake a out
-        if (gamepad1.left_trigger > 0) {
-            intakeA.setPower(-1);
-        }
-        if (gamepad1.left_trigger == 0) {
-            intakeA.setPower(0);
-        }//intake b out
-        if (gamepad1.left_bumper) {
-            intakeB.setPower(-1);
-        }//intake b in
-        if (gamepad1.right_bumper) {
-            intakeB.setPower(1);
-        }
-    }
-
-
-    double scaleInput(double dVal) {
-        double[] scaleArray = {0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24, 0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00};
-        // get the corresponding index for the scaleInput array.
-        int index = (int) (dVal * 16.0);
-        if (index < 0) {
-            index = -index;
-        } else if (index > 16) {
-            index = 16;
-        }
-        double dScale = 0.0;
-        if (dVal < 0) {
-            dScale = -scaleArray[index];
-        } else {
-            dScale = scaleArray[index];
-        }
-        return dScale;
     }
 }
