@@ -32,6 +32,8 @@ public class RunToCapBallFarRed extends OpMode {
 
     DcMotor IntakeB;
 
+    DcMotor IntakeA;
+
 
 
     @Override
@@ -42,6 +44,7 @@ public class RunToCapBallFarRed extends OpMode {
         colorUtils = new ColorUtils(hardwareMap);
         FlyWheelMotor = hardwareMap.dcMotor.get("FlyWheelMotor");
         IntakeB = hardwareMap.dcMotor.get("IntakeB");
+        IntakeA = hardwareMap.dcMotor.get("IntakeA");
 
 
         gyro = gyroUtils.gyro;
@@ -133,14 +136,35 @@ public class RunToCapBallFarRed extends OpMode {
             }
             else
             {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 8)
+        {
+            if (time.time() < .35)
+                IntakeA.setPower(1);
+            else
+            {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 9)
+        {
+            if(time.time() > 2)
+            {
                 IntakeB.setPower(0);
+                IntakeA.setPower(0);
                 FlyWheelMotor.setPower(0);
                 time.reset();
                 stage++;
             }
         }
 
-        if (stage ==8)
+        if (stage == 10)
         {
             if (time.time() > .25)
             {
@@ -150,7 +174,7 @@ public class RunToCapBallFarRed extends OpMode {
         }
 
 
-        if (stage == 9) {
+        if (stage == 11) {
             if (time.time() < 1) {
                 driveTrain.driveStraight();
             } else {
