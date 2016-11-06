@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallTimeFarBlue", group = "Testing")
+@Autonomous(name = "CapBallFarBlue", group = "Testing")
 public class RunToCapBallFarBlue extends OpMode {
 
     int stage = 0;
@@ -177,7 +177,7 @@ public class RunToCapBallFarBlue extends OpMode {
 
 
         if (stage == 11) {
-            if ((!colorUtils.aboveBlueLine())/* || (time.time() < 0.65)*/) {
+            if ((!colorUtils.aboveBlueLine()) || (time.time() < 0.65)) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();

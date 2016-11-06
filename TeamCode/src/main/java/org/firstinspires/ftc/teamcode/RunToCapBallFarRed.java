@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallTimeFarRed", group = "Testing")
+@Autonomous(name = "CapBallFarRed", group = "Testing")
 public class RunToCapBallFarRed extends OpMode {
 
     int stage = 0;

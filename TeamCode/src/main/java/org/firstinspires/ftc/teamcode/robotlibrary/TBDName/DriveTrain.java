@@ -27,13 +27,25 @@ public class DriveTrain {
     }
 
     public void driveStraight(double startingPower, double difference) {
-        if (difference > 0) {
-            powerLeft(startingPower);
-            powerRight(startingPower - difference);
+        if (startingPower > 0) {
+            if (difference > 0) {
+                powerLeft(startingPower);
+                powerRight(startingPower - difference);
+            }
+            if (difference < 0) {
+                powerLeft(startingPower - difference);
+                powerRight(startingPower);
+            }
         }
-        if (difference < 0) {
-            powerLeft(startingPower - difference);
-            powerRight(startingPower);
+        if (startingPower < 0) {
+            if (difference > 0) {
+                powerLeft(startingPower);
+                powerRight(startingPower + difference);
+            }
+            if (difference < 0) {
+                powerLeft(startingPower + difference);
+                powerRight(startingPower);
+            }
         }
         if (difference == 0) {
             powerLeft(startingPower);
