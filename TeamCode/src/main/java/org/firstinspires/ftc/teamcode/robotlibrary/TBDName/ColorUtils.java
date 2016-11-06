@@ -10,10 +10,9 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 
 public class ColorUtils {
 
-    private HardwareMap hardwareMap;
-
     public ColorSensor lineColorSensor;
     public ColorSensor beaconColorSensor;
+    private HardwareMap hardwareMap;
 
     public ColorUtils(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -50,6 +49,27 @@ public class ColorUtils {
             returnValue = true;
         }
         return returnValue;
+    }
+
+    public Color beaconColor() {
+        Color returnColor = Color.NONE;
+        if ((beaconColorSensor.red() > beaconColorSensor.green() + 1) && (beaconColorSensor.red() > beaconColorSensor.blue() + 1)) {
+            returnColor = Color.RED;
+        }
+        if ((beaconColorSensor.blue() > beaconColorSensor.red()) && (beaconColorSensor.blue() > beaconColorSensor.green())) {
+            returnColor = Color.BLUE;
+        }
+        if ((beaconColorSensor.red() >= 2) && (beaconColorSensor.green() >= 2) && (beaconColorSensor.blue() >= 2)) {
+            returnColor = Color.WHITE;
+        }
+        return returnColor;
+    }
+
+    public enum Color {
+        BLUE,
+        RED,
+        WHITE,
+        NONE
     }
 
 

@@ -19,18 +19,16 @@ import java.util.List;
 
 public class VuforiaSystem {
 
-    private final float MM_PER_INCH = 25.4f;
-    private final float ROBOT_WIDTH = 18 * MM_PER_INCH;               // in mm
-    private final float FTC_FIELD_WIDTH = (12 * 12 - 2) * MM_PER_INCH;  // in mm
-    private final float TARGET_HEIGHT = 160.0f;                     // in mm
-
-    public VuforiaLocalizer vuforia;
-    public List<VuforiaTrackable> allTrackables = new ArrayList<>();
-
     /* Vuforia Preferences */
     private static final String VUFORIA_LICENSE_KEY = "AbXnxf//////AAAAGRuNC5J8ZEyftEBQmHGLn/JRAsckJezlsbt+FqzEIevPs5nHoqNr8RxWAOXkyTKIYfEkL17legkgm4sV7qv3qcJXlVQE1Xlo/UKbwVQBgzEfGZi9M3d3tgaJNLEeDe1VLXCVrGyrGSThbd364UF/+nsZMhnFGcnLavxaH8N0QWS5QiAgdbV71V4SLS2vWzML4leBiAxl8qqitSqHEmlez4xF5BoyADuT3lLanURW+g+guX7jFo8ONDzI+xjBsi5BCnI41USBfJdhRnh272sUgdpJFetdTQKIlvRifwHOzGz9oX1WpFSOid+NE76fLon5sHVRx4ztQrqBtSQN3J9CgaJo0DjkDyTMbJBTTE56n2Yi";
     private static final VuforiaLocalizer.CameraDirection DIRECTION = VuforiaLocalizer.CameraDirection.BACK;
     private static final String FIELD_DATABASE_NAME = "FTC_2016-17";
+    private final float MM_PER_INCH = 25.4f;
+    private final float ROBOT_WIDTH = 18 * MM_PER_INCH;               // in mm
+    private final float FTC_FIELD_WIDTH = (12 * 12 - 2) * MM_PER_INCH;  // in mm
+    private final float TARGET_HEIGHT = 160.0f;                     // in mm
+    public VuforiaLocalizer vuforia;
+    public List<VuforiaTrackable> allTrackables = new ArrayList<>();
     OpenGLMatrix phoneLocationMatrix = locationMatrix(90.0f, 0.0f, 0.0f, 0.0f, ROBOT_WIDTH / 2.0f, 0.0f);
     /* END OF PREFERENCES */
 
@@ -154,9 +152,14 @@ public class VuforiaSystem {
         return specifyTrackable(TrackableDatabase, XMLIndex, Name, null);
     }
 
-    public enum TargetDirection {
-        HORIZONTAL,
-        VERTICAL
+    public double distanceBetweenTargets(OpenGLMatrix PhoneLocationMatrix, OpenGLMatrix TargetLocationMatrix) {
+        VectorF phoneVector = PhoneLocationMatrix.getTranslation();
+        VectorF targetVector = TargetLocationMatrix.getTranslation();
+        double[] orderedPairPhone = {phoneVector.get(0), phoneVector.get(2)};
+        double[] orderedPairTarget = {targetVector.get(0), phoneVector.get(2)};
+        double differenceX = orderedPairPhone[0] - orderedPairTarget[0];
+        double differenceZ = orderedPairPhone[1] - orderedPairTarget[1];
+        return Math.abs(Math.sqrt(Math.pow(differenceX, 2) + Math.pow(differenceZ, 2)));
     }
 
     /*
@@ -170,14 +173,9 @@ public class VuforiaSystem {
     }
     */
 
-    public double distanceBetweenTargets(OpenGLMatrix PhoneLocationMatrix, OpenGLMatrix TargetLocationMatrix) {
-        VectorF phoneVector = PhoneLocationMatrix.getTranslation();
-        VectorF targetVector = TargetLocationMatrix.getTranslation();
-        double[] orderedPairPhone = {phoneVector.get(0), phoneVector.get(2)};
-        double[] orderedPairTarget = {targetVector.get(0), phoneVector.get(2)};
-        double differenceX = orderedPairPhone[0] - orderedPairTarget[0];
-        double differenceZ = orderedPairPhone[1] - orderedPairTarget[1];
-        return Math.abs(Math.sqrt(Math.pow(differenceX, 2) + Math.pow(differenceZ, 2)));
+    public enum TargetDirection {
+        HORIZONTAL,
+        VERTICAL
     }
 
 

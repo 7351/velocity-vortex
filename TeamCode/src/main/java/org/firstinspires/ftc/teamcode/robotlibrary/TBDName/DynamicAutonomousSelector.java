@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 
-import android.content.Context;
 import android.os.Environment;
 
 import com.google.gson.Gson;
@@ -22,10 +21,9 @@ import java.util.HashMap;
 
 public class DynamicAutonomousSelector {
 
-    private HashMap<String, String> selectorChoices;
-
     private final static Type mapType = new TypeToken<HashMap<String, String>>() {
     }.getType();
+    private HashMap<String, String> selectorChoices;
 
     public DynamicAutonomousSelector() {
         HashMap<String, String> serverHashMap = new HashMap<>();
@@ -62,10 +60,6 @@ public class DynamicAutonomousSelector {
         }
     }
 
-    public HashMap<String, String> getSelectorChoices() {
-        return selectorChoices;
-    }
-
     private static String getJsonFromServer(String url) throws Exception {
 
         BufferedReader inputStream;
@@ -94,6 +88,10 @@ public class DynamicAutonomousSelector {
         }
         fis.close();
         return str;
+    }
+
+    public HashMap<String, String> getSelectorChoices() {
+        return selectorChoices;
     }
 
 
