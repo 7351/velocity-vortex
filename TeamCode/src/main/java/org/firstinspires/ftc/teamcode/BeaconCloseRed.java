@@ -57,14 +57,26 @@ public class BeaconCloseRed extends OpMode {
     public void loop() {
 
         if (stage == 0) {//calibrates to 0
-            if (!gyro.isCalibrating()) {
-                stage++;
+            if (gyro.isCalibrating()) {
+                 stage++;
                 time.reset();
+                telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
+            }else {
+                gyro.calibrate();
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
+        if (stage==1) {
+            if (!gyro.isCalibrating()) {
+                stage++;
+                time.reset();
 
-        if (stage == 1) { //drives forward 0.25 seconds
+
+
+            }
+        }
+
+        if (stage == 999) { //drives forward 0.25 seconds
             if (time.time() <= 0.25) {
                 driveTrain.powerLeft(1);
                 driveTrain.powerRight(1);
