@@ -221,16 +221,15 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-
-            if (stage == 18) {
-                if (time.time() > autonomousUtils.WAITTIME) {
-                    stage++;
-                    time.reset();
-                }
+        if (stage == 18) {
+            if (time.time() > autonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
         }
         if (stage == 19) {
             if (time.time() < 0.75) {
-                driveTrain.driveStraight(-0.5);
+                driveTrain.driveStraight(-0.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
