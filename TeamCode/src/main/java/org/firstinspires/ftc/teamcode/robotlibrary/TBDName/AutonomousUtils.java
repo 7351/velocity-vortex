@@ -5,26 +5,31 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Created by Dynamic Signals on 11/6/2016.
  */
-
+@Deprecated
 public class AutonomousUtils {
 
-    public final double WAITTIME = 0.15;
-    int stage;
-    ElapsedTime time;
+    public static final double WAITTIME = 0.15;
+    private ElapsedTime time;
 
-    public AutonomousUtils(int stage, ElapsedTime time) {
-        this.stage = stage;
+    public AutonomousUtils() {
+
+    }
+
+    public AutonomousUtils(ElapsedTime time) {
         this.time = time;
     }
+    public AutonomousUtils(int stage, ElapsedTime time){}
 
-    public void waitTime(double timeWait) {
-        if (time.time() > timeWait) {
-            stage++;
-            time.reset();
+
+    public void waitTime(double time) {
+        // Old way of waiting failed, must use the following
+        /*
+        if (stage == <Waiting stage number here>) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
         }
-    }
-
-    public void waitTime() {
-        waitTime(WAITTIME);
+         */
     }
 }
