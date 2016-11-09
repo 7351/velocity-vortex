@@ -192,7 +192,7 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
         if (stage == 15) {
-            if (time.time() < 1) {
+            if (time.time() < AutonomousUtils.WAITTIME) {
                 time.reset();
                 stage++;
             }
@@ -238,7 +238,7 @@ public class RunToBeaconBlue extends OpMode {
         }
 
         if (stage == 20) {
-            if (time.time() > .5) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
@@ -301,19 +301,20 @@ public class RunToBeaconBlue extends OpMode {
                         case "Blue":
                             RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             time.reset();
-                            stage = 666;
+                            stage++;
                             break;
                         case "Red":
                             RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage++;
                             }
                             break;
                     }
                     break;
             }
         }
+        /*
         if (stage == 26) {
             if (!colorUtils.aboveWhiteLine()) {
                 driveTrain.driveStraight();
@@ -400,6 +401,7 @@ public class RunToBeaconBlue extends OpMode {
             }
 
         }
+        */
 
 
         RobotLog.d(String.valueOf(stage + " Gyro: " + gyro.getHeading() + " Time:" + time.time()));

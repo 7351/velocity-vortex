@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TBDName;
 
 /**
  * Created by Leo on 10/16/2016.
@@ -23,8 +22,6 @@ public class RunToBeaconRed extends OpMode {
 
     private int stage = 0;
     private ElapsedTime time = new ElapsedTime();
-
-    private TBDName tbdName;
     private DriveTrain driveTrain;
     private GyroUtils gyroUtils;
     private ColorUtils colorUtils;
@@ -32,18 +29,16 @@ public class RunToBeaconRed extends OpMode {
     private Intake intake;
     private FlyWheel flyWheel;
 
-    private String alliance = "Blue";
+    private String alliance = "Red";
 
     @Override
     public void init() {
 
-        tbdName = new TBDName(hardwareMap, telemetry);
-
-        driveTrain = tbdName.driveTrain;
-        gyroUtils = tbdName.gyroUtils;
-        colorUtils = tbdName.colorUtils;
-        intake = tbdName.intake;
-        flyWheel = tbdName.flyWheel;
+        driveTrain = new DriveTrain(hardwareMap);
+        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
+        colorUtils = new ColorUtils(hardwareMap);
+        flyWheel = new FlyWheel(hardwareMap);
+        intake = new Intake(hardwareMap);
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
@@ -132,7 +127,7 @@ public class RunToBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 9) { // Turn to 270
+        if (stage == 9) { // Turn to 90
             int difference = 11;
             int angle = 90;
             if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
@@ -154,7 +149,7 @@ public class RunToBeaconRed extends OpMode {
 
 
         if (stage == 11) { //drives forward 33 inches in seconds // OUTDATED LENGTH
-            if (time.time() <= 1.2) {
+            if (time.time() <= 0.8) {
                 driveTrain.driveStraight(-1);
             } else {
                 driveTrain.stopRobot();
@@ -170,9 +165,9 @@ public class RunToBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 13) { // Turn to 225
+        if (stage == 13) { // Turn to 145
             int difference = 9;
-            int angle = 45;
+            int angle = 145;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
@@ -189,17 +184,17 @@ public class RunToBeaconRed extends OpMode {
                 driveTrain.driveStraight(-.3);
             } else {
                 driveTrain.stopRobot();
-                //AutonomousUtils.waitTime(.5);
                 time.reset();
                 stage++;
             }
         }
         if (stage == 15) {
-            if (time.time() < 1) {
+            if (time.time() < AutonomousUtils.WAITTIME) {
                 time.reset();
                 stage++;
             }
         }
+
         if (stage == 16) {
             if (time.time() < .15) {
                 driveTrain.driveStraight(.3);
@@ -286,7 +281,7 @@ public class RunToBeaconRed extends OpMode {
                         case "Blue":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 17;
+                                stage = 21;
                             }
                             break;
                         case "Red":
@@ -304,7 +299,7 @@ public class RunToBeaconRed extends OpMode {
                         case "Red":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 17;
+                                stage = 21;
                             }
                             break;
                     }

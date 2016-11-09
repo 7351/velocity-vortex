@@ -25,10 +25,8 @@ public class GyroUtils {
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.driveTrain = driveTrain;
-        if (hardwareMap.gyroSensor.get("gyro") != null) {
-            gyro = hardwareMap.gyroSensor.get("gyro");
-            i2cGyro = (ModernRoboticsI2cGyro) gyro;
-        }
+        gyro = hardwareMap.gyroSensor.get("gyro");
+        i2cGyro = (ModernRoboticsI2cGyro) gyro;
     }
 
     /*
