@@ -28,7 +28,6 @@ public class BeaconSlamTest extends OpMode {
     private GyroSensor gyro;
     private Intake intake;
     private FlyWheel flyWheel;
-    private AutonomousUtils autonomousUtils;
 
     @Override
     public void init() {
@@ -38,7 +37,6 @@ public class BeaconSlamTest extends OpMode {
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
-        autonomousUtils = new AutonomousUtils(stage, time);
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
@@ -65,7 +63,7 @@ public class BeaconSlamTest extends OpMode {
             }
         }
         if (stage == 18) {
-            if (time.time() > autonomousUtils.WAITTIME) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
@@ -80,7 +78,7 @@ public class BeaconSlamTest extends OpMode {
             }
         }
         if (stage == 20) {
-            if (time.time() > autonomousUtils.WAITTIME) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
