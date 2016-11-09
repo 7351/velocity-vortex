@@ -30,7 +30,7 @@ public class RunToBeaconBlue extends OpMode {
     private FlyWheel flyWheel;
     private AutonomousUtils autonomousUtils;
 
-    private String alliance = "Red";
+    private String alliance = "Blue";
 
     @Override
     public void init() {
@@ -279,26 +279,32 @@ public class RunToBeaconBlue extends OpMode {
         if (stage == 25) {
             switch (colorUtils.beaconColor()) {
                 case RED:
+                    RobotLog.d("Red color detected");
                     switch (alliance) {
                         case "Blue":
+                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             if (time.time() > 5.1) {
                                 time.reset();
                                 stage = 21;
                             }
                             break;
                         case "Red":
+                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             time.reset();
                             stage++;
                             break;
                     }
                     break;
                 case BLUE:
+                    RobotLog.d("Blue color detected");
                     switch (alliance) {
                         case "Blue":
+                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             time.reset();
-                            stage++;
+                            stage = 666;
                             break;
                         case "Red":
+                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             if (time.time() > 5.1) {
                                 time.reset();
                                 stage = 21;
