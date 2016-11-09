@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallFarRed", group = "Testing")
+@Autonomous(name = "CapBallRed", group = "Testing")
 public class RunToCapBallFarRed extends OpMode {
 
     int stage = 0;
@@ -70,7 +70,7 @@ public class RunToCapBallFarRed extends OpMode {
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
-            if (time.time() <= .5) {
+            if (time.time() <= 0.3) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
@@ -87,7 +87,7 @@ public class RunToCapBallFarRed extends OpMode {
         }
 
         if (stage == 3){
-            if(gyro.getHeading() > 330 || gyro.getHeading() < 10)
+            if(gyro.getHeading() > 332 || gyro.getHeading() < 10)
             {
                 driveTrain.powerLeft(-.15);
                 driveTrain.powerRight(.15);
@@ -106,7 +106,7 @@ public class RunToCapBallFarRed extends OpMode {
 
         if (stage == 5)
         {
-            if (time.time() < 1.35)
+            if (time.time() < 1.05)
             {
                 driveTrain.driveStraight();
             }
@@ -115,7 +115,7 @@ public class RunToCapBallFarRed extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-                FlyWheelMotor.setPower(.60);
+                FlyWheelMotor.setPower(.47);
             }
         }
 
@@ -130,9 +130,9 @@ public class RunToCapBallFarRed extends OpMode {
 
         if (stage == 7)
         {
-            if(time.time() < 2)
+            if(time.time() < 2.5)
             {
-                IntakeB.setPower(1);
+                IntakeB.setPower(.7);
             }
             else
             {
@@ -175,7 +175,7 @@ public class RunToCapBallFarRed extends OpMode {
 
 
         if (stage == 11) {
-            if (!colorUtils.aboveRedLine() || time.time() < 1) {
+            if (!colorUtils.aboveRedLine() && time.time() < 1) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();

@@ -12,35 +12,38 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TBDName;
 
 /**
  * Created by Leo on 10/16/2016.
  */
 
 @Autonomous(name = "BeaconCloseBlue", group = "Testing")
-public class RunToBeaconBlue extends OpMode {
+public class RunToBeaconRed extends OpMode {
 
     private int stage = 0;
     private ElapsedTime time = new ElapsedTime();
+
+    private TBDName tbdName;
     private DriveTrain driveTrain;
     private GyroUtils gyroUtils;
     private ColorUtils colorUtils;
     private GyroSensor gyro;
     private Intake intake;
     private FlyWheel flyWheel;
-    private AutonomousUtils autonomousUtils;
 
-    private String alliance = "Red";
+    private String alliance = "Blue";
 
     @Override
     public void init() {
 
-        driveTrain = new DriveTrain(hardwareMap);
-        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
-        colorUtils = new ColorUtils(hardwareMap);
-        flyWheel = new FlyWheel(hardwareMap);
-        intake = new Intake(hardwareMap);
-        autonomousUtils = new AutonomousUtils(stage, time);
+        tbdName = new TBDName(hardwareMap, telemetry);
+
+        driveTrain = tbdName.driveTrain;
+        gyroUtils = tbdName.gyroUtils;
+        colorUtils = tbdName.colorUtils;
+        intake = tbdName.intake;
+        flyWheel = tbdName.flyWheel;
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
@@ -131,10 +134,10 @@ public class RunToBeaconBlue extends OpMode {
 
         if (stage == 9) { // Turn to 270
             int difference = 11;
-            int angle = 270;
-            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+            int angle = 90;
+            if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -169,10 +172,10 @@ public class RunToBeaconBlue extends OpMode {
 
         if (stage == 13) { // Turn to 225
             int difference = 9;
-            int angle = 225;
+            int angle = 45;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             } else {
                 RobotLog.d("13." + "Statement true at gyro degree " + gyro.getHeading());
                 driveTrain.stopRobot();
@@ -186,7 +189,7 @@ public class RunToBeaconBlue extends OpMode {
                 driveTrain.driveStraight(-.3);
             } else {
                 driveTrain.stopRobot();
-                //autonomousUtils.waitTime(.5);
+                //AutonomousUtils.waitTime(.5);
                 time.reset();
                 stage++;
             }
@@ -209,10 +212,10 @@ public class RunToBeaconBlue extends OpMode {
 
         if (stage == 17) {
             int difference = 9;
-            int angle = 270;
+            int angle = 90;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
-                driveTrain.powerLeft(.15);
-                driveTrain.powerRight(-.15);
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
             } else {
                 RobotLog.d("15." + "Statement true at gyro degree " + gyro.getHeading());
                 driveTrain.stopRobot();
