@@ -87,7 +87,7 @@ public class RunToCapBallFarBlue extends OpMode {
 
         if (stage == 3){
             int difference = 9;
-            if (gyro.getHeading() < (45 - difference) || gyro.getHeading() > 350)
+            if (gyro.getHeading() < (35 - difference) || gyro.getHeading() > 350)
             {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
@@ -177,7 +177,7 @@ public class RunToCapBallFarBlue extends OpMode {
 
 
         if (stage == 11) {
-            if ((!colorUtils.aboveBlueLine()) || (time.time() < 0.65)) {
+            if ((!colorUtils.aboveBlueLine()) || (time.time() < .65)) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();

@@ -75,6 +75,4 @@ public class DriveTrain {
         powerLeft(0);
         powerRight(0);
     }
-
-
 }
