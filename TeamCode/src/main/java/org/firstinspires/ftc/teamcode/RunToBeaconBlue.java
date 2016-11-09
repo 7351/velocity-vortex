@@ -283,7 +283,7 @@ public class RunToBeaconBlue extends OpMode {
                         case "Blue":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 17;
+                                stage = 21;
                             }
                             break;
                         case "Red":
@@ -301,12 +301,98 @@ public class RunToBeaconBlue extends OpMode {
                         case "Red":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 17;
+                                stage = 21;
                             }
                             break;
                     }
                     break;
             }
+        }
+        if (stage == 26) {
+            if (!colorUtils.aboveWhiteLine()) {
+                driveTrain.driveStraight();
+            } else {
+                driveTrain.stopRobot();
+            }
+        }
+        if (stage == 27) {
+            int difference = 9;
+            int angle = 270;
+            if (!gyroUtils.isGyroInTolerance(angle, difference)) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
+            } else {
+                RobotLog.d("15." + "Statement true at gyro degree " + gyro.getHeading());
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 28) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+
+        }
+        if (stage == 29) {
+            if (time.time() < 0.75) {
+                driveTrain.driveStraight(-0.3);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+
+        }
+        if (stage == 30) {
+            if (time.time() < 0.1) {
+                driveTrain.driveStraight(0.5);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+
+        }
+        if (stage == 31) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 32) {
+            switch (colorUtils.beaconColor()) {
+                case RED:
+                    switch (alliance) {
+                        case "Blue":
+                            if (time.time() > 5.1) {
+                                time.reset();
+                                stage = 29;
+                            }
+                            break;
+                        case "Red":
+                            time.reset();
+                            stage++;
+                            break;
+                    }
+                    break;
+                case BLUE:
+                    switch (alliance) {
+                        case "Blue":
+                            time.reset();
+                            stage++;
+                            break;
+                        case "Red":
+                            if (time.time() > 5.1) {
+                                time.reset();
+                                stage = 29;
+                            }
+                            break;
+                    }
+                    break;
+            }
+
         }
 
 

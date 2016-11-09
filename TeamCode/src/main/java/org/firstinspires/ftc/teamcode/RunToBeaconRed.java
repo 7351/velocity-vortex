@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TBDName;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconCloseBlue", group = "Testing")
+@Autonomous(name = "BeaconCloseRed", group = "Testing")
 public class RunToBeaconRed extends OpMode {
 
     private int stage = 0;
