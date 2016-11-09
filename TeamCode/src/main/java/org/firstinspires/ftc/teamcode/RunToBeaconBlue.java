@@ -73,7 +73,7 @@ public class RunToBeaconBlue extends OpMode {
         }
 
         if (stage == 2) {
-            if (time.time() > autonomousUtils.WAITTIME) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
@@ -121,7 +121,7 @@ public class RunToBeaconBlue extends OpMode {
         }
 
         if (stage == 8) {
-            if (time.time() > autonomousUtils.WAITTIME) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
@@ -141,7 +141,7 @@ public class RunToBeaconBlue extends OpMode {
         }
 
         if (stage == 10) {
-            if (time.time() > autonomousUtils.WAITTIME) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
@@ -149,7 +149,7 @@ public class RunToBeaconBlue extends OpMode {
 
 
         if (stage == 11) { //drives forward 33 inches in seconds
-            if (time.time() <= 1) {
+            if (time.time() <= 1.2) {
                 driveTrain.driveStraight(-1);
             } else {
                 driveTrain.stopRobot();
@@ -159,7 +159,7 @@ public class RunToBeaconBlue extends OpMode {
         }
 
         if (stage == 12) {
-            if (time.time() > autonomousUtils.WAITTIME) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
@@ -181,13 +181,33 @@ public class RunToBeaconBlue extends OpMode {
 
         if (stage == 14) {
             if (!colorUtils.aboveWhiteLine()) {
-                driveTrain.driveStraight(-1);
+                driveTrain.driveStraight(-.3);
             } else {
                 driveTrain.stopRobot();
+                autonomousUtils.waitTime(.5);
+                time.reset();
                 stage++;
             }
         }
-        if (stage == 15) {
+        if (stage == 15){
+            if(time.time()< .5){
+
+                time.reset();
+                stage++;
+            }
+        }
+        if (stage == 16){
+            if (!colorUtils.aboveWhiteLine()){
+                driveTrain.driveStraight(.3);
+
+            }else {
+                driveTrain.stopRobot();
+
+                time.reset();
+                stage++;
+            }
+        }
+        if (stage == 17) {
             int difference = 9;
             int angle = 270;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
@@ -200,10 +220,70 @@ public class RunToBeaconBlue extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 16) {
-            if (time.time() > autonomousUtils.WAITTIME) {
+
+        if (stage == 18) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
+            }
+        }
+        if (stage == 19) {
+            if (time.time() < 0.75) {
+                driveTrain.driveStraight(-0.3);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 20) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 21) {
+            if (time.time() < 0.75) {
+                driveTrain.driveStraight(-0.5);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 22) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 23) {
+            if (time.time() < 0.1) {
+                driveTrain.driveStraight(0.5);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 24) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 25) {
+            switch (colorUtils.beaconColor()) {
+                case RED:
+                    if (time.time() > 5.1) {
+                        time.reset();
+                        stage = 21;
+                    }
+                    break;
+                case BLUE:
+                    time.reset();
+                    stage++;
+                    break;
             }
         }
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
@@ -12,6 +13,8 @@ public class DriveTrain {
     public DcMotor RightFrontMotor;
     public DcMotor LeftBackMotor;
     public DcMotor RightBackMotor;
+
+    DcMotor[] DcMotors = {LeftBackMotor, LeftFrontMotor, RightBackMotor, RightFrontMotor};
 
     public DriveTrain(HardwareMap hardwareMap) {
         if (hardwareMap != null) {
@@ -74,6 +77,18 @@ public class DriveTrain {
     public void stopRobot() {
         powerLeft(0);
         powerRight(0);
+    }
+
+    public double getVoltage() {
+        double averageVoltage = 0;
+        for (DcMotor motor : DcMotors) {
+            VoltageSensor sensor = (VoltageSensor) motor;
+            if (sensor != null) {
+                averageVoltage += sensor.getVoltage();
+            }
+        }
+        averageVoltage /= 4;
+        return averageVoltage;
     }
 
 
