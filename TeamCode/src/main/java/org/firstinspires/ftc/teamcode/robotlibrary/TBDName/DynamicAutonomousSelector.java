@@ -43,7 +43,7 @@ public class DynamicAutonomousSelector {
             fileHashMap = new Gson().fromJson(JsonFromFile, mapType);
             OptionsFile.delete();
         } catch (Exception e) {
-            e.printStackTrace();
+            RobotLog.d("The robot controller doesn't have th selections either!");
         }
 
         if (serverHashMap.size() == 0) {
@@ -88,6 +88,26 @@ public class DynamicAutonomousSelector {
         }
         fis.close();
         return str;
+    }
+
+    public String get(String key, String defaultValue) {
+        String returnValue = defaultValue;
+        if (selectorChoices != null) {
+            returnValue = selectorChoices.get(key);
+        }
+        return returnValue;
+    }
+
+    public double getNumberDouble(String key, double defaultNumber) {
+        return ((selectorChoices.containsKey(key)) ? Double.valueOf(selectorChoices.get(key)) : defaultNumber);
+    }
+
+    public int getNumberInt(String key, int defaultNumber) {
+        return ((selectorChoices.containsKey(key)) ? Integer.valueOf(selectorChoices.get(key)) : defaultNumber);
+    }
+
+    public String getRadio(String key, String defaultNumber) {
+        return ((selectorChoices.containsKey(key)) ? String.valueOf(selectorChoices.get(key)) : defaultNumber);
     }
 
     public HashMap<String, String> getSelectorChoices() {
