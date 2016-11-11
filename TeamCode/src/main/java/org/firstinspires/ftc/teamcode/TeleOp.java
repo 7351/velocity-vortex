@@ -143,21 +143,55 @@ public class TeleOp extends OpMode {
 
         /*
          * Driving controls
-         * Right Joystick - Arcade driving takes both x and y
+         * Right Joystick - Arcade driving takes both x and y - full speed
+         * Left Joystick - Arcade driving takes both x and y - half speed
          */
+
+        float right = 0;
+        float left = 0;
+        double scalePower = 1;
+        double slowerSpeed = 0.5;
 
         // throttle: right_stick_y ranges from -1 to 1, where -1 is full up, and
         // 1 is full down
         // direction: right_stick_x ranges from -1 to 1, where -1 is full left
         // and 1 is full right
-        float throttle = -gamepad1.right_stick_y;
-        float direction = gamepad1.right_stick_x;
-        float right = throttle - direction;
-        float left = throttle + direction;
+        float throttle1 = -gamepad1.right_stick_y;
+        float direction1 = gamepad1.right_stick_x;
+
+        // throttle: left_stick_y ranges from -1 to 1, where -1 is full up, and
+        // 1 is full down
+        // direction: left_stick_x ranges from -1 to 1, where -1 is full left
+        // and 1 is full right
+        float throttle2 = -gamepad1.left_stick_y;
+        float direction2 = gamepad1.left_stick_x;
+
+        if ((throttle2 != 0 || direction2 != 0) && (throttle1 == 0 && direction1 == 0)) { // If the second joystick is moving only
+            right = throttle2 - direction2;
+            left = throttle2 + direction2;
+            scalePower = slowerSpeed;
+        }
+
+        if ((throttle1 != 0 || direction1 != 0) && (throttle2 == 0 && direction2 == 0)) { // If the first joystick is moving only
+            right = throttle1 - direction1;
+            left = throttle1 + direction1;
+            scalePower = 1;
+        }
+
+        if ((throttle1 != 0 || direction1 != 0) && (throttle2 != 0 || direction2 != 0)) { // We will prefer the first joystick for faster
+            right = throttle1 - direction1;
+            left = throttle1 + direction1;
+            scalePower = 1;
+        }
+
+        /*
+        right = throttle - direction;
+        left = throttle + direction;
+        */
 
         // clip the right/left values so that the values never exceed +/- 1
-        right = Range.clip(right, -1, 1);
-        left = Range.clip(left, -1, 1);
+        right = Range.clip(right * ((float) scalePower), -1, 1);
+        left = Range.clip(left * ((float) scalePower), -1, 1);
 
         // scale the joystick value to make it easier to control
         // the robot more precisely at slower speeds.

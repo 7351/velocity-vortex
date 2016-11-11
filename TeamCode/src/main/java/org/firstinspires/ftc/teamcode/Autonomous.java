@@ -23,7 +23,7 @@ public class Autonomous extends OpMode {
     private ElapsedTime time = new ElapsedTime();
     private ElapsedTime delayTime = new ElapsedTime();
 
-    private double flyWheelLaunchPower = 0.5;
+    private double flyWheelLaunchPower = 0.4;
 
     private double delay;
     private String alliance;
@@ -108,7 +108,13 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 5) {
-                    if (time.time() < 2) {
+                    double DurationTime = 0;
+                    if (shoot == 0) {
+                        DurationTime = 0;
+                    } else {
+                        DurationTime = 2;
+                    }
+                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.B, 1);
                     } else {
                         time.reset();
@@ -117,7 +123,14 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 6) {
-                    if (time.time() < .35)
+                    double DurationTime = 0;
+                    if (shoot == 0 || shoot == 1) {
+                        DurationTime = 0;
+                    }
+                    if (shoot == 2) {
+                        DurationTime = 0.35;
+                    }
+                    if (time.time() < DurationTime) // 0.35 for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
@@ -126,7 +139,7 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 7) {
-                    if (time.time() > 2) {
+                    if (time.time() > 2) { // Let it run for 2 seconds
                         tbdName.intake.stopIntake(Intake.IntakeSpec.A);
                         tbdName.intake.stopIntake(Intake.IntakeSpec.B);
                         tbdName.flyWheel.FlyWheelMotor.setPower(0);
@@ -374,9 +387,14 @@ public class Autonomous extends OpMode {
                         stage++;
                     }
                 }
-
                 if (stage == 7) {
-                    if (time.time() < 2.5) {
+                    double DurationTime = 0;
+                    if (shoot == 0) {
+                        DurationTime = 0;
+                    } else {
+                        DurationTime = 2.5;
+                    }
+                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.B, .7);
                     } else {
                         time.reset();
@@ -385,7 +403,14 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 8) {
-                    if (time.time() < .35)
+                    double DurationTime = 0;
+                    if (shoot == 0 || shoot == 1) {
+                        DurationTime = 0;
+                    }
+                    if (shoot == 2) {
+                        DurationTime = 0.35;
+                    }
+                    if (time.time() < DurationTime) // 0.35 for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
@@ -455,7 +480,13 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 5) {
-                    if (time.time() < 2) {
+                    double DurationTime = 0;
+                    if (shoot == 0) {
+                        DurationTime = 0;
+                    } else {
+                        DurationTime = 2;
+                    }
+                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.B, 1);
                     } else {
                         time.reset();
@@ -464,7 +495,14 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 6) {
-                    if (time.time() < .35)
+                    double DurationTime = 0;
+                    if (shoot == 0 || shoot == 1) {
+                        DurationTime = 0;
+                    }
+                    if (shoot == 2) {
+                        DurationTime = 0.35;
+                    }
+                    if (time.time() < DurationTime) // 0.35 for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
@@ -729,7 +767,13 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 7) {
-                    if (time.time() < 2.5) {
+                    double DurationTime = 0;
+                    if (shoot == 0) {
+                        DurationTime = 0;
+                    } else {
+                        DurationTime = 2.5;
+                    }
+                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.B, .7);
                     } else {
                         time.reset();
@@ -738,7 +782,14 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 8) {
-                    if (time.time() < .35)
+                    double DurationTime = 0;
+                    if (shoot == 0 || shoot == 1) {
+                        DurationTime = 0;
+                    }
+                    if (shoot == 2) {
+                        DurationTime = 0.35;
+                    }
+                    if (time.time() < DurationTime) // 0.35 for 2 balls
                         tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
