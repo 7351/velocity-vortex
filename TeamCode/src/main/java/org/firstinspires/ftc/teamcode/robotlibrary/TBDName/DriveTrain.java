@@ -8,13 +8,13 @@ import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
 
-    public final double DIFFERENCE = 0.04;
+    public final double DEFAULTDIFFERENCE = 0.04;
     public DcMotor LeftFrontMotor;
     public DcMotor RightFrontMotor;
     public DcMotor LeftBackMotor;
     public DcMotor RightBackMotor;
-
-    DcMotor[] DcMotors = {LeftBackMotor, LeftFrontMotor, RightBackMotor, RightFrontMotor};
+    private VoltageSensor LeftDriveTrainVoltage;
+    private VoltageSensor RightDriveTrainVoltage;
 
     public DriveTrain(HardwareMap hardwareMap) {
         if (hardwareMap != null) {
@@ -25,6 +25,9 @@ public class DriveTrain {
 
             LeftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             LeftBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            LeftDriveTrainVoltage = hardwareMap.voltageSensor.get("Left Drive Train");
+            RightDriveTrainVoltage = hardwareMap.voltageSensor.get("Right Drive Train");
         }
 
     }
@@ -57,7 +60,7 @@ public class DriveTrain {
     }
 
     public void driveStraight(double startingPower) {
-        driveStraight(startingPower, DIFFERENCE);
+        driveStraight(startingPower, DEFAULTDIFFERENCE);
     }
 
     public void driveStraight() {
@@ -81,13 +84,8 @@ public class DriveTrain {
 
     public double getVoltage() {
         double averageVoltage = 0;
-        for (DcMotor motor : DcMotors) {
-            VoltageSensor sensor = (VoltageSensor) motor;
-            if (sensor != null) {
-                averageVoltage += sensor.getVoltage();
-            }
-        }
-        averageVoltage /= 4;
+        averageVoltage = LeftDriveTrainVoltage.getVoltage() + RightDriveTrainVoltage.getVoltage();
+        averageVoltage /= 2;
         return averageVoltage;
     }
 
