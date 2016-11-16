@@ -36,6 +36,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     final static String TAG = "MainActivity";
+    public final static String DRIVERSTATIONPACKAGE = "com.qualcomm.ftcdriverstation";
+    public final static String ROBOTCONTROLLERPACKAGE = "com.qualcomm.ftcrobotcontroller";
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -141,14 +143,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 // Host the hashmap json on a webserver if it's on the driver station
-                if (appInstalledOrNot("com.qualcomm.ftcdriverstation")) {
+                if (appInstalledOrNot(DRIVERSTATIONPACKAGE) && !appInstalledOrNot(ROBOTCONTROLLERPACKAGE)) {
                     postDataUsingWireless();
                 }
-                // Otherwise, save to sharedpreferences and let the OpMode open them
-                if (appInstalledOrNot("com.qualcomm.ftcrobotcontroller")) {
-                    postDataUsingPref();
+                // Otherwise, save to file and let the OpMode open them
+                if (appInstalledOrNot(ROBOTCONTROLLERPACKAGE) && !appInstalledOrNot(DRIVERSTATIONPACKAGE)) {
+                    postDataUsingFile();
                 }
-                if ((!appInstalledOrNot("com.qualcomm.ftcrobotcontroller") && !appInstalledOrNot("com.qualcomm.ftcdriverstation")) || (appInstalledOrNot("com.qualcomm.ftcrobotcontroller") && appInstalledOrNot("com.qualcomm.ftcdriverstation"))) {
+                if ((!appInstalledOrNot(ROBOTCONTROLLERPACKAGE) && !appInstalledOrNot(DRIVERSTATIONPACKAGE)) || (appInstalledOrNot(ROBOTCONTROLLERPACKAGE) && appInstalledOrNot(DRIVERSTATIONPACKAGE))) {
                     Log.d(TAG, "Manual option");
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                     // set title
@@ -163,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.robotButton:
-                postDataUsingPref();
+                postDataUsingFile();
                 manualDialog.dismiss();
                 break;
             case R.id.driverStationButton:
@@ -173,15 +175,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void postDataUsingPref() {
+    private void postDataUsingFile() {
         // Save the data locally on the device (for Robot controller)
-        // Retro: Now it is named local file mode
         Log.d(TAG, "Using local file mode");
         JSONObject jsonObject = new JSONObject(selectedItems);
         String JsonData = jsonObject.toString();
         downloadAndStoreJson(JsonData);
         Snackbar.make(coordinatorLayout,
-                "Data pushed! Now open the robot controller app " +  new String(Character.toChars(0x1F601)),
+                "Data pushed! You can now open the Robot Controller app  " +  new String(Character.toChars(0x1F601)),
                 Snackbar.LENGTH_SHORT).show();
     }
 
@@ -193,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hoster.setData(JsonData);
         if (getLocalIPAddress() != null) {
             Snackbar.make(coordinatorLayout,
-                    "Data pushed! You may now exit but do not kill this application " + new String(Character.toChars(0x1F601)),
+                    "Data pushed! You can now open the Driver Station app " + new String(Character.toChars(0x1F601)),
                     Snackbar.LENGTH_SHORT).show();
         } else {
             Snackbar.make(coordinatorLayout,
