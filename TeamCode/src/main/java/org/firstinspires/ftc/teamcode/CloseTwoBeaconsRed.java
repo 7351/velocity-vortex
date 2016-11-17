@@ -321,7 +321,7 @@ public class CloseTwoBeaconsRed extends OpMode {
         {
             int difference = 13;
             int angle = 0;
-            if (gyro.getHeading() < 335) {
+            if (gyro.getHeading() < 340) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
             } else {
@@ -490,7 +490,7 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if (stage == 42)
         {
-            if (gyro.getHeading() > 155)
+            if (gyro.getHeading() > 150)
             {
                 driveTrain.powerLeft(-.15);
                 driveTrain.powerRight(.15);
@@ -519,7 +519,16 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if (stage == 44)
         {
-            if (!colorUtils.aboveRedLine() && time.time() < 1)
+            if (time.time() > .3)
+            {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 45)
+        {
+            if (!colorUtils.aboveRedLine() && time.time() < 3)
             {
                 driveTrain.powerLeft(.3);
                 driveTrain.powerRight(.3);
