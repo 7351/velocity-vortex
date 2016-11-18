@@ -40,8 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public final static String DRIVERSTATIONPACKAGE = "com.qualcomm.ftcdriverstation";
     public final static String ROBOTCONTROLLERPACKAGE = "com.qualcomm.ftcrobotcontroller";
     final static String TAG = "MainActivity";
-    public final static String DRIVERSTATIONPACKAGE = "com.qualcomm.ftcdriverstation";
-    public final static String ROBOTCONTROLLERPACKAGE = "com.qualcomm.ftcrobotcontroller";
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
