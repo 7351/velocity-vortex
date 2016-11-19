@@ -136,6 +136,27 @@ public class DynamicAutonomousSelector {
         }
     }
 
+    // Getter methods
+    public double getNumberDouble(String key, double defaultNumber) {
+        return ((selectorChoices.containsKey(key)) ? Double.valueOf(selectorChoices.get(key)) : defaultNumber);
+    }
+
+    public int getNumberInt(String key, int defaultNumber) {
+        return ((selectorChoices.containsKey(key)) ? Integer.valueOf(selectorChoices.get(key)) : defaultNumber);
+    }
+
+    public String getRadio(String key, String defaultNumber) {
+        return ((selectorChoices.containsKey(key)) ? String.valueOf(selectorChoices.get(key)) : defaultNumber);
+    }
+
+    public String get(String key, String defaultValue) {
+        String returnValue = defaultValue;
+        if (selectorChoices != null) {
+            returnValue = selectorChoices.get(key);
+        }
+        return returnValue;
+    }
+
     // Class for each device on the wifi direct network
     class Node {
         String ip;
