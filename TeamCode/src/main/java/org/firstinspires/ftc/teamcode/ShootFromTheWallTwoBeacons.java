@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CloseTwoBeaconsRed", group = "Testing")
-public class CloseTwoBeaconsRed extends OpMode {
+@Autonomous(name = "ShootFromTheWallTwoBeacons", group = "Testing")
+public class ShootFromTheWallTwoBeacons extends OpMode {
 
     private int stage = 0;
     private ElapsedTime time = new ElapsedTime();
@@ -62,37 +62,20 @@ public class CloseTwoBeaconsRed extends OpMode {
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
 
-        if (stage == 1) { //drives forward 33 inches in seconds
-            if (time.time() <= 0.64) {
-                driveTrain.driveStraight();
-            } else {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-            }
-        }
-
-        if (stage == 2) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-            }
-        }
-
-        if (stage == 3) {
-            double flyWheelLaunchPower = 0.5;
+        if (stage == 1) {
+            double flyWheelLaunchPower = 0.365;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
 
-        if (stage == 4) {
-            if (time.time() > 2) {
+        if (stage == 2) {
+            if (time.time() > 3) {
                 time.reset();
                 stage++;
             }
         }
 
-        if (stage == 5) {
+        if (stage == 3) {
             if (time.time() < 2) {
                 intake.setIntakePower(Intake.IntakeSpec.B, 1);
             } else {
@@ -101,22 +84,48 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 6) {
-            if (time.time() < .35)
-                intake.setIntakePower(Intake.IntakeSpec.A, 1);
-            else {
+        if (stage == 4)
+        {
+            if (time.time() > 1.2)
+            {
                 time.reset();
                 stage++;
             }
         }
 
-        if (stage == 7) {
+        if (stage == 5) {
+            if (time.time() < .35)
+                intake.setIntakePower(Intake.IntakeSpec.A, 1);
+            else {
+                time.reset();
+                stage = 99;
+            }
+        }
+
+        if (stage == 99) {
             if (time.time() > 2) {
                 intake.stopIntake(Intake.IntakeSpec.A);
                 intake.stopIntake(Intake.IntakeSpec.B);
                 flyWheel.FlyWheelMotor.setPower(0);
                 time.reset();
                 stage++;
+            }
+        }
+
+        if (stage == 6) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 7) { //drives forward 33 inches in seconds
+            if (time.time() <= 0.64) {
+                driveTrain.driveStraight();
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
             }
         }
 

@@ -129,10 +129,10 @@ public class CloseTwoBeaconsBlue extends OpMode {
 
         if (stage == 9) { // Turn to 90
             int difference = 13;
-            int angle = 90;
-            if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
-                driveTrain.powerLeft(.15);
-                driveTrain.powerRight(-.15);
+            int angle = 270;
+            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -167,10 +167,10 @@ public class CloseTwoBeaconsBlue extends OpMode {
 
         if (stage == 13) { // Turn to 145
             int difference = 9;
-            int angle = 45;
-            if (gyro.getHeading() > 45 + difference) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+            int angle = 317;
+            if (!gyroUtils.isGyroInTolerance(angle, difference)) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             } else {
                 RobotLog.d("13." + "Statement true at gyro degree " + gyro.getHeading());
                 driveTrain.stopRobot();
@@ -196,7 +196,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
         }
 
         if (stage == 16) {
-            if (time.time() < .15) {
+            if (time.time() < .3) {
                 driveTrain.driveStraight(-.3);
             } else {
                 driveTrain.stopRobot();
@@ -225,7 +225,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
             }
         }
         if (stage == 19) {
-            if (time.time() < 0.75) {
+            if (time.time() < 0.65) {
                 driveTrain.driveStraight(.3);
             } else {
                 driveTrain.stopRobot();
@@ -244,7 +244,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
         // Initialize the beacon subroutine from BeaconSlamTest
 
         if (stage == 21) {
-            if (time.time() < 0.75) {
+            if (time.time() < 1) {
                 driveTrain.driveStraight(0.5);
             } else {
                 driveTrain.stopRobot();
@@ -319,48 +319,9 @@ public class CloseTwoBeaconsBlue extends OpMode {
 
         if(stage == 27)
         {
-            int difference = 9;
-            int angle = 0;
-            if (gyro.getHeading() > 10 + difference){// || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
-            } else {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-            }
-        }
-
-        if (stage == 28) {
-            if (!colorUtils.aboveWhiteLine()) {
-                driveTrain.driveStraight(.3);
-            } else {
-                driveTrain.stopRobot();
-                time.reset();
-                stage++;
-            }
-        }
-        if (stage == 29) {
-            if (time.time() < AutonomousUtils.WAITTIME) {
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 30) {
-            if (time.time() < .15) {
-                driveTrain.driveStraight(-.3);
-            } else {
-                driveTrain.stopRobot();
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 31) { // Turn to 90
             int difference = 13;
-            int angle = 90;
-            if (gyro.getHeading() > (angle - difference) || gyro.getHeading() > 350) {
+            int angle = 0;
+            if (gyro.getHeading() < 340) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
             } else {
@@ -370,14 +331,68 @@ public class CloseTwoBeaconsBlue extends OpMode {
             }
         }
 
-        if (stage == 32) {
+        if (stage == 28)
+        {
+            if (time.time() < .3)
+            {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(.15);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 29) {
+            if (!colorUtils.aboveWhiteLine()) {
+                driveTrain.driveStraight(.3);
+            } else {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+        if (stage == 30) {
+            if (time.time() < AutonomousUtils.WAITTIME) {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 31) {
+            if (time.time() < .25) {
+                driveTrain.driveStraight(-.3);
+            } else {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 32) { // Turn to 90
+            int difference = 13;
+            int angle = 270;
+            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 33) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 33) {
-            if (time.time() < 0.75) {
+        if (stage == 34) {
+            if (time.time() < 1) {
                 driveTrain.driveStraight(.3);
             } else {
                 driveTrain.stopRobot();
@@ -386,7 +401,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
             }
         }
 
-        if (stage == 34) {
+        if (stage == 35) {
             if (time.time() > .5) {
                 stage++;
                 time.reset();
@@ -395,7 +410,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
 
         // Initialize the beacon subroutine from BeaconSlamTest
 
-        if (stage == 35) {
+        if (stage == 36) {
             if (time.time() < 0.75) {
                 driveTrain.driveStraight(0.5);
             } else {
@@ -404,13 +419,13 @@ public class CloseTwoBeaconsBlue extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 36) {
+        if (stage == 37) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 37) {
+        if (stage == 38) {
             if (time.time() < 0.1) {
                 driveTrain.driveStraight(-0.5);
             } else {
@@ -419,20 +434,20 @@ public class CloseTwoBeaconsBlue extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 38) {
+        if (stage == 39) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 39) {
+        if (stage == 40) {
             switch (colorUtils.beaconColor()) {
                 case RED:
                     switch (alliance) {
                         case "Blue":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage = 33;
                             }
                             break;
                         case "Red":
@@ -450,11 +465,79 @@ public class CloseTwoBeaconsBlue extends OpMode {
                         case "Red":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage = 33;
                             }
                             break;
                     }
                     break;
+            }
+        }
+
+        if (stage == 41)
+        {
+            if (time.time() < .3)
+            {
+                driveTrain.powerLeft(-.3);
+                driveTrain.powerRight(-.3);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 42)
+        {
+            if (gyro.getHeading() > 150)
+            {
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 43)
+        {
+            if (time.time() < .3)
+            {
+                driveTrain.driveStraight();
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 44)
+        {
+            if (time.time() > .3)
+            {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 45)
+        {
+            if (!colorUtils.aboveRedLine() && time.time() < 3)
+            {
+                driveTrain.powerLeft(.3);
+                driveTrain.powerRight(.3);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
             }
         }
 
