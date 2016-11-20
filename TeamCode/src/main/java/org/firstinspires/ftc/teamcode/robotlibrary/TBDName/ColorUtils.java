@@ -37,7 +37,7 @@ public class ColorUtils {
 
     public boolean aboveBlueLine() {
         boolean returnValue = false;
-        if ((lineColorSensor.blue() >= 2)){ //lineColorSensor.red()) && (lineColorSensor.blue() > lineColorSensor.green())) {
+        if ((lineColorSensor.blue() > lineColorSensor.red()) && (lineColorSensor.blue() > lineColorSensor.green())) {
             returnValue = true;
         }
         return returnValue;
@@ -45,7 +45,7 @@ public class ColorUtils {
 
     public boolean aboveRedLine() {
         boolean returnValue = false;
-        if ((lineColorSensor.red() >= 2)){//lineColorSensor.green() + 2) && (lineColorSensor.red() > lineColorSensor.blue() + 2)) {
+        if ((lineColorSensor.red() > lineColorSensor.green() + 2) && (lineColorSensor.red() > lineColorSensor.blue() + 2)) {
             returnValue = true;
         }
         return returnValue;

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class FlyWheel {
 
-    public final double defaultStartingPower = 0.55;
+    public final double defaultStartingPower = 0.45;
     public final double incrementValue = 0.05;
     public DcMotor FlyWheelMotor; // This is the big black wheel to launch balls
     public double currentPower = 0;
