@@ -3,11 +3,13 @@ package us.a7351.dynamicautonomousselector;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,6 +37,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public final static String DRIVERSTATIONPACKAGE = "com.qualcomm.ftcdriverstation";
+    public final static String ROBOTCONTROLLERPACKAGE = "com.qualcomm.ftcrobotcontroller";
     final static String TAG = "MainActivity";
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -77,6 +81,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Lets set the navigation bar color to blue if the device supports it
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        }
+
         // Get all layout objects and create translater to inject the options to the LinearLayout
 
         mainLayout = (LinearLayout) findViewById(R.id.activity_main);
@@ -97,8 +106,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // We want to make sure that we can write to the hard drive
         verifyStoragePermissions(this);
 
-        // Inject the options into the linearlayout
+        // Inject the options into the LinearLayout
         initializeOptions();
+
 
     }
 
@@ -141,14 +151,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 // Host the hashmap json on a webserver if it's on the driver station
-                if (appInstalledOrNot("com.qualcomm.ftcdriverstation")) {
+                if (appInstalledOrNot(DRIVERSTATIONPACKAGE) && !appInstalledOrNot(ROBOTCONTROLLERPACKAGE)) {
                     postDataUsingWireless();
                 }
-                // Otherwise, save to sharedpreferences and let the OpMode open them
-                if (appInstalledOrNot("com.qualcomm.ftcrobotcontroller")) {
-                    postDataUsingPref();
+                // Otherwise, save to file and let the OpMode open them
+                if (appInstalledOrNot(ROBOTCONTROLLERPACKAGE) && !appInstalledOrNot(DRIVERSTATIONPACKAGE)) {
+                    postDataUsingFile();
                 }
-                if ((!appInstalledOrNot("com.qualcomm.ftcrobotcontroller") && !appInstalledOrNot("com.qualcomm.ftcdriverstation")) || (appInstalledOrNot("com.qualcomm.ftcrobotcontroller") && appInstalledOrNot("com.qualcomm.ftcdriverstation"))) {
+                if ((!appInstalledOrNot(ROBOTCONTROLLERPACKAGE) && !appInstalledOrNot(DRIVERSTATIONPACKAGE)) || (appInstalledOrNot(ROBOTCONTROLLERPACKAGE) && appInstalledOrNot(DRIVERSTATIONPACKAGE))) {
                     Log.d(TAG, "Manual option");
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                     // set title
@@ -163,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.robotButton:
-                postDataUsingPref();
+                postDataUsingFile();
                 manualDialog.dismiss();
                 break;
             case R.id.driverStationButton:
@@ -173,15 +183,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void postDataUsingPref() {
+    private void postDataUsingFile() {
         // Save the data locally on the device (for Robot controller)
-        // Retro: Now it is named local file mode
         Log.d(TAG, "Using local file mode");
         JSONObject jsonObject = new JSONObject(selectedItems);
         String JsonData = jsonObject.toString();
         downloadAndStoreJson(JsonData);
         Snackbar.make(coordinatorLayout,
-                "Data pushed! Now open the robot controller app " +  new String(Character.toChars(0x1F601)),
+                "Data pushed! You can now open the Robot Controller app  " +  new String(Character.toChars(0x1F601)),
                 Snackbar.LENGTH_SHORT).show();
     }
 
@@ -193,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hoster.setData(JsonData);
         if (getLocalIPAddress() != null) {
             Snackbar.make(coordinatorLayout,
-                    "Data pushed! You may now exit but do not kill this application " + new String(Character.toChars(0x1F601)),
+                    "Data pushed! You can now open the Driver Station app " + new String(Character.toChars(0x1F601)),
                     Snackbar.LENGTH_SHORT).show();
         } else {
             Snackbar.make(coordinatorLayout,
