@@ -330,7 +330,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if(stage == 28)
+        /*if(stage == 28)
         {
             int difference = 13;
             int angle = 0;
@@ -560,7 +560,7 @@ public class CloseTwoBeaconsRed extends OpMode {
                 time.reset();
                 stage++;
             }
-        }
+        }*/
 
 
         Log.d(TAG, String.valueOf(stage + " Gyro: " + gyro.getHeading() + " Time:" + this.time + " Stage: " + stage));
