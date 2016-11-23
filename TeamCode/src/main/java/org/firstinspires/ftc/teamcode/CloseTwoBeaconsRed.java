@@ -33,6 +33,8 @@ public class CloseTwoBeaconsRed extends OpMode {
     private Intake intake;
     private FlyWheel flyWheel;
 
+
+
     private String alliance = "Red";
 
     @Override
@@ -238,7 +240,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
         if (stage == 20) {
-            if (time.time() < 0.65) {
+            if (time.time() < 1) {
                 driveTrain.driveStraight(.3);
             } else {
                 driveTrain.stopRobot();
