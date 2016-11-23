@@ -321,7 +321,7 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if(stage == 27)
         {
-            if (time.time() < 0.2) {
+            if (time.time() < 0.5) {
                 driveTrain.driveStraight(-0.5);
             } else {
                 driveTrain.stopRobot();
@@ -330,21 +330,36 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        /*if(stage == 28)
+        if(stage == 28)
         {
             int difference = 13;
             int angle = 0;
-            if (gyro.getHeading() < 340) {
-                driveTrain.powerLeft(.15);
-                driveTrain.powerRight(-.15);
+            if (gyro.getHeading() > 210) {
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
             } else {
                 driveTrain.stopRobot();
-                stage++;
                 time.reset();
+                stage++;
             }
         }
 
         if (stage == 29)
+        {
+            if (time.time() < 1.25)
+            {
+                driveTrain.powerRight(1);
+                driveTrain.powerLeft(1);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        /*if (stage == 29)
         {
             if (time.time() < .5)
             {
