@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
@@ -20,6 +22,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
 @Autonomous(name = "CloseTwoBeaconsRed", group = "Testing")
 public class CloseTwoBeaconsRed extends OpMode {
 
+
+    private final static String TAG = CloseTwoBeaconsRed.class.getName();
     private int stage = 0;
     private ElapsedTime time = new ElapsedTime();
     private DriveTrain driveTrain;
@@ -80,13 +84,13 @@ public class CloseTwoBeaconsRed extends OpMode {
         }
 
         if (stage == 3) {
-            double flyWheelLaunchPower = 0.5;
+            double flyWheelLaunchPower = 0.25;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
 
         if (stage == 4) {
-            if (time.time() > 2) {
+            if (time.time() > 3) {
                 time.reset();
                 stage++;
             }
@@ -101,7 +105,16 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 6) {
+        if (stage == 6)
+        {
+            if (time.time() > 1.2)
+            {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 7) {
             if (time.time() < .35)
                 intake.setIntakePower(Intake.IntakeSpec.A, 1);
             else {
@@ -110,7 +123,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 7) {
+        if (stage == 8) {
             if (time.time() > 2) {
                 intake.stopIntake(Intake.IntakeSpec.A);
                 intake.stopIntake(Intake.IntakeSpec.B);
@@ -120,14 +133,14 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 8) {
+        if (stage == 9) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 9) { // Turn to 90
+        if (stage == 10) { // Turn to 90
             int difference = 13;
             int angle = 270;
             if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
@@ -140,7 +153,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 10) {
+        if (stage == 11) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
@@ -148,7 +161,7 @@ public class CloseTwoBeaconsRed extends OpMode {
         }
 
 
-        if (stage == 11) { //drives forward 33 inches in seconds // OUTDATED LENGTH
+        if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
             if (time.time() <= 0.8) {
                 driveTrain.driveStraight(1);
             } else {
@@ -158,14 +171,14 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 12) {
+        if (stage == 13) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 13) { // Turn to 145
+        if (stage == 14) { // Turn to 145
             int difference = 9;
             int angle = 317;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
@@ -179,7 +192,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 14) {
+        if (stage == 15) {
             if (!colorUtils.aboveWhiteLine()) {
                 driveTrain.driveStraight(.3);
             } else {
@@ -188,14 +201,14 @@ public class CloseTwoBeaconsRed extends OpMode {
                 stage++;
             }
         }
-        if (stage == 15) {
+        if (stage == 16) {
             if (time.time() < AutonomousUtils.WAITTIME) {
                 time.reset();
                 stage++;
             }
         }
 
-        if (stage == 16) {
+        if (stage == 17) {
             if (time.time() < .3) {
                 driveTrain.driveStraight(-.3);
             } else {
@@ -205,7 +218,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 17) { // Turn to 90
+        if (stage == 18) { // Turn to 90
             int difference = 13;
             int angle = 270;
             if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
@@ -218,13 +231,13 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 18) {
+        if (stage == 19) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 19) {
+        if (stage == 20) {
             if (time.time() < 0.65) {
                 driveTrain.driveStraight(.3);
             } else {
@@ -234,7 +247,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 20) {
+        if (stage == 21) {
             if (time.time() > .5) {
                 stage++;
                 time.reset();
@@ -243,22 +256,22 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         // Initialize the beacon subroutine from BeaconSlamTest
 
-        if (stage == 21) {
+        if (stage == 22) {
             if (time.time() < 1) {
-                driveTrain.driveStraight(0.5);
+                driveTrain.driveStraight(0.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 22) {
+        if (stage == 23) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 23) {
+        if (stage == 24) {
             if (time.time() < 0.15) {
                 driveTrain.driveStraight(-0.5);
             } else {
@@ -267,13 +280,13 @@ public class CloseTwoBeaconsRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 24) {
+        if (stage == 25) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 25) {
+        if (stage == 26) {
             switch (colorUtils.beaconColor()) {
                 case RED:
                     switch (alliance) {
@@ -306,7 +319,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if(stage == 26)
+        if(stage == 27)
         {
             if (time.time() < 0.2) {
                 driveTrain.driveStraight(-0.5);
@@ -317,7 +330,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if(stage == 27)
+        if(stage == 28)
         {
             int difference = 13;
             int angle = 0;
@@ -331,7 +344,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 28)
+        if (stage == 29)
         {
             if (time.time() < .5)
             {
@@ -345,7 +358,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 29)
+        if (stage == 30)
         {
             if(time.time() > .15)
             {
@@ -354,7 +367,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 30) {
+        if (stage == 31) {
             if (!colorUtils.aboveWhiteLine()) {
                 driveTrain.driveStraight(.3);
             } else {
@@ -363,14 +376,14 @@ public class CloseTwoBeaconsRed extends OpMode {
                 stage++;
             }
         }
-        if (stage == 31) {
+        if (stage == 32) {
             if (time.time() < AutonomousUtils.WAITTIME) {
                 time.reset();
                 stage++;
             }
         }
 
-        if (stage == 32) {
+        if (stage == 33) {
             if (time.time() < .25) {
                 driveTrain.driveStraight(-.3);
             } else {
@@ -380,7 +393,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 33) { // Turn to 90
+        if (stage == 34) { // Turn to 90
             int difference = 13;
             int angle = 270;
             if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
@@ -393,13 +406,13 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 34) {
+        if (stage == 35) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 35) {
+        if (stage == 36) {
             if (time.time() < 1) {
                 driveTrain.driveStraight(.3);
             } else {
@@ -409,7 +422,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 36) {
+        if (stage == 37) {
             if (time.time() > .5) {
                 stage++;
                 time.reset();
@@ -418,22 +431,22 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         // Initialize the beacon subroutine from BeaconSlamTest
 
-        if (stage == 37) {
-            if (time.time() < 0.75) {
-                driveTrain.driveStraight(0.5);
+        if (stage == 38) {
+            if (time.time() < 1) {
+                driveTrain.driveStraight(0.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 38) {
+        if (stage == 39) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 39) {
+        if (stage == 40) {
             if (time.time() < 0.1) {
                 driveTrain.driveStraight(-0.5);
             } else {
@@ -442,13 +455,13 @@ public class CloseTwoBeaconsRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 40) {
+        if (stage == 41) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 41) {
+        if (stage == 42) {
             switch (colorUtils.beaconColor()) {
                 case RED:
                     switch (alliance) {
@@ -481,7 +494,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 42)
+        if (stage == 43)
         {
             if (time.time() < .3)
             {
@@ -496,7 +509,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 43)
+        if (stage == 44)
         {
             if (gyro.getHeading() > 150)
             {
@@ -511,7 +524,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 44)
+        if (stage == 45)
         {
             if (time.time() < .3)
             {
@@ -525,7 +538,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 45)
+        if (stage == 46)
         {
             if (time.time() > .3)
             {
@@ -534,7 +547,7 @@ public class CloseTwoBeaconsRed extends OpMode {
             }
         }
 
-        if (stage == 46)
+        if (stage == 47)
         {
             if (!colorUtils.aboveRedLine() && time.time() < 3)
             {
@@ -550,7 +563,7 @@ public class CloseTwoBeaconsRed extends OpMode {
         }
 
 
-        RobotLog.d(String.valueOf(stage + " Gyro: " + gyro.getHeading() + " Time:" + time.time()));
+        Log.d(TAG, String.valueOf(stage + " Gyro: " + gyro.getHeading() + " Time:" + this.time + " Stage: " + stage));
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
         telemetry.addData("Time", String.valueOf(time.time()));
