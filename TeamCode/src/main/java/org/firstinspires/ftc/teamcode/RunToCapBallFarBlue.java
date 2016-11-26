@@ -70,7 +70,7 @@ public class RunToCapBallFarBlue extends OpMode {
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
-            if (time.time() <= 0.40) {
+            if (time.time() <= 0.35) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
@@ -87,7 +87,7 @@ public class RunToCapBallFarBlue extends OpMode {
         }
 
         if (stage == 3){
-            if(gyro.getHeading() > 350 || gyro.getHeading() < 31)
+            if(gyro.getHeading() > 350 || gyro.getHeading() < 32)
             {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
@@ -115,7 +115,7 @@ public class RunToCapBallFarBlue extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-                FlyWheelMotor.setPower(.47);
+                FlyWheelMotor.setPower(.3);
             }
         }
 

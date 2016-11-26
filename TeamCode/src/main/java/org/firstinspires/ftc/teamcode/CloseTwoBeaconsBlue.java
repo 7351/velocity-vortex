@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CloseTwoBeaconsBlue", group = "Testing")
+@Autonomous(name = "BlueBeaconCorner", group = "Testing")
 public class CloseTwoBeaconsBlue extends OpMode {
 
 
@@ -84,7 +84,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
         }
 
         if (stage == 3) {
-            double flyWheelLaunchPower = 0.25;
+            double flyWheelLaunchPower = 0.3;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
@@ -180,7 +180,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
 
         if (stage == 14) { // Turn to 145
             int difference = 9;
-            int angle = 30;
+            int angle = 30 ;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
                 driveTrain.powerLeft(-.15);
                 driveTrain.powerRight(.15);
