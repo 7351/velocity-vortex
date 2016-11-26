@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
@@ -19,11 +18,11 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "DoublePlayRed", group = "Testing")
-public class JustBeaconsRed extends OpMode {
+@Autonomous(name = "DoublePlayBlue", group = "Testing")
+public class JustBeaconsBlue extends OpMode {
 
 
-    private final static String TAG = JustBeaconsRed.class.getName();
+    private final static String TAG = JustBeaconsBlue.class.getName();
     private int stage = 0;
     private ElapsedTime time = new ElapsedTime();
     private DriveTrain driveTrain;
@@ -35,7 +34,7 @@ public class JustBeaconsRed extends OpMode {
 
 
 
-    private String alliance = "Red";
+    private String alliance = "Blue";
 
     @Override
     public void init() {
@@ -87,10 +86,10 @@ public class JustBeaconsRed extends OpMode {
 
         if (stage == 3) { // Turn to 315
             int difference = 13;
-            int angle = 325;
-            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+            int angle = 25;
+            if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -133,10 +132,10 @@ public class JustBeaconsRed extends OpMode {
 
         if (stage == 8) { // Turn to 90
             int difference = 13;
-            int angle = 270;
-            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+            int angle = 85;
+            if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -152,7 +151,7 @@ public class JustBeaconsRed extends OpMode {
         }
         if (stage == 10) {
             if (time.time() < 1) {
-                driveTrain.driveStraight(.5);
+                driveTrain.driveStraight(.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -171,7 +170,7 @@ public class JustBeaconsRed extends OpMode {
 
         if (stage == 12) {
             if (time.time() < 1) {
-                driveTrain.driveStraight(0.5);
+                driveTrain.driveStraight(0.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -247,9 +246,9 @@ public class JustBeaconsRed extends OpMode {
         {
             int difference = 13;
             int angle = 0;
-            if (gyro.getHeading() < 345) {
-                driveTrain.powerLeft(.15);
-                driveTrain.powerRight(-.15);
+            if (gyro.getHeading() > 10) {
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
             } else {
                 driveTrain.stopRobot();
                 time.reset();
@@ -323,10 +322,10 @@ public class JustBeaconsRed extends OpMode {
 
         if (stage == 25) { // Turn to 90
             int difference = 13;
-            int angle = 275;
-            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+            int angle = 85;
+            if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -439,10 +438,10 @@ public class JustBeaconsRed extends OpMode {
 
         if (stage == 35)
         {
-            if (gyro.getHeading() > 150)
+            if (gyro.getHeading() > 115)
             {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             }
             else
             {
