@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallRed", group = "Testing")
+@Autonomous(name = "HitAndRunRed", group = "Testing")
 public class HitAndRunRed extends OpMode {
 
     int stage = 0;
@@ -73,7 +73,7 @@ public class HitAndRunRed extends OpMode {
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
-            if (time.time() <= 0.3) {
+            if (time.time() <= .5) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
@@ -90,7 +90,7 @@ public class HitAndRunRed extends OpMode {
         }
 
         if (stage == 3){
-            if(gyro.getHeading() > 333.5 || gyro.getHeading() < 10)
+            if(gyro.getHeading() > 333 || gyro.getHeading() < 10)
             {
                 driveTrain.powerLeft(-.15);
                 driveTrain.powerRight(.15);
@@ -102,14 +102,14 @@ public class HitAndRunRed extends OpMode {
         }
         if (stage == 4) {
             if (time.time() > 0.15) {
-                stage++;
+                stage = 6;
                 time.reset();
             }
         }
 
-        if (stage == 5)
+        /*if (stage == 5)
         {
-            if (time.time() < 1.05)
+            if (time.time() < .15)
             {
                 driveTrain.driveStraight();
             }
@@ -118,14 +118,17 @@ public class HitAndRunRed extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-                FlyWheelMotor.setPower(.3);
+
             }
-        }
+        }*/
 
         if(stage == 6)
         {
-            if (time.time() > 2)
+            if (time.time() < 2)
             {
+                FlyWheelMotor.setPower(.3);
+            }
+            else {
                 time.reset();
                 stage++;
             }
@@ -169,7 +172,7 @@ public class HitAndRunRed extends OpMode {
 
         if (stage == 10) { // Turn to 90
             int difference = 13;
-            int angle = 270;
+            int angle = 280;
             if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
                 driveTrain.powerLeft(-.15);
                 driveTrain.powerRight(.15);
@@ -207,7 +210,7 @@ public class HitAndRunRed extends OpMode {
 
         if (stage == 14) { // Turn to 145
             int difference = 9;
-            int angle = 317;
+            int angle = 315;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
@@ -236,7 +239,7 @@ public class HitAndRunRed extends OpMode {
         }
 
         if (stage == 17) {
-            if (time.time() < .3) {
+            if (time.time() < .15) {
                 driveTrain.driveStraight(-.3);
             } else {
                 driveTrain.stopRobot();

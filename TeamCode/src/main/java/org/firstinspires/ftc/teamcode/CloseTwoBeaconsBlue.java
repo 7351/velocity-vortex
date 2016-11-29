@@ -142,7 +142,7 @@ public class CloseTwoBeaconsBlue extends OpMode {
 
         if (stage == 10) { // Turn to 90
             int difference = 13;
-            int angle = 90;
+            int angle = 80;
             if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
@@ -204,11 +204,11 @@ public class CloseTwoBeaconsBlue extends OpMode {
         if (stage == 16) {
             if (time.time() < AutonomousUtils.WAITTIME) {
                 time.reset();
-                stage++;
+                stage = 18;
             }
         }
 
-        if (stage == 17) {
+        /*if (stage == 17) {
             if (time.time() < .3) {
                 driveTrain.driveStraight(-.3);
             } else {
@@ -216,11 +216,11 @@ public class CloseTwoBeaconsBlue extends OpMode {
                 time.reset();
                 stage++;
             }
-        }
+        }*/
 
         if (stage == 18) { // Turn to 90
             int difference = 13;
-            int angle = 90;
+            int angle = 80;
             if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
