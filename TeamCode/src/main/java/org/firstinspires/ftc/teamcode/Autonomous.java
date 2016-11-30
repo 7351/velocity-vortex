@@ -75,7 +75,10 @@ public class Autonomous extends OpMode {
             telemetry.addData("Calibrating", String.valueOf(tbdName.gyroUtils.gyro.isCalibrating()));
         }
         if (alliance.equals("Red")) {
-            if (target.equals("Beacon")) {
+            if (target.equals("1 Beacon")) {
+
+            }
+            if (target.equals("2 Beacons")) {
 
             }
             if (target.equals("Cap ball")) {
@@ -83,7 +86,10 @@ public class Autonomous extends OpMode {
             }
         }
         if (alliance.equals("Blue")) {
-            if (target.equals("Beacon")) {
+            if (target.equals("1 Beacon")) {
+
+            }
+            if (target.equals("2 Beacons")) {
 
             }
             if (target.equals("Cap ball")) {
