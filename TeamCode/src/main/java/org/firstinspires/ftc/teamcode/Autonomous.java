@@ -98,7 +98,7 @@ public class Autonomous extends OpMode {
             telemetry.addData("Calibrating", String.valueOf(tbdName.gyroUtils.gyro.isCalibrating()));
         }
         if (alliance.equals("Red")) {
-            if (target.equals("Beacons")) {
+            if (target.equals("Beacon")) {
                 if (stage == 1) { //drives forward 33 inches in seconds
                     if (time.time() <= 0.64) {
                         driveTrain.driveStraight();
