@@ -111,8 +111,13 @@ public class Autonomous extends OpMode {
 
                 if (stage == 2) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
+                        if (shoot == 0) {
+                            stage = 10;
+                        } else {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
@@ -139,10 +144,17 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 6) {
-                    if (time.time() > 1.2) {
-                        time.reset();
-                        stage++;
+                    if (shoot == 2) {
+                        if (time.time() > 1.2) {
+                            time.reset();
+                            stage++;
+                        }
                     }
+                    if (shoot == 1) {
+                        stage = 8;
+                        time.reset();
+                    }
+
                 }
 
                 if (stage == 7) {
@@ -499,16 +511,20 @@ public class Autonomous extends OpMode {
 
                 if (stage == 2) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
+                        if (shoot == 0) {
+                            stage = 10;
+                        } else {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
                 if (stage == 3) {
-                    double flyWheelLaunchPower = 0.3;
+                    double flyWheelLaunchPower = 0.25;
                     flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
                     stage++;
-
                 }
 
                 if (stage == 4) {
@@ -523,15 +539,22 @@ public class Autonomous extends OpMode {
                         intake.setIntakePower(Intake.IntakeSpec.B, 1);
                     } else {
                         time.reset();
-                        stage++;
+                        stage = 8;
                     }
                 }
 
                 if (stage == 6) {
-                    if (time.time() > 1.2) {
-                        time.reset();
-                        stage++;
+                    if (shoot == 2) {
+                        if (time.time() > 1.2) {
+                            time.reset();
+                            stage++;
+                        }
                     }
+                    if (shoot == 1) {
+                        stage = 8;
+                        time.reset();
+                    }
+
                 }
 
                 if (stage == 7) {
