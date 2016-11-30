@@ -139,18 +139,17 @@ public class Autonomous extends OpMode {
                         intake.setIntakePower(Intake.IntakeSpec.B, 1);
                     } else {
                         time.reset();
-                        stage = 8;
+                        stage++;
                     }
                 }
 
                 if (stage == 6) {
                     if (shoot == 2) {
                         if (time.time() > 1.2) {
-                            time.reset();
                             stage++;
+                            time.reset();
                         }
-                    }
-                    if (shoot == 1) {
+                    } else if (shoot == 1) {
                         stage = 8;
                         time.reset();
                     }
@@ -552,7 +551,7 @@ public class Autonomous extends OpMode {
                         intake.setIntakePower(Intake.IntakeSpec.B, 1);
                     } else {
                         time.reset();
-                        stage = 8;
+                        stage++;
                     }
                 }
 
@@ -562,8 +561,7 @@ public class Autonomous extends OpMode {
                             time.reset();
                             stage++;
                         }
-                    }
-                    if (shoot == 1) {
+                    } else if (shoot == 1) {
                         stage = 8;
                         time.reset();
                     }
