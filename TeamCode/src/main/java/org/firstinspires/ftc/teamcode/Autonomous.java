@@ -41,8 +41,6 @@ public class Autonomous extends OpMode {
     private Intake intake;
     private FlyWheel flyWheel;
 
-    //TODO: Implement shoot variable for each shooting method
-
     @Override
     public void init() {
 
