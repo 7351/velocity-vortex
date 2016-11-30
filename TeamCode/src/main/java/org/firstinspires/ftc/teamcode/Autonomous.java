@@ -435,10 +435,15 @@ public class Autonomous extends OpMode {
                     if (time.time() < 1.05) {
                         driveTrain.driveStraight();
                     } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                        flyWheel.FlyWheelMotor.setPower(.3);
+                        if (shoot == 0) {
+                            stage = 10;
+                            time.reset();
+                        } else {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                            flyWheel.FlyWheelMotor.setPower(.3);
+                        }
                     }
                 }
 
@@ -454,7 +459,15 @@ public class Autonomous extends OpMode {
                         intake.setIntakePower(Intake.IntakeSpec.B, .7);
                     } else {
                         time.reset();
-                        stage++;
+                        if (shoot == 1) {
+                            time.reset();
+                            stage = 9;
+                        }
+                        if (shoot == 2) {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
@@ -836,10 +849,15 @@ public class Autonomous extends OpMode {
                     if (time.time() < .90) {
                         driveTrain.driveStraight();
                     } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                        flyWheel.FlyWheelMotor.setPower(.25);
+                        if (shoot == 0) {
+                            stage = 10;
+                            time.reset();
+                        } else {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                            flyWheel.FlyWheelMotor.setPower(.3);
+                        }
                     }
                 }
 
@@ -855,7 +873,15 @@ public class Autonomous extends OpMode {
                         intake.setIntakePower(Intake.IntakeSpec.B, .7);
                     } else {
                         time.reset();
-                        stage++;
+                        if (shoot == 1) {
+                            time.reset();
+                            stage = 9;
+                        }
+                        if (shoot == 2) {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
