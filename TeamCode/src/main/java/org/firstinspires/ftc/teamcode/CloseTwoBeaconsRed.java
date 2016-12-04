@@ -86,7 +86,7 @@ public class CloseTwoBeaconsRed extends OpMode {
         }
 
         if (stage == 3) {
-            double flyWheelLaunchPower = 0.25;
+            double flyWheelLaunchPower = 0.28;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
@@ -182,7 +182,7 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if (stage == 14) { // Turn to 145
             int difference = 9;
-            int angle = 317;
+            int angle = 335;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);

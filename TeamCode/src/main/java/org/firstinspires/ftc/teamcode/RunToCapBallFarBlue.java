@@ -175,7 +175,7 @@ public class RunToCapBallFarBlue extends OpMode {
 
 
         if (stage == 11) {
-            if (!colorUtils.aboveBlueLine() && time.time() < 1) {
+            if (!colorUtils.aboveBlueLine() && time.time() < 1.15) {
                 driveTrain.driveStraight();
             } else {
                 driveTrain.stopRobot();
