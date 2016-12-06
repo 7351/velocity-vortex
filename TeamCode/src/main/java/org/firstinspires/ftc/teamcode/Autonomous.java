@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.AutonomousUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TBDName;
 
@@ -17,23 +22,36 @@ import java.util.Map;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Autonomous", group = "Autonomous")
 public class Autonomous extends OpMode {
 
-    TBDName tbdName;
+    TBDName tbdName; // Robot object
 
-    private int stage = -1;
-    private ElapsedTime time = new ElapsedTime();
-    private ElapsedTime delayTime = new ElapsedTime();
+    private int stage = -1; // First stage is -1 (wait time)
+    private ElapsedTime time = new ElapsedTime(); // regular match time variable minus gyro cal. and wait
+    private ElapsedTime delayTime = new ElapsedTime(); // delay time elapsed time
 
-    private double flyWheelLaunchPower = 0.4;
-
+    // Selector variables
     private double delay;
     private String alliance;
     private int shoot;
     private String target;
 
+    private DriveTrain driveTrain;
+    private GyroUtils gyroUtils;
+    private ColorUtils colorUtils;
+    private GyroSensor gyro;
+    private Intake intake;
+    private FlyWheel flyWheel;
+
     @Override
     public void init() {
 
         tbdName = new TBDName(hardwareMap, telemetry, false);
+
+        driveTrain = tbdName.driveTrain;
+        gyroUtils = tbdName.gyroUtils;
+        colorUtils = tbdName.colorUtils;
+        gyro = gyroUtils.gyro;
+        intake = tbdName.intake;
+        flyWheel = tbdName.flyWheel;
 
         delay = tbdName.das.getNumberDouble("delay", 0); // 0 default wait time
         alliance = tbdName.das.getRadio("alliance", "ns"); // Not selected - ns
@@ -81,41 +99,42 @@ public class Autonomous extends OpMode {
             if (target.equals("Beacon")) {
                 if (stage == 1) { //drives forward 33 inches in seconds
                     if (time.time() <= 0.64) {
-                        tbdName.driveTrain.driveStraight();
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
+
                 if (stage == 2) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
+                        if (shoot == 0) {
+                            stage = 10;
+                        } else {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
                 if (stage == 3) {
-                    tbdName.flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
+                    double flyWheelLaunchPower = 0.25;
+                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
                     stage++;
                 }
 
                 if (stage == 4) {
-                    if (time.time() > 2) {
+                    if (time.time() > 3) {
                         time.reset();
                         stage++;
                     }
                 }
 
                 if (stage == 5) {
-                    double DurationTime = 0;
-                    if (shoot == 0) {
-                        DurationTime = 0;
-                    } else {
-                        DurationTime = 2;
-                    }
-                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.B, 1);
+                    if (time.time() < 2) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, 1);
                     } else {
                         time.reset();
                         stage++;
@@ -123,52 +142,58 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 6) {
-                    double DurationTime = 0;
-                    if (shoot == 0 || shoot == 1) {
-                        DurationTime = 0;
-                    }
                     if (shoot == 2) {
-                        DurationTime = 0.35;
+                        if (time.time() > 1.2) {
+                            stage++;
+                            time.reset();
+                        }
+                    } else if (shoot == 1) {
+                        stage = 8;
+                        time.reset();
                     }
-                    if (time.time() < DurationTime) // 0.35 for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
+
+                }
+
+                if (stage == 7) {
+                    if (time.time() < .35)
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
                         stage++;
                     }
                 }
 
-                if (stage == 7) {
-                    if (time.time() > 2) { // Let it run for 2 seconds
-                        tbdName.intake.stopIntake(Intake.IntakeSpec.A);
-                        tbdName.intake.stopIntake(Intake.IntakeSpec.B);
-                        tbdName.flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
                 if (stage == 8) {
+                    if (time.time() > 2) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 9) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 9) { // Turn to 90
-                    int difference = 11;
-                    int angle = 90;
-                    if (tbdName.gyroUtils.gyro.getHeading() < (angle - difference) || tbdName.gyroUtils.gyro.getHeading() > 350) {
-                        tbdName.driveTrain.powerLeft(.15);
-                        tbdName.driveTrain.powerRight(-.15);
+                if (stage == 10) { // Turn to 90
+                    int difference = 13;
+                    int angle = 270;
+                    if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
+                        driveTrain.powerLeft(-.15);
+                        driveTrain.powerRight(.15);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 10) {
+                if (stage == 11) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
@@ -176,94 +201,93 @@ public class Autonomous extends OpMode {
                 }
 
 
-                if (stage == 11) { //drives forward 33 inches in seconds // OUTDATED LENGTH
+                if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
                     if (time.time() <= 0.8) {
-                        tbdName.driveTrain.driveStraight(-1);
+                        driveTrain.driveStraight(1);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 12) {
+                if (stage == 13) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 13) { // Turn to 145
+                if (stage == 14) { // Turn to 145
                     int difference = 9;
-                    int angle = 145;
-                    if (!tbdName.gyroUtils.isGyroInTolerance(angle, difference)) {
-                        tbdName.driveTrain.powerLeft(.15);
-                        tbdName.driveTrain.powerRight(-.15);
+                    int angle = 317;
+                    if (!gyroUtils.isGyroInTolerance(angle, difference)) {
+                        driveTrain.powerLeft(.15);
+                        driveTrain.powerRight(-.15);
                     } else {
-                        RobotLog.d("13." + "Statement true at gyro degree " + tbdName.gyroUtils.gyro.getHeading());
-                        tbdName.driveTrain.stopRobot();
+                        RobotLog.d("13." + "Statement true at gyro degree " + gyro.getHeading());
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 14) {
-                    if (!tbdName.colorUtils.aboveWhiteLine()) {
-                        tbdName.driveTrain.driveStraight(-.3);
+                if (stage == 15) {
+                    if (!colorUtils.aboveWhiteLine()) {
+                        driveTrain.driveStraight(.3);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         time.reset();
                         stage++;
                     }
                 }
-                if (stage == 15) {
+                if (stage == 16) {
                     if (time.time() < AutonomousUtils.WAITTIME) {
                         time.reset();
                         stage++;
                     }
                 }
 
-                if (stage == 16) {
-                    if (time.time() < .15) {
-                        tbdName.driveTrain.driveStraight(.3);
-                    } else {
-                        tbdName.driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-                }
-
                 if (stage == 17) {
-                    int difference = 9;
-                    int angle = 90;
-                    if (!tbdName.gyroUtils.isGyroInTolerance(angle, difference)) {
-                        tbdName.driveTrain.powerLeft(-.15);
-                        tbdName.driveTrain.powerRight(.15);
+                    if (time.time() < .3) {
+                        driveTrain.driveStraight(-.3);
                     } else {
-                        RobotLog.d("15." + "Statement true at gyro degree " + tbdName.gyroUtils.gyro.getHeading());
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 18) { // Turn to 90
+                    int difference = 13;
+                    int angle = 270;
+                    if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
+                        driveTrain.powerLeft(-.15);
+                        driveTrain.powerRight(.15);
+                    } else {
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 18) {
+                if (stage == 19) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
                     }
                 }
-                if (stage == 19) {
-                    if (time.time() < 0.75) {
-                        tbdName.driveTrain.driveStraight(-.3);
+                if (stage == 20) {
+                    if (time.time() < 1) {
+                        driveTrain.driveStraight(.3);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 20) {
+                if (stage == 21) {
                     if (time.time() > .5) {
                         stage++;
                         time.reset();
@@ -272,38 +296,38 @@ public class Autonomous extends OpMode {
 
                 // Initialize the beacon subroutine from BeaconSlamTest
 
-                if (stage == 21) {
-                    if (time.time() < 0.75) {
-                        tbdName.driveTrain.driveStraight(-0.5);
-                    } else {
-                        tbdName.driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
                 if (stage == 22) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
+                    if (time.time() < 1) {
+                        driveTrain.driveStraight(0.3);
+                    } else {
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
                 if (stage == 23) {
-                    if (time.time() < 0.1) {
-                        tbdName.driveTrain.driveStraight(0.5);
-                    } else {
-                        tbdName.driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 24) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
                     }
                 }
+                if (stage == 24) {
+                    if (time.time() < 0.15) {
+                        driveTrain.driveStraight(-0.5);
+                    } else {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
                 if (stage == 25) {
-                    switch (tbdName.colorUtils.beaconColor()) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 26) {
+                    switch (colorUtils.beaconColor()) {
                         case RED:
                             switch (alliance) {
                                 case "Blue":
@@ -334,13 +358,47 @@ public class Autonomous extends OpMode {
                             break;
                     }
                 }
+
+                if (stage == 27) {
+                    if (time.time() < 0.5) {
+                        driveTrain.driveStraight(-0.5);
+                    } else {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 28) {
+                    int difference = 13;
+                    int angle = 0;
+                    if (gyro.getHeading() > 210) {
+                        driveTrain.powerLeft(-.15);
+                        driveTrain.powerRight(.15);
+                    } else {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 29) {
+                    if (time.time() < 1.25) {
+                        driveTrain.powerRight(1);
+                        driveTrain.powerLeft(1);
+                    } else {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+                }
             }
             if (target.equals("Cap ball")) {
                 if (stage == 1) { //drives forward 0.25 seconds
-                    if (time.time() <= 0.3) {
-                        tbdName.driveTrain.driveStraight();
+                    if (time.time() <= 0.325) {
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
@@ -354,11 +412,11 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 3) {
-                    if (tbdName.gyroUtils.gyro.getHeading() > 332 || tbdName.gyroUtils.gyro.getHeading() < 10) {
-                        tbdName.driveTrain.powerLeft(-.15);
-                        tbdName.driveTrain.powerRight(.15);
+                    if (gyro.getHeading() > 334 || gyro.getHeading() < 10) {
+                        driveTrain.powerLeft(-.15);
+                        driveTrain.powerRight(.15);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
@@ -372,12 +430,17 @@ public class Autonomous extends OpMode {
 
                 if (stage == 5) {
                     if (time.time() < 1.05) {
-                        tbdName.driveTrain.driveStraight();
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                        tbdName.flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
+                        if (shoot == 0) {
+                            stage = 10;
+                            time.reset();
+                        } else {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                            flyWheel.FlyWheelMotor.setPower(.3);
+                        }
                     }
                 }
 
@@ -387,42 +450,39 @@ public class Autonomous extends OpMode {
                         stage++;
                     }
                 }
+
                 if (stage == 7) {
-                    double DurationTime = 0;
-                    if (shoot == 0) {
-                        DurationTime = 0;
-                    } else {
-                        DurationTime = 2.5;
-                    }
-                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.B, .7);
+                    if (time.time() < 2.5) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, .7);
                     } else {
                         time.reset();
-                        stage++;
+                        if (shoot == 1) {
+                            time.reset();
+                            stage = 9;
+                        }
+                        if (shoot == 2) {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
                 if (stage == 8) {
-                    double DurationTime = 0;
-                    if (shoot == 0 || shoot == 1) {
-                        DurationTime = 0;
-                    }
-                    if (shoot == 2) {
-                        DurationTime = 0.35;
-                    }
-                    if (time.time() < DurationTime) // 0.35 for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    else {
+                    if (time.time() < .35) {
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                    } else {
                         time.reset();
                         stage++;
                     }
+
                 }
 
                 if (stage == 9) {
                     if (time.time() > 2) {
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.B, 0);
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 0);
-                        tbdName.flyWheel.FlyWheelMotor.setPower(0);
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
                         time.reset();
                         stage++;
                     }
@@ -437,10 +497,10 @@ public class Autonomous extends OpMode {
 
 
                 if (stage == 11) {
-                    if (!tbdName.colorUtils.aboveRedLine() && time.time() < 1) {
-                        tbdName.driveTrain.driveStraight();
+                    if (!colorUtils.aboveRedLine() && time.time() < 1) {
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                     }
                 }
@@ -448,12 +508,12 @@ public class Autonomous extends OpMode {
         }
         if (alliance.equals("Blue")) {
             if (target.equals("Beacon")) {
+
                 if (stage == 1) { //drives forward 33 inches in seconds
-                    telemetry.addData("Config", "BlueBeacon");
                     if (time.time() <= 0.64) {
-                        tbdName.driveTrain.driveStraight();
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
@@ -461,33 +521,32 @@ public class Autonomous extends OpMode {
 
                 if (stage == 2) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
+                        if (shoot == 0) {
+                            stage = 10;
+                        } else {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
                 if (stage == 3) {
-
-                    tbdName.flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
+                    double flyWheelLaunchPower = 0.25;
+                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
                     stage++;
                 }
 
                 if (stage == 4) {
-                    if (time.time() > 2) {
+                    if (time.time() > 3) {
                         time.reset();
                         stage++;
                     }
                 }
 
                 if (stage == 5) {
-                    double DurationTime = 0;
-                    if (shoot == 0) {
-                        DurationTime = 0;
-                    } else {
-                        DurationTime = 2;
-                    }
-                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.B, 1);
+                    if (time.time() < 2) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, 1);
                     } else {
                         time.reset();
                         stage++;
@@ -495,52 +554,59 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 6) {
-                    double DurationTime = 0;
-                    if (shoot == 0 || shoot == 1) {
-                        DurationTime = 0;
-                    }
                     if (shoot == 2) {
-                        DurationTime = 0.35;
+                        if (time.time() > 1.2) {
+                            time.reset();
+                            stage++;
+                        }
+                    } else if (shoot == 1) {
+                        stage = 8;
+                        time.reset();
                     }
-                    if (time.time() < DurationTime) // 0.35 for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
+
+                }
+
+                if (stage == 7) {
+                    if (time.time() < .35)
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
                         stage++;
                     }
-                }
 
-                if (stage == 7) {
-                    if (time.time() > 2) {
-                        tbdName.intake.stopIntake(Intake.IntakeSpec.A);
-                        tbdName.intake.stopIntake(Intake.IntakeSpec.B);
-                        tbdName.flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
                 }
 
                 if (stage == 8) {
+                    if (time.time() > 2) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 9) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 9) { // Turn to 270
-                    int difference = 11;
-                    int angle = 270;
-                    if (tbdName.gyroUtils.gyro.getHeading() > (angle + difference) || tbdName.gyroUtils.gyro.getHeading() < 10) {
-                        tbdName.driveTrain.powerLeft(-.15);
-                        tbdName.driveTrain.powerRight(.15);
+                if (stage == 10) { // Turn to 90
+                    int difference = 13;
+                    int angle = 80;
+                    if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                        driveTrain.powerLeft(.15);
+                        driveTrain.powerRight(-.15);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 10) {
+                if (stage == 11) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
@@ -548,95 +614,94 @@ public class Autonomous extends OpMode {
                 }
 
 
-                if (stage == 11) { //drives forward 33 inches in seconds // OUTDATED LENGTH
-                    if (time.time() <= 1.2) {
-                        tbdName.driveTrain.driveStraight(-1);
+                if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
+                    if (time.time() <= 0.85) {
+                        driveTrain.driveStraight(1);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 12) {
+                if (stage == 13) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 13) { // Turn to 225
+                if (stage == 14) { // Turn to 145
                     int difference = 9;
-                    int angle = 225;
-                    if (!tbdName.gyroUtils.isGyroInTolerance(angle, difference)) {
-                        tbdName.driveTrain.powerLeft(-.15);
-                        tbdName.driveTrain.powerRight(.15);
+                    int angle = 30;
+                    if (!gyroUtils.isGyroInTolerance(angle, difference)) {
+                        driveTrain.powerLeft(-.15);
+                        driveTrain.powerRight(.15);
                     } else {
-                        RobotLog.d("13." + "Statement true at gyro degree " + tbdName.gyroUtils.gyro.getHeading());
-                        tbdName.driveTrain.stopRobot();
+                        RobotLog.d("13." + "Statement true at gyro degree " + gyro.getHeading());
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 14) {
-                    if (!tbdName.colorUtils.aboveWhiteLine()) {
-                        tbdName.driveTrain.driveStraight(-.3);
-                    } else {
-                        tbdName.driveTrain.stopRobot();
-                        //autonomousUtils.waitTime(.5);
-                        time.reset();
-                        stage++;
-                    }
-                }
                 if (stage == 15) {
-                    if (time.time() < AutonomousUtils.WAITTIME) {
+                    if (!colorUtils.aboveWhiteLine()) {
+                        driveTrain.driveStraight(.3);
+                    } else {
+                        driveTrain.stopRobot();
                         time.reset();
                         stage++;
                     }
                 }
                 if (stage == 16) {
-                    if (time.time() < .15) {
-                        tbdName.driveTrain.driveStraight(.3);
-                    } else {
-                        tbdName.driveTrain.stopRobot();
+                    if (time.time() < AutonomousUtils.WAITTIME) {
                         time.reset();
-                        stage++;
+                        stage = 18;
                     }
                 }
 
-                if (stage == 17) {
-                    int difference = 9;
-                    int angle = 270;
-                    if (!tbdName.gyroUtils.isGyroInTolerance(angle, difference)) {
-                        tbdName.driveTrain.powerLeft(.15);
-                        tbdName.driveTrain.powerRight(-.15);
+        /*if (stage == 17) {
+            if (time.time() < .3) {
+                driveTrain.driveStraight(-.3);
+            } else {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }*/
+
+                if (stage == 18) { // Turn to 90
+                    int difference = 13;
+                    int angle = 80;
+                    if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                        driveTrain.powerLeft(.15);
+                        driveTrain.powerRight(-.15);
                     } else {
-                        RobotLog.d("15." + "Statement true at gyro degree " + tbdName.gyroUtils.gyro.getHeading());
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 18) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
-                    }
-                }
                 if (stage == 19) {
-                    if (time.time() < 0.75) {
-                        tbdName.driveTrain.driveStraight(-.3);
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 20) {
+                    if (time.time() < 1) {
+                        driveTrain.driveStraight(.3);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 20) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
+                if (stage == 21) {
+                    if (time.time() > .5) {
                         stage++;
                         time.reset();
                     }
@@ -644,81 +709,109 @@ public class Autonomous extends OpMode {
 
                 // Initialize the beacon subroutine from BeaconSlamTest
 
-                if (stage == 21) {
-                    if (time.time() < 0.75) {
-                        tbdName.driveTrain.driveStraight(-0.5);
-                    } else {
-                        tbdName.driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
                 if (stage == 22) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
+                    if (time.time() < 1) {
+                        driveTrain.driveStraight(0.3);
+                    } else {
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
                 if (stage == 23) {
-                    if (time.time() < 0.1) {
-                        tbdName.driveTrain.driveStraight(0.5);
-                    } else {
-                        tbdName.driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 24) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         time.reset();
                     }
                 }
+                if (stage == 24) {
+                    if (time.time() < 0.15) {
+                        driveTrain.driveStraight(-0.5);
+                    } else {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
                 if (stage == 25) {
-                    switch (tbdName.colorUtils.beaconColor()) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 26) {
+                    switch (colorUtils.beaconColor()) {
                         case RED:
-                            RobotLog.d("Red color detected");
                             switch (alliance) {
                                 case "Blue":
-                                    RobotLog.d(alliance + " alliance, Beacon color: " + tbdName.colorUtils.beaconColor());
                                     if (time.time() > 5.1) {
                                         time.reset();
                                         stage = 21;
                                     }
                                     break;
                                 case "Red":
-                                    RobotLog.d(alliance + " alliance, Beacon color: " + tbdName.colorUtils.beaconColor());
                                     time.reset();
                                     stage++;
                                     break;
                             }
                             break;
                         case BLUE:
-                            RobotLog.d("Blue color detected");
                             switch (alliance) {
                                 case "Blue":
-                                    RobotLog.d(alliance + " alliance, Beacon color: " + tbdName.colorUtils.beaconColor());
                                     time.reset();
                                     stage++;
                                     break;
                                 case "Red":
-                                    RobotLog.d(alliance + " alliance, Beacon color: " + tbdName.colorUtils.beaconColor());
                                     if (time.time() > 5.1) {
                                         time.reset();
-                                        stage++;
+                                        stage = 21;
                                     }
                                     break;
                             }
                             break;
                     }
                 }
+
+                if (stage == 27) {
+                    if (time.time() < 0.5) {
+                        driveTrain.driveStraight(-0.5);
+                    } else {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 28) {
+                    int difference = 13;
+                    int angle = 0;
+                    if (gyro.getHeading() < 150) {
+                        driveTrain.powerLeft(.15);
+                        driveTrain.powerRight(-.15);
+                    } else {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 29) {
+                    if (time.time() < 1.25) {
+                        driveTrain.powerRight(1);
+                        driveTrain.powerLeft(1);
+                    } else {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+                }
             }
             if (target.equals("Cap ball")) {
                 if (stage == 1) { //drives forward 0.25 seconds
-                    if (time.time() <= 0.35) {
-                        tbdName.driveTrain.driveStraight();
+                    if (time.time() <= 0.325) {
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
@@ -732,11 +825,11 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 3) {
-                    if (tbdName.gyroUtils.gyro.getHeading() > 350 || tbdName.gyroUtils.gyro.getHeading() < 27) {
-                        tbdName.driveTrain.powerLeft(.15);
-                        tbdName.driveTrain.powerRight(-.15);
+                    if (gyro.getHeading() > 350 || gyro.getHeading() < 29) {
+                        driveTrain.powerLeft(.15);
+                        driveTrain.powerRight(-.15);
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
@@ -749,13 +842,18 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 5) {
-                    if (time.time() < 1.05) {
-                        tbdName.driveTrain.driveStraight();
+                    if (time.time() < .90) {
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                        tbdName.flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
+                        if (shoot == 0) {
+                            stage = 10;
+                            time.reset();
+                        } else {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                            flyWheel.FlyWheelMotor.setPower(.3);
+                        }
                     }
                 }
 
@@ -767,30 +865,25 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 7) {
-                    double DurationTime = 0;
-                    if (shoot == 0) {
-                        DurationTime = 0;
-                    } else {
-                        DurationTime = 2.5;
-                    }
-                    if (time.time() < DurationTime) { // 2 Seconds for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.B, .7);
+                    if (time.time() < 2.5) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, .7);
                     } else {
                         time.reset();
-                        stage++;
+                        if (shoot == 1) {
+                            time.reset();
+                            stage = 9;
+                        }
+                        if (shoot == 2) {
+                            stage++;
+                            time.reset();
+                        }
+
                     }
                 }
 
                 if (stage == 8) {
-                    double DurationTime = 0;
-                    if (shoot == 0 || shoot == 1) {
-                        DurationTime = 0;
-                    }
-                    if (shoot == 2) {
-                        DurationTime = 0.35;
-                    }
-                    if (time.time() < DurationTime) // 0.35 for 2 balls
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                    if (time.time() < .35)
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
                         stage++;
@@ -799,9 +892,9 @@ public class Autonomous extends OpMode {
 
                 if (stage == 9) {
                     if (time.time() > 2) {
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.B, 0);
-                        tbdName.intake.setIntakePower(Intake.IntakeSpec.A, 0);
-                        tbdName.flyWheel.FlyWheelMotor.setPower(0);
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
                         time.reset();
                         stage++;
                     }
@@ -816,10 +909,10 @@ public class Autonomous extends OpMode {
 
 
                 if (stage == 11) {
-                    if (!tbdName.colorUtils.aboveBlueLine() && time.time() < 1) {
-                        tbdName.driveTrain.driveStraight();
+                    if (!colorUtils.aboveBlueLine() && time.time() < 1) {
+                        driveTrain.driveStraight();
                     } else {
-                        tbdName.driveTrain.stopRobot();
+                        driveTrain.stopRobot();
                         stage++;
                     }
                 }

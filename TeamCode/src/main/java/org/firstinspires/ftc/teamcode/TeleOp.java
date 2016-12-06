@@ -79,7 +79,7 @@ public class TeleOp extends OpMode {
          * D-pad up - Increment the power by 0.05
          * D-pad down - Decrease the power by 0.05
          * D-pad right - Kill the motor
-         * D-pad left - Set the power to 0.55 no-matter the position
+         * D-pad left - Set the power to default no-matter the position
          */
 
         boolean DPadUpPressed = gamepad1.dpad_up;

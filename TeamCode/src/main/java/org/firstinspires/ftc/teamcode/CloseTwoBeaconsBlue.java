@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
@@ -17,9 +19,11 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconCloseBlue", group = "Testing")
-public class RunToBeaconBlue extends OpMode {
+@Autonomous(name = "BlueBeaconCorner", group = "Testing")
+public class CloseTwoBeaconsBlue extends OpMode {
 
+
+    private final static String TAG = CloseTwoBeaconsRed.class.getName();
     private int stage = 0;
     private ElapsedTime time = new ElapsedTime();
     private DriveTrain driveTrain;
@@ -28,7 +32,6 @@ public class RunToBeaconBlue extends OpMode {
     private GyroSensor gyro;
     private Intake intake;
     private FlyWheel flyWheel;
-    private AutonomousUtils autonomousUtils;
 
     private String alliance = "Blue";
 
@@ -40,7 +43,6 @@ public class RunToBeaconBlue extends OpMode {
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
-        autonomousUtils = new AutonomousUtils(stage, time);
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
@@ -82,13 +84,13 @@ public class RunToBeaconBlue extends OpMode {
         }
 
         if (stage == 3) {
-            double flyWheelLaunchPower = 0.5;
+            double flyWheelLaunchPower = 0.3;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
 
         if (stage == 4) {
-            if (time.time() > 2) {
+            if (time.time() > 3) {
                 time.reset();
                 stage++;
             }
@@ -103,7 +105,16 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 6) {
+        if (stage == 6)
+        {
+            if (time.time() > 1.2)
+            {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 7) {
             if (time.time() < .35)
                 intake.setIntakePower(Intake.IntakeSpec.A, 1);
             else {
@@ -112,7 +123,7 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 7) {
+        if (stage == 8) {
             if (time.time() > 2) {
                 intake.stopIntake(Intake.IntakeSpec.A);
                 intake.stopIntake(Intake.IntakeSpec.B);
@@ -122,19 +133,19 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 8) {
+        if (stage == 9) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 9) { // Turn to 270
-            int difference = 11;
-            int angle = 270;
-            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+        if (stage == 10) { // Turn to 90
+            int difference = 13;
+            int angle = 80;
+            if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -142,7 +153,7 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 10) {
+        if (stage == 11) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
@@ -150,9 +161,9 @@ public class RunToBeaconBlue extends OpMode {
         }
 
 
-        if (stage == 11) { //drives forward 33 inches in seconds // OUTDATED LENGTH
-            if (time.time() <= 1.2) {
-                driveTrain.driveStraight(-1);
+        if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
+            if (time.time() <= 0.85) {
+                driveTrain.driveStraight(1);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -160,16 +171,16 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 12) {
+        if (stage == 13) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 13) { // Turn to 225
+        if (stage == 14) { // Turn to 145
             int difference = 9;
-            int angle = 225;
+            int angle = 30 ;
             if (!gyroUtils.isGyroInTolerance(angle, difference)) {
                 driveTrain.powerLeft(-.15);
                 driveTrain.powerRight(.15);
@@ -181,24 +192,8 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 14) {
-            if (!colorUtils.aboveWhiteLine()) {
-                driveTrain.driveStraight(-.3);
-            } else {
-                driveTrain.stopRobot();
-                //autonomousUtils.waitTime(.5);
-                time.reset();
-                stage++;
-            }
-        }
         if (stage == 15) {
-            if (time.time() < AutonomousUtils.WAITTIME) {
-                time.reset();
-                stage++;
-            }
-        }
-        if (stage == 16) {
-            if (time.time() < .15) {
+            if (!colorUtils.aboveWhiteLine()) {
                 driveTrain.driveStraight(.3);
             } else {
                 driveTrain.stopRobot();
@@ -206,39 +201,54 @@ public class RunToBeaconBlue extends OpMode {
                 stage++;
             }
         }
-
-        if (stage == 17) {
-            int difference = 9;
-            int angle = 270;
-            if (!gyroUtils.isGyroInTolerance(angle, difference)) {
-                driveTrain.powerLeft(.15);
-                driveTrain.powerRight(-.15);
-            } else {
-                RobotLog.d("15." + "Statement true at gyro degree " + gyro.getHeading());
-                driveTrain.stopRobot();
-                stage++;
+        if (stage == 16) {
+            if (time.time() < AutonomousUtils.WAITTIME) {
                 time.reset();
+                stage = 18;
             }
         }
 
-        if (stage == 18) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-            }
-        }
-        if (stage == 19) {
-            if (time.time() < 0.75) {
+        /*if (stage == 17) {
+            if (time.time() < .3) {
                 driveTrain.driveStraight(-.3);
             } else {
                 driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }*/
+
+        if (stage == 18) { // Turn to 90
+            int difference = 13;
+            int angle = 80;
+            if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
+                driveTrain.powerLeft(.15);
+                driveTrain.powerRight(-.15);
+            } else {
+                driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 20) {
+        if (stage == 19) {
             if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 20) {
+            if (time.time() < 1) {
+                driveTrain.driveStraight(.3);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 21) {
+            if (time.time() > .5) {
                 stage++;
                 time.reset();
             }
@@ -246,8 +256,23 @@ public class RunToBeaconBlue extends OpMode {
 
         // Initialize the beacon subroutine from BeaconSlamTest
 
-        if (stage == 21) {
-            if (time.time() < 0.75) {
+        if (stage == 22) {
+            if (time.time() < 1) {
+                driveTrain.driveStraight(0.3);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 23) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 24) {
+            if (time.time() < 0.15) {
                 driveTrain.driveStraight(-0.5);
             } else {
                 driveTrain.stopRobot();
@@ -255,59 +280,38 @@ public class RunToBeaconBlue extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 22) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-            }
-        }
-        if (stage == 23) {
-            if (time.time() < 0.1) {
-                driveTrain.driveStraight(0.5);
-            } else {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-            }
-        }
-        if (stage == 24) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-            }
-        }
         if (stage == 25) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 26) {
             switch (colorUtils.beaconColor()) {
                 case RED:
-                    RobotLog.d("Red color detected");
                     switch (alliance) {
                         case "Blue":
-                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             if (time.time() > 5.1) {
                                 time.reset();
                                 stage = 21;
                             }
                             break;
                         case "Red":
-                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             time.reset();
                             stage++;
                             break;
                     }
                     break;
                 case BLUE:
-                    RobotLog.d("Blue color detected");
                     switch (alliance) {
                         case "Blue":
-                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             time.reset();
                             stage++;
                             break;
                         case "Red":
-                            RobotLog.d(alliance + " alliance, Beacon color: " + colorUtils.beaconColor());
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage++;
+                                stage = 21;
                             }
                             break;
                     }
@@ -315,67 +319,171 @@ public class RunToBeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 26) {
-            if (!colorUtils.aboveWhiteLine()) {
-                driveTrain.driveStraight();
+        if(stage == 27)
+        {
+            if (time.time() < 0.5) {
+                driveTrain.driveStraight(-0.5);
             } else {
                 driveTrain.stopRobot();
+                stage++;
+                time.reset();
             }
         }
-        if (stage == 27) {
-            int difference = 9;
-            int angle = 270;
-            if (!gyroUtils.isGyroInTolerance(angle, difference)) {
+
+        if(stage == 28)
+        {
+            int difference = 13;
+            int angle = 0;
+            if (gyro.getHeading() < 150) {
                 driveTrain.powerLeft(.15);
                 driveTrain.powerRight(-.15);
             } else {
-                RobotLog.d("15." + "Statement true at gyro degree " + gyro.getHeading());
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 29)
+        {
+            if (time.time() < 1.25)
+            {
+                driveTrain.powerRight(1);
+                driveTrain.powerLeft(1);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        /*if (stage == 29)
+        {
+            if (time.time() < .5)
+            {
+                driveTrain.driveStraight(.3);
+            }
+            else
+            {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
         }
-        if (stage == 28) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-            }
 
-        }
-        if (stage == 29) {
-            if (time.time() < 0.75) {
-                driveTrain.driveStraight(-0.3);
-            } else {
-                driveTrain.stopRobot();
-                stage++;
+        if (stage == 30)
+        {
+            if(time.time() > .15)
+            {
                 time.reset();
-            }
-
-        }
-        if (stage == 30) {
-            if (time.time() < 0.1) {
-                driveTrain.driveStraight(0.5);
-            } else {
-                driveTrain.stopRobot();
                 stage++;
-                time.reset();
             }
-
         }
+
         if (stage == 31) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
+            if (!colorUtils.aboveWhiteLine()) {
+                driveTrain.driveStraight(.3);
+            } else {
+                driveTrain.stopRobot();
                 time.reset();
+                stage++;
             }
         }
         if (stage == 32) {
+            if (time.time() < AutonomousUtils.WAITTIME) {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 33) {
+            if (time.time() < .25) {
+                driveTrain.driveStraight(-.3);
+            } else {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 34) { // Turn to 90
+            int difference = 13;
+            int angle = 270;
+            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 35) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 36) {
+            if (time.time() < 1) {
+                driveTrain.driveStraight(.3);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 37) {
+            if (time.time() > .5) {
+                stage++;
+                time.reset();
+            }
+        }
+
+        // Initialize the beacon subroutine from BeaconSlamTest
+
+        if (stage == 38) {
+            if (time.time() < 1) {
+                driveTrain.driveStraight(0.3);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 39) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 40) {
+            if (time.time() < 0.1) {
+                driveTrain.driveStraight(-0.5);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 41) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 42) {
             switch (colorUtils.beaconColor()) {
                 case RED:
                     switch (alliance) {
                         case "Blue":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 29;
+                                stage = 33;
                             }
                             break;
                         case "Red":
@@ -393,18 +501,84 @@ public class RunToBeaconBlue extends OpMode {
                         case "Red":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 29;
+                                stage = 33;
                             }
                             break;
                     }
                     break;
             }
-
         }
 
+        if (stage == 43)
+        {
+            if (time.time() < .3)
+            {
+                driveTrain.powerLeft(-.3);
+                driveTrain.powerRight(-.3);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 44)
+        {
+            if (gyro.getHeading() > 150)
+            {
+                driveTrain.powerLeft(-.15);
+                driveTrain.powerRight(.15);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 45)
+        {
+            if (time.time() < .3)
+            {
+                driveTrain.driveStraight();
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 46)
+        {
+            if (time.time() > .3)
+            {
+                time.reset();
+                stage++;
+            }
+        }
+
+        if (stage == 47)
+        {
+            if (!colorUtils.aboveRedLine() && time.time() < 3)
+            {
+                driveTrain.powerLeft(.3);
+                driveTrain.powerRight(.3);
+            }
+            else
+            {
+                driveTrain.stopRobot();
+                time.reset();
+                stage++;
+            }
+        }*/
 
 
-        RobotLog.d(String.valueOf(stage + " Gyro: " + gyro.getHeading() + " Time:" + time.time()));
+        Log.d(TAG, String.valueOf(stage + " Gyro: " + gyro.getHeading() + " Time:" + this.time + " Stage: " + stage));
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
         telemetry.addData("Time", String.valueOf(time.time()));
