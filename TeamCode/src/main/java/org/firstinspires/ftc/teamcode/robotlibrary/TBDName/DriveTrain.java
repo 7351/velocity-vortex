@@ -3,18 +3,12 @@ package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
 
     public final double DIFFERENCE = 0.04;
-    public DcMotor LeftFrontMotor;
-    public DcMotor RightFrontMotor;
-    public DcMotor LeftBackMotor;
-    public DcMotor RightBackMotor;
-
-    DcMotor[] DcMotors = {LeftBackMotor, LeftFrontMotor, RightBackMotor, RightFrontMotor};
+    public DcMotor LeftFrontMotor, RightFrontMotor, LeftBackMotor, RightBackMotor;
 
     public DriveTrain(HardwareMap hardwareMap) {
         if (hardwareMap != null) {
@@ -79,6 +73,7 @@ public class DriveTrain {
         powerRight(0);
     }
 
+    /*
     public double getVoltage() {
         double averageVoltage = 0;
         for (DcMotor motor : DcMotors) {
@@ -90,6 +85,28 @@ public class DriveTrain {
         averageVoltage /= 4;
         return averageVoltage;
     }
+    */
 
+
+    public void setDriveTrainRunMode(DcMotor.RunMode mode) {
+        LeftBackMotor.setMode(mode);
+        LeftFrontMotor.setMode(mode);
+        RightBackMotor.setMode(mode);
+        RightFrontMotor.setMode(mode);
+    }
+
+    public void setTargetPosition(int position) {
+        LeftBackMotor.setTargetPosition(position);
+        LeftFrontMotor.setTargetPosition(position);
+        RightBackMotor.setTargetPosition(position);
+        RightFrontMotor.setTargetPosition(position);
+    }
+
+    public boolean isBusy() {
+        return LeftBackMotor.isBusy() ||
+                LeftFrontMotor.isBusy() ||
+                RightBackMotor.isBusy() ||
+                RightFrontMotor.isBusy();
+    }
 
 }
