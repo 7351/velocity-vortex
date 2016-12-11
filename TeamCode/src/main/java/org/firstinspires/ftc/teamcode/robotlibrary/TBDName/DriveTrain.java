@@ -19,6 +19,7 @@ public class DriveTrain {
 
             LeftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             LeftBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         }
 
     }
@@ -87,26 +88,12 @@ public class DriveTrain {
     }
     */
 
-
-    public void setDriveTrainRunMode(DcMotor.RunMode mode) {
-        LeftBackMotor.setMode(mode);
-        LeftFrontMotor.setMode(mode);
-        RightBackMotor.setMode(mode);
-        RightFrontMotor.setMode(mode);
-    }
-
-    public void setTargetPosition(int position) {
-        LeftBackMotor.setTargetPosition(position);
-        LeftFrontMotor.setTargetPosition(position);
-        RightBackMotor.setTargetPosition(position);
-        RightFrontMotor.setTargetPosition(position);
-    }
-
     public boolean isBusy() {
-        return LeftBackMotor.isBusy() ||
+        return
                 LeftFrontMotor.isBusy() ||
-                RightBackMotor.isBusy() ||
-                RightFrontMotor.isBusy();
+                        RightFrontMotor.isBusy();
     }
 
 }
+
+
