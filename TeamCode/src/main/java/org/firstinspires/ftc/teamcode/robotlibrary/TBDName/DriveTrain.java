@@ -89,9 +89,7 @@ public class DriveTrain {
     */
 
     public boolean isBusy() {
-        return
-                LeftFrontMotor.isBusy() ||
-                        RightFrontMotor.isBusy();
+        return LeftFrontMotor.isBusy() || RightFrontMotor.isBusy();
     }
 
 }
