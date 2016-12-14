@@ -11,7 +11,7 @@ public class EncoderTurn {
 
     int startingLeftPosition;
     int startingRightPosition;
-    int oneDegreeTurn = 40;
+    double turnPerDegree = PPD(40, 1.5);
 
     DriveTrain driveTrain;
     GyroUtils gyroUtils;
@@ -32,9 +32,16 @@ public class EncoderTurn {
 
     }
 
+    public double PPD(int gearRatio, double sprocketRatio)
+    {
+        double temp = (gearRatio * sprocketRatio);
+        temp /= 360;
+        return temp;
+    }
+
     public void run(int targetAngle, double power, boolean turnRight) {
         //int currentPos = gyroSensor.getHeading();
-        int turnThisMuch = targetAngle * oneDegreeTurn;
+        int turnThisMuch = targetAngle * (int)turnPerDegree;
 
         if (turnRight)
         {
