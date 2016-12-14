@@ -52,6 +52,9 @@ public class EncoderTurn {
             driveTrain.LeftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             driveTrain.RightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            driveTrain.powerLeft((power > 0 && (turnThisMuch + startingLeftPosition) < 0) ? -1 * power : power);
+            driveTrain.powerRight((power > 0 && (startingRightPosition - turnThisMuch) < 0) ? -1 * power : power);
         }
 
     }
