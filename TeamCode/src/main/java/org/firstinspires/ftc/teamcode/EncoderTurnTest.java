@@ -4,7 +4,6 @@ import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
 
 /**
@@ -44,7 +43,8 @@ public class EncoderTurnTest extends OpMode {
 
         if (stage == 0) {
             EncoderTurn yo = new EncoderTurn(driveTrain);
-            yo.run(90, 1, true);
+            yo.run(90, 1);
+            // Currently, this just TURNS 90 degrees, not turns to 90 degrees.
         }
         if (stage == 1) {
             if (!driveTrain.isBusy()) {
