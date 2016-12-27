@@ -74,6 +74,13 @@ public class DriveTrain {
         powerRight(0);
     }
 
+    public void setMode(DcMotor.RunMode mode) {
+        LeftFrontMotor.setMode(mode);
+        LeftBackMotor.setMode(mode);
+        RightFrontMotor.setMode(mode);
+        RightBackMotor.setMode(mode);
+    }
+
     /*
     public double getVoltage() {
         double averageVoltage = 0;

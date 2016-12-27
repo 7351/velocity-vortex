@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 
 /**
  * Created by Dynamic Signals on 12/6/2016.
@@ -15,24 +16,14 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
 public class EncoderTurnTest extends OpMode {
 
     DriveTrain driveTrain;
-    int startingLeftPosition;
-    int startingRightPosition;
 
-
-    int stage = 0;
-    double turnPerDegree = (40 * 1.5) / 360;
-
+    GyroUtils.Direction turnDirection = GyroUtils.Direction.CLOCKWISE;
+    int targetPosition = 7500;
 
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        /*this.gyroUtils = gyroUtils;
-        gyroSensor = initialgyro;*/
-        // We use this way instead of resetting the encoders because we can relatively move the robot
-        startingLeftPosition = driveTrain.LeftFrontMotor.getCurrentPosition();
-        startingRightPosition = driveTrain.RightFrontMotor.getCurrentPosition();
-
 
     }
 
@@ -47,39 +38,31 @@ public class EncoderTurnTest extends OpMode {
     @Override
     public void start() {
 
+        double power = 0.5;
+
+        driveTrain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        int directionMultiplier = (turnDirection.equals(GyroUtils.Direction.CLOCKWISE)) ? 1 : -1; // For the left side
+
+        driveTrain.LeftFrontMotor.setTargetPosition(directionMultiplier * targetPosition);
+        driveTrain.RightFrontMotor.setTargetPosition(-directionMultiplier * targetPosition);
+
+        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        driveTrain.powerLeft(directionMultiplier * power);
+        driveTrain.powerRight(-directionMultiplier * power);
 
     }
 
     @Override
     public void loop() {
 
-        if (stage == 0) {
-            int turnThisMuch = 90 * (int)turnPerDegree;
+        if (!driveTrain.isBusy()) driveTrain.stopRobot();
 
-            driveTrain.LeftFrontMotor.setTargetPosition(turnThisMuch + startingLeftPosition);
-            driveTrain.RightFrontMotor.setTargetPosition(startingRightPosition - turnThisMuch);
+        telemetry.addData("Position", String.valueOf(driveTrain.LeftFrontMotor.getCurrentPosition() + " - " + driveTrain.LeftFrontMotor.getTargetPosition()));
 
-            driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            driveTrain.LeftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            driveTrain.RightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            driveTrain.powerLeft((.5 > 0 && (turnThisMuch + startingLeftPosition) < 0) ? -1 * .5 : .5);
-            driveTrain.powerRight((-.5 < 0 && (startingRightPosition - turnThisMuch) > 0) ? 1 * -.5 : -.5);
-
-
-            /*EncoderTurn yo = new EncoderTurn(driveTrain);
-            yo.run(90, 1, true);*/
-            // Currently, this just TURNS 90 degrees, not turns to 90 degrees.
-        }
-        if (stage == 1) {
-            if (!driveTrain.isBusy()) {
-                driveTrain.stopRobot();
-                stage++;
-            }
-        }
-
-        DbgLog.msg(String.valueOf(": " + driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));
+        DbgLog.msg(String.valueOf(": " + driveTrain.LeftFrontMotor.getCurrentPosition() + " - " + driveTrain.LeftFrontMotor.getTargetPosition()));
 
     }
 }
