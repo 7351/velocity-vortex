@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake.IntakeSpec;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TeleOpUtils;
 
 /**
@@ -23,6 +24,7 @@ public class TeleOp extends OpMode {
     private DriveTrain driveTrain;
     private FlyWheel flyWheel;
     private Intake intake;
+    private Lift lift;
     private TeleOpUtils teleOpUtils;
 
     @Override
@@ -31,8 +33,8 @@ public class TeleOp extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
+        lift = new Lift(hardwareMap);
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
-
     }
 
     @Override
@@ -174,6 +176,38 @@ public class TeleOp extends OpMode {
         /*
          * Controller 2 Controls --------------------------------------------------
          */
+
+        /*
+         * Lift controls
+         * Right joystick Y Up - Lift positive power
+         * Right joystick Y Down - Lift negative power
+         * D-pad up (without the top bumper) - Put the lift servo up
+         * D-pad down (without the top bumper) - Put the lift servo down
+         */
+
+        double right_joystick_y = -gamepad2.right_stick_y;
+        boolean liftManualMode = gamepad2.left_bumper;
+
+        if (right_joystick_y > 0.5) {
+            lift.LiftMotor.setPower(lift.liftMotorPower);
+        } else if(right_joystick_y < 0.5) {
+            lift.LiftMotor.setPower(-lift.liftMotorPower);
+        } else {
+            lift.LiftMotor.setPower(0);
+        }
+
+        if (liftManualMode) {
+            if (gamepad2.dpad_up) {
+                lift.LiftServo.setPosition(lift.maximumServo);
+            } if (gamepad2.dpad_down) {
+                lift.LiftServo.setPosition(lift.minimumServo);
+            }
+        } else {
+            //TODO: Implement stepper here
+        }
+
+
+
 
     }
 }
