@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
@@ -35,21 +36,26 @@ public class EncoderDriveStraightTest extends OpMode {
     @Override
     public void start() {
 
+        driveTrain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        driveTrain.RightFrontMotor.setTargetPosition(1000);
+
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        driveTrain.powerLeft(0.75);
+        driveTrain.powerRight(0.75);
 
     }
 
     @Override
     public void loop() {
 
-        if (stage == 0) {
-            new EncoderDrive(driveTrain).run(1600, 1);
+        if (driveTrain.RightFrontMotor.getCurrentPosition() >= 1000) {
+            driveTrain.stopRobot();
         }
-        if (stage == 1) {
-            if (!driveTrain.isBusy()) {
-                driveTrain.stopRobot();
-                stage++;
-            }
-        }
+
+        telemetry.addData("Busy", String.valueOf(driveTrain.isBusy()));
+        telemetry.addData("Positions", String.valueOf(driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));
 
         DbgLog.msg(String.valueOf(": " + driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));
 
