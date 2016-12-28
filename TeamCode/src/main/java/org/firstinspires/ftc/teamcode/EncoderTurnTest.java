@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
@@ -18,7 +21,9 @@ public class EncoderTurnTest extends OpMode {
     DriveTrain driveTrain;
 
     GyroUtils.Direction turnDirection = GyroUtils.Direction.CLOCKWISE;
-    int targetPosition = 7500;
+
+    double turnPerDegree = (40 * 1.5) / 360;
+
 
     @Override
     public void init() {
@@ -37,6 +42,7 @@ public class EncoderTurnTest extends OpMode {
 
     @Override
     public void start() {
+        int turnThisMuch = 90 * (int) ((7 * 4 * 40 * 1.5) / 360);
 
         double power = 0.5;
 
@@ -44,25 +50,25 @@ public class EncoderTurnTest extends OpMode {
 
         int directionMultiplier = (turnDirection.equals(GyroUtils.Direction.CLOCKWISE)) ? 1 : -1; // For the left side
 
-        driveTrain.LeftFrontMotor.setTargetPosition(directionMultiplier * targetPosition);
-        driveTrain.RightFrontMotor.setTargetPosition(-directionMultiplier * targetPosition);
+        driveTrain.RightFrontMotor.setTargetPosition(-100);
+        //driveTrain.RightFrontMoto r.setTargetPosition(-directionMultiplier * turnThisMuch);
 
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         driveTrain.powerLeft(directionMultiplier * power);
         driveTrain.powerRight(-directionMultiplier * power);
-
     }
 
     @Override
     public void loop() {
 
-        if (!driveTrain.isBusy()) driveTrain.stopRobot();
+        if (!driveTrain.LeftFrontMotor.isBusy())
+            driveTrain.stopRobot();
 
-        telemetry.addData("Position", String.valueOf(driveTrain.LeftFrontMotor.getCurrentPosition() + " - " + driveTrain.LeftFrontMotor.getTargetPosition()));
+        DbgLog.msg(String.valueOf(": " + driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));
 
-        DbgLog.msg(String.valueOf(": " + driveTrain.LeftFrontMotor.getCurrentPosition() + " - " + driveTrain.LeftFrontMotor.getTargetPosition()));
-
+        telemetry.addData("Busy", String.valueOf(driveTrain.LeftFrontMotor.isBusy() + ":" + driveTrain.RightFrontMotor.isBusy()));
+        telemetry.addData("Encoders", String.valueOf(driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition()));
     }
 }

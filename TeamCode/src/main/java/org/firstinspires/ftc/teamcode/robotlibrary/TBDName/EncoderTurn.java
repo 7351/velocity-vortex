@@ -34,7 +34,7 @@ public class EncoderTurn {
 
     public double PPD(int gearRatio, double sprocketRatio)
     {
-        double temp = (gearRatio * sprocketRatio);
+        double temp = (gearRatio * sprocketRatio) * 28;
         temp /= 360;
         return temp;
     }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
@@ -35,6 +36,7 @@ public class EncoderDriveStraightTest extends OpMode {
     @Override
     public void start() {
 
+        driveTrain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
