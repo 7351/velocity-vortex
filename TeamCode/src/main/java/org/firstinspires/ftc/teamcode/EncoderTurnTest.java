@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
+
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RESET_ENCODERS;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+//import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
 
 /**
  * Created by Dynamic Signals on 12/6/2016.
@@ -20,16 +20,15 @@ public class EncoderTurnTest extends OpMode {
 
     DriveTrain driveTrain;
 
-    GyroUtils.Direction turnDirection = GyroUtils.Direction.CLOCKWISE;
-
-    double turnPerDegree = (40 * 1.5) / 360;
-
+    int stage = 0;
 
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
 
+        driveTrain.RightFrontMotor.setMode(STOP_AND_RESET_ENCODER);
+        //driveTrain.RightFrontMotor.setMode(STOP_AND_RESET_ENCODER);
     }
 
     /* Encoder drive sequence
@@ -42,33 +41,41 @@ public class EncoderTurnTest extends OpMode {
 
     @Override
     public void start() {
-        int turnThisMuch = 90 * (int) ((7 * 4 * 40 * 1.5) / 360);
 
-        double power = 0.5;
 
-        driveTrain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        int directionMultiplier = (turnDirection.equals(GyroUtils.Direction.CLOCKWISE)) ? 1 : -1; // For the left side
-
-        driveTrain.RightFrontMotor.setTargetPosition(-100);
-        //driveTrain.RightFrontMoto r.setTargetPosition(-directionMultiplier * turnThisMuch);
+        //driveTrain.RightFrontMotor.setTargetPosition(1000);
+        //driveTrain.LeftFrontMotor.setTargetPosition(-1000);
+        driveTrain.RightFrontMotor.setTargetPosition(-1000);
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //driveTrain.LeftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        driveTrain.powerLeft(directionMultiplier * power);
-        driveTrain.powerRight(-directionMultiplier * power);
+
+        driveTrain.powerLeft(0.25);
+        driveTrain.powerRight(-0.25);
+        //driveTrain.powerRight(0.75);
+
     }
 
     @Override
     public void loop() {
 
-        if (!driveTrain.LeftFrontMotor.isBusy())
+        telemetry.addData("Left Position: ", driveTrain.LeftFrontMotor.getCurrentPosition());
+        telemetry.addData("Right Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
+
+        if (!driveTrain.RightFrontMotor.isBusy())
+        {
             driveTrain.stopRobot();
+        }
 
-        DbgLog.msg(String.valueOf(": " + driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));
+        /*if (driveTrain.LeftFrontMotor.getCurrentPosition() >= 1000) {
+                driveTrain.stopRobot();
+        }
 
-        telemetry.addData("Busy", String.valueOf(driveTrain.LeftFrontMotor.isBusy() + ":" + driveTrain.RightFrontMotor.isBusy()));
-        telemetry.addData("Encoders", String.valueOf(driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition()));
+        /*telemetry.addData("Busy", String.valueOf(driveTrain.isBusy()));
+        telemetry.addData("Positions", String.valueOf(driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));
+
+        DbgLog.msg(String.valueOf(": " + driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));*/
+
     }
 }
