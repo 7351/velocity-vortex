@@ -2,64 +2,73 @@ package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class EncoderDrive {
-    int startingLeftPosition;
-    int startingRightPosition;
+public class EncoderDrive implements EncoderRoutine {
 
     DriveTrain driveTrain;
+    double power;
+    public int targetPosition;
+
+    // We only want to use the FrontRightMotor encoder
 
     /**
      * Constructor for the EncoderDrive object
      *
      * @param driveTrain - The drive train object that should be initialized
      */
-    public EncoderDrive(DriveTrain driveTrain) {
+    public EncoderDrive(DriveTrain driveTrain, int targetPosition, double power) {
         this.driveTrain = driveTrain;
-        // We use this way instead of resetting the encoders because we can relatively move the robot
-        startingLeftPosition = driveTrain.LeftFrontMotor.getCurrentPosition();
-        startingRightPosition = driveTrain.RightFrontMotor.getCurrentPosition();
+        this.targetPosition = targetPosition;
+        this.power = power;
+
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set the target position for front motors (Right only)
+        driveTrain.RightFrontMotor.setTargetPosition(targetPosition);
+
+        // Set the run mode for only the front motors (Right only)
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
-    /**
-     * Run function - The moving of the whole EncoderDrive object
-     *
-     * @param targetPosition - The target position that you want both sides to rotate (relative to where they
-     *                       are to when you initialize the object)
-     * @param power          - The power that you want the drive train to drive at
-     */
-    public void run(int targetPosition, double power) {
-        // Set the target position for front motors
-        driveTrain.LeftFrontMotor.setTargetPosition(targetPosition + startingLeftPosition);
-        driveTrain.RightFrontMotor.setTargetPosition(targetPosition + startingRightPosition);
+    public EncoderDrive(DriveTrain driveTrain, int targetPosition) {
+        this.driveTrain = driveTrain;
+        this.targetPosition = targetPosition;
+        this.power = 0.75;
 
-        // Set the run mode for only the front motors
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set the target position for front motors (Right only)
+        driveTrain.RightFrontMotor.setTargetPosition(targetPosition);
+
+        // Set the run mode for only the front motors (Right only)
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+
+    @Override
+    public boolean isCompleted() {
+        if (Math.signum(targetPosition) == 1) { // If the target is positive
+            if (driveTrain.RightFrontMotor.getCurrentPosition() > targetPosition) {
+                return true;
+            }
+        } else { // If it is negative
+            if (driveTrain.RightFrontMotor.getCurrentPosition() < targetPosition) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    @Override
+    public void run() {
+
 
         // Set the power for all 4 motors
         driveTrain.powerLeft((power > 0 && targetPosition < 0) ? -1 * power : power);
         driveTrain.powerRight((power > 0 && targetPosition < 0) ? -1 * power : power);
         // We do this funky equation to make sure that we will eventually reach the target and it won't run forever.
         // If the target is negative, and you specified positive power, it will change it to negative power
-
-
-        /* The following should be moved to the next stage after initializing the object
-        if (!driveTrain.isBusy()) {
-                driveTrain.stopRobot();
-                stage++;
-            }
-         */
-
     }
-
-    /**
-     * Run without a power specified
-     *
-     * @param targetPosition This defaults to one power and uses the other method
-     */
-    public void run(int targetPosition) {
-        run(targetPosition, 1);
-    }
-
-
 }

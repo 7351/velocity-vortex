@@ -7,55 +7,80 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
  * Created by leoforney on 12/11/16.
  */
 
-public class EncoderTurn {
+public class EncoderTurn implements EncoderRoutine {
 
-    int startingLeftPosition;
-    int startingRightPosition;
     double turnPerDegree = PPD(40, 1.5);
 
-    DriveTrain driveTrain;
-    GyroUtils gyroUtils;
-    GyroSensor gyroSensor;
+    private DriveTrain driveTrain;
+    private final double power = 0.55;
+    private int encoderCounts;
+    public GyroUtils.Direction turnDirection;
 
     /**
      * Constructor for the EncoderTurn object
      *
      * @param driveTrain - The drive train object that should be initialized
      */
-    public EncoderTurn(DriveTrain driveTrain/*, GyroUtils gyroUtils, GyroSensor initialgyro*/) {
+    public EncoderTurn(DriveTrain driveTrain, int degreesToTurn, GyroUtils.Direction turnDirection) {
         this.driveTrain = driveTrain;
-        /*this.gyroUtils = gyroUtils;
-        gyroSensor = initialgyro;*/
-        // We use this way instead of resetting the encoders because we can relatively move the robot
-        startingLeftPosition = driveTrain.LeftFrontMotor.getCurrentPosition();
-        startingRightPosition = driveTrain.RightFrontMotor.getCurrentPosition();
+        this.turnDirection = turnDirection;
 
-    }
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    public double PPD(int gearRatio, double sprocketRatio)
-    {
-        double temp = (gearRatio * sprocketRatio) * 28;
-        temp /= 360;
-        return temp;
-    }
-
-    public void run(int targetAngle, double power, boolean turnRight) {
         //int currentPos = gyroSensor.getHeading();
-        int turnThisMuch = targetAngle * (int)turnPerDegree;
+        encoderCounts = degreesToTurn * (int)turnPerDegree;
 
-        if (turnRight)
-        {
-            driveTrain.LeftFrontMotor.setTargetPosition(turnThisMuch + startingLeftPosition);
-            driveTrain.RightFrontMotor.setTargetPosition(startingRightPosition - turnThisMuch);
+        switch (turnDirection) {
+            case CLOCKWISE:
+                driveTrain.RightFrontMotor.setTargetPosition(-encoderCounts);
 
-            driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            driveTrain.LeftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            driveTrain.RightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                break;
+            case COUNTERCLOCKWISE:
+                driveTrain.RightFrontMotor.setTargetPosition(encoderCounts);
 
-            driveTrain.powerLeft((power > 0 && (turnThisMuch + startingLeftPosition) < 0) ? -1 * power : power);
-            driveTrain.powerRight((power > 0 && (startingRightPosition - turnThisMuch) < 0) ? -1 * power : power);
+                driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                break;
         }
 
+        // Set the run mode for only the front motors (Right only)
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    }
+
+    public double PPD(int gearRatio, double sprocketRatio) {
+        return ((gearRatio * sprocketRatio) * 28)/360;
+    }
+
+    @Override
+    public void run() {
+        switch (turnDirection) {
+            case CLOCKWISE:
+                driveTrain.powerLeft(power);
+                driveTrain.powerRight(-power);
+                break;
+            case COUNTERCLOCKWISE:
+                driveTrain.powerLeft(-power);
+                driveTrain.powerRight(power);
+                break;
+        }
+    }
+
+    @Override
+    public boolean isCompleted() {
+        switch (turnDirection) {
+            case CLOCKWISE:
+                if (driveTrain.RightFrontMotor.getCurrentPosition() < -encoderCounts) {
+                    return true;
+                }
+                break;
+            case COUNTERCLOCKWISE:
+                if (driveTrain.RightFrontMotor.getCurrentPosition() > encoderCounts) {
+                    return true;
+                }
+                break;
+        }
+
+        return false;
     }
 }
