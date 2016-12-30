@@ -17,10 +17,12 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TeleOpUtils;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class TeleOp extends OpMode {
 
-    boolean DPadUp = false;
-    boolean DPadDown = false;
-    boolean DPadRight = false;
-    boolean DPadLeft = false;
+    private boolean DPadUp = false;
+    private boolean DPadDown = false;
+    private boolean DPadRight = false;
+    private boolean DPadLeft = false;
+    private boolean DPadUp2 = false;
+    private boolean DPadDown2 = false;
     private DriveTrain driveTrain;
     private FlyWheel flyWheel;
     private Intake intake;
@@ -183,28 +185,41 @@ public class TeleOp extends OpMode {
          * Right joystick Y Down - Lift negative power
          * D-pad up (without the top bumper) - Put the lift servo up
          * D-pad down (without the top bumper) - Put the lift servo down
+         * D-pad up (with top bumper) - Increment the servo up
+         * D-pad down (with top bumper) - Increment the servo down
          */
 
-        double right_joystick_y = -gamepad2.right_stick_y;
+        double right_joystick_y = gamepad2.right_stick_y;
         boolean liftManualMode = gamepad2.left_bumper;
 
-        if (right_joystick_y > 0.5) {
-            lift.LiftMotor.setPower(lift.liftMotorPower);
-        } else if(right_joystick_y < 0.5) {
-            lift.LiftMotor.setPower(-lift.liftMotorPower);
-        } else {
-            lift.LiftMotor.setPower(0);
-        }
+        lift.LiftMotor.setPower(teleOpUtils.scaleInput(right_joystick_y));
 
-        if (liftManualMode) {
+        if (!liftManualMode) { // If it's automatic
             if (gamepad2.dpad_up) {
-                lift.LiftServo.setPosition(lift.maximumServo);
+                lift.currentServoPosition = lift.maximum;
             } if (gamepad2.dpad_down) {
-                lift.LiftServo.setPosition(lift.minimumServo);
+                lift.currentServoPosition = lift.minimum;
             }
         } else {
-            //TODO: Implement stepper here
+            if (gamepad2.dpad_up) {
+                if (!DPadUp2) {
+                    lift.incrementServo();
+                    DPadUp2 = true;
+                }
+            } else {
+                DPadUp2 = false;
+            }
+            if (gamepad2.dpad_down) {
+                if (!DPadDown2) {
+                    lift.decrementServo();
+                    DPadDown2 = true;
+                }
+            } else {
+                DPadDown2 = false;
+            }
         }
+        lift.currentServoPosition = Range.clip(lift.currentServoPosition, -1, 1);
+        lift.LiftServo.setPosition(lift.currentServoPosition);
 
 
 
