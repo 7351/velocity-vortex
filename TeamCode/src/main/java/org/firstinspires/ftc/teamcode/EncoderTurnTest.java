@@ -58,7 +58,7 @@ public class EncoderTurnTest extends OpMode {
                 turn.run();
             }
             if (turn.isCompleted()) {
-                driveTrain.stopRobot();
+                turn.completed();
                 stage++;
             }
         }

@@ -10,4 +10,5 @@ public interface EncoderRoutine {
 
     void run();
     boolean isCompleted();
+    void completed();
 }

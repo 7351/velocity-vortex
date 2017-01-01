@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 
 public class EncoderTurn implements EncoderRoutine {
 
-    double turnPerDegree = PPD(40, 1.5);
+    private double turnPerDegree = ((GearRatio * SprocketRatio) * 28)/360;
 
     private DriveTrain driveTrain;
     private final double power = 0.55;
@@ -48,10 +48,6 @@ public class EncoderTurn implements EncoderRoutine {
 
     }
 
-    public double PPD(int gearRatio, double sprocketRatio) {
-        return ((gearRatio * sprocketRatio) * 28)/360;
-    }
-
     @Override
     public void run() {
         switch (turnDirection) {
@@ -82,5 +78,11 @@ public class EncoderTurn implements EncoderRoutine {
         }
 
         return false;
+    }
+
+    @Override
+    public void completed() {
+        driveTrain.stopRobot();
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

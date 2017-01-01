@@ -71,7 +71,7 @@ public class EncoderCapBallRed extends OpMode {
                 drive.run();
             }
             if (drive.isCompleted()) {
-                driveTrain.stopRobot();
+                drive.completed();
                 time.reset();
                 stage++;
             }

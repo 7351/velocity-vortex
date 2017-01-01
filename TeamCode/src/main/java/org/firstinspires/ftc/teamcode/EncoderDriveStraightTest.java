@@ -58,7 +58,7 @@ public class EncoderDriveStraightTest extends OpMode {
                 drive.run();
             }
             if (drive.isCompleted()) {
-                driveTrain.stopRobot();
+                drive.completed();
                 stage++;
             }
         }

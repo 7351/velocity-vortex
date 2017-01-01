@@ -59,6 +59,11 @@ public class EncoderDrive implements EncoderRoutine {
         return false;
     }
 
+    @Override
+    public void completed() {
+        driveTrain.stopRobot();
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
 
     @Override
