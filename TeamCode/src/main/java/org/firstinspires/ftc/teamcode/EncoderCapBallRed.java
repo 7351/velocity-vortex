@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
@@ -29,6 +30,7 @@ public class EncoderCapBallRed extends OpMode {
     Intake intake;
     FlyWheel flyWheel;
     EncoderDrive drive;
+    EncoderTurn turn;
 
 
 
@@ -67,7 +69,7 @@ public class EncoderCapBallRed extends OpMode {
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 500, 0.5);
+                drive = new EncoderDrive(driveTrain, 450, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -80,24 +82,28 @@ public class EncoderCapBallRed extends OpMode {
 
         if (stage == 2) {
             if (time.time() > 0.15) {
+                drive = null;
                 stage++;
                 time.reset();
             }
         }
 
         if (stage == 3){
-            if(gyro.getHeading() > 334 || gyro.getHeading() < 10)
+            if(turn == null)
             {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
-            } else {
-                driveTrain.stopRobot();
-                stage++;
+                turn = new EncoderTurn(driveTrain, 40, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()){
+                turn.completed();
+                stage = 100;
                 time.reset();
             }
         }
+
         if (stage == 4) {
             if (time.time() > 0.15) {
+                turn = null;
                 stage++;
                 time.reset();
             }
