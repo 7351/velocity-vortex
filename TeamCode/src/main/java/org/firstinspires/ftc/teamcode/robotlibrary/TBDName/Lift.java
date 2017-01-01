@@ -14,10 +14,9 @@ public class Lift {
     public DcMotor LiftMotor;
     public Servo LiftServo;
 
-    public double liftMotorPower = 0.75; // The power to move the lift motor up and down at
-
-    public double minimum = 0.2; // The minimum (down) servo position
-    public double maximum = 0.8; // The maximum (up) servo position
+    public double minimum = 0; // The minimum (down) servo position
+    public double ideal = 0.6; // The ideal (closed) position
+    public double maximum = 1; // The maximum (up) servo position (released)
     public double servoIncrement = 0.05;
     public double currentServoPosition;
 
@@ -25,7 +24,7 @@ public class Lift {
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
         LiftServo = hardwareMap.servo.get("LiftServo");
 
-        currentServoPosition = maximum;
+        currentServoPosition = minimum;
     }
 
     public void incrementServo() {

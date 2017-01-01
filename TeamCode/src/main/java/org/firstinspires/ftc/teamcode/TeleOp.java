@@ -199,6 +199,8 @@ public class TeleOp extends OpMode {
                 lift.currentServoPosition = lift.maximum;
             } if (gamepad2.dpad_down) {
                 lift.currentServoPosition = lift.minimum;
+            } if (gamepad2.dpad_left) {
+                lift.currentServoPosition = lift.ideal;
             }
         } else {
             if (gamepad2.dpad_up) {
@@ -222,7 +224,7 @@ public class TeleOp extends OpMode {
         lift.LiftServo.setPosition(lift.currentServoPosition);
 
 
-
+        telemetry.addData("Lift Servo", String.valueOf(lift.currentServoPosition));
 
     }
 }
