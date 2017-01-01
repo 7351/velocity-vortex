@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake.IntakeSpec;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TeleOpUtils;
 
 /**
@@ -16,13 +17,16 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TeleOpUtils;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class TeleOp extends OpMode {
 
-    boolean DPadUp = false;
-    boolean DPadDown = false;
-    boolean DPadRight = false;
-    boolean DPadLeft = false;
+    private boolean DPadUp = false;
+    private boolean DPadDown = false;
+    private boolean DPadRight = false;
+    private boolean DPadLeft = false;
+    private boolean DPadUp2 = false;
+    private boolean DPadDown2 = false;
     private DriveTrain driveTrain;
     private FlyWheel flyWheel;
     private Intake intake;
+    private Lift lift;
     private TeleOpUtils teleOpUtils;
 
     @Override
@@ -31,8 +35,8 @@ public class TeleOp extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
+        lift = new Lift(hardwareMap);
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
-
     }
 
     @Override
@@ -79,7 +83,7 @@ public class TeleOp extends OpMode {
          * D-pad up - Increment the power by 0.05
          * D-pad down - Decrease the power by 0.05
          * D-pad right - Kill the motor
-         * D-pad left - Set the power to 0.55 no-matter the position
+         * D-pad left - Set the power to default no-matter the position
          */
 
         boolean DPadUpPressed = gamepad1.dpad_up;
@@ -208,6 +212,53 @@ public class TeleOp extends OpMode {
         /*
          * Controller 2 Controls --------------------------------------------------
          */
+
+        /*
+         * Lift controls
+         * Right joystick Y Up - Lift positive power
+         * Right joystick Y Down - Lift negative power
+         * D-pad up (without the top bumper) - Put the lift servo up
+         * D-pad down (without the top bumper) - Put the lift servo down
+         * D-pad up (with top bumper) - Increment the servo up
+         * D-pad down (with top bumper) - Increment the servo down
+         */
+
+        double right_joystick_y = gamepad2.right_stick_y;
+        boolean liftManualMode = gamepad2.left_bumper;
+
+        lift.LiftMotor.setPower(teleOpUtils.scaleInput(right_joystick_y));
+
+        if (!liftManualMode) { // If it's automatic
+            if (gamepad2.dpad_up) {
+                lift.currentServoPosition = lift.maximum;
+            } if (gamepad2.dpad_down) {
+                lift.currentServoPosition = lift.minimum;
+            } if (gamepad2.dpad_left) {
+                lift.currentServoPosition = lift.ideal;
+            }
+        } else {
+            if (gamepad2.dpad_up) {
+                if (!DPadUp2) {
+                    lift.incrementServo();
+                    DPadUp2 = true;
+                }
+            } else {
+                DPadUp2 = false;
+            }
+            if (gamepad2.dpad_down) {
+                if (!DPadDown2) {
+                    lift.decrementServo();
+                    DPadDown2 = true;
+                }
+            } else {
+                DPadDown2 = false;
+            }
+        }
+        lift.currentServoPosition = Range.clip(lift.currentServoPosition, -1, 1);
+        lift.LiftServo.setPosition(lift.currentServoPosition);
+
+
+        telemetry.addData("Lift Servo", String.valueOf(lift.currentServoPosition));
 
     }
 }

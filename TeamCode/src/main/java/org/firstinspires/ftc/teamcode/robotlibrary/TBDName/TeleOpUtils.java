@@ -12,8 +12,8 @@ public class TeleOpUtils {
     private Gamepad gamepad2;
 
     public TeleOpUtils(Gamepad gamepad1, Gamepad gamepad2) {
-        gamepad1 = this.gamepad1;
-        gamepad2 = this.gamepad2;
+        this.gamepad1 = gamepad1;
+        this.gamepad2 = gamepad2;
     }
 
     public double scaleInput(double dVal) {
