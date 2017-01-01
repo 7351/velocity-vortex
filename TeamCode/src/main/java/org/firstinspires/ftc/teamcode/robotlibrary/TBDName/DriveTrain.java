@@ -68,13 +68,21 @@ public class DriveTrain {
     }
 
     public void powerLeft(double power) {
-        LeftFrontMotor.setPower(Range.clip(power, -1, 1));
-        LeftBackMotor.setPower(Range.clip(power, -1, 1));
+        double clippedPower = Range.clip(power, -1, 1);
+        double previousPower = LeftFrontMotor.getPower();
+        if (clippedPower != previousPower) {
+            LeftFrontMotor.setPower(clippedPower);
+            LeftBackMotor.setPower(clippedPower);
+        }
     }
 
     public void powerRight(double power) {
-        RightFrontMotor.setPower(Range.clip(power, -1, 1));
-        RightBackMotor.setPower(Range.clip(power, -1, 1));
+        double clippedPower = Range.clip(power, -1, 1);
+        double previousPower = RightFrontMotor.getPower();
+        if (clippedPower != previousPower) {
+            RightFrontMotor.setPower(clippedPower);
+            RightBackMotor.setPower(clippedPower);
+        }
     }
 
     public void stopRobot() {

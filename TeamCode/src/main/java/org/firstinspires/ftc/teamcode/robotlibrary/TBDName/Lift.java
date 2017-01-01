@@ -1,0 +1,39 @@
+package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+
+/**
+ * Created by Dynamic Signals on 12/27/2016.
+ */
+
+public class Lift {
+
+    public DcMotor LiftMotor;
+    public Servo LiftServo;
+
+    public double minimum = 0; // The minimum (down) servo position
+    public double ideal = 0.6; // The ideal (closed) position
+    public double maximum = 1; // The maximum (up) servo position (released)
+    public double servoIncrement = 0.05;
+    public double currentServoPosition;
+
+    public Lift(HardwareMap hardwareMap) {
+        LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
+        LiftServo = hardwareMap.servo.get("LiftServo");
+
+        currentServoPosition = minimum;
+    }
+
+    public void incrementServo() {
+
+        currentServoPosition += servoIncrement;
+    }
+
+    public void decrementServo() {
+        currentServoPosition -= servoIncrement;
+    }
+
+}
