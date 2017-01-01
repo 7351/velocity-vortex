@@ -9,10 +9,11 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 
 public class EncoderTurn implements EncoderRoutine {
 
-    private double turnPerDegree = ((GearRatio * SprocketRatio) * 28)/360;
-
+    private int turnPerDegree = (int) Math.round(((GearRatio * SprocketRatio) * 28)/360);
     private DriveTrain driveTrain;
+    private GyroUtils gyroUtils;
     private final double power = 0.55;
+    int turnDegree;
     private int encoderCounts;
     public GyroUtils.Direction turnDirection;
 
@@ -21,14 +22,27 @@ public class EncoderTurn implements EncoderRoutine {
      *
      * @param driveTrain - The drive train object that should be initialized
      */
-    public EncoderTurn(DriveTrain driveTrain, int degreesToTurn, GyroUtils.Direction turnDirection) {
+    public EncoderTurn(DriveTrain driveTrain, GyroUtils gyroUtils, int degree) {
         this.driveTrain = driveTrain;
-        this.turnDirection = turnDirection;
+        this.gyroUtils = gyroUtils;
+
+        turnDegree = degree;
+
+        int currentDegree = gyroUtils.spoofedZero(degree);
+
+        if (currentDegree > 0 && currentDegree <= 90) { // We need to turn counterclockwise
+            int error_degrees = Math.abs(0 - currentDegree);
+            turnDirection = GyroUtils.Direction.COUNTERCLOCKWISE;
+            encoderCounts = error_degrees * turnPerDegree;
+        }
+
+        if (currentDegree >= 270 && currentDegree < 360) { // We need to turn clockwise
+            int error_degrees = Math.abs(90 - (currentDegree - 270));
+            turnDirection = GyroUtils.Direction.CLOCKWISE;
+            encoderCounts = error_degrees * turnPerDegree;
+        }
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //int currentPos = gyroSensor.getHeading();
-        encoderCounts = degreesToTurn * (int)turnPerDegree;
 
         switch (turnDirection) {
             case CLOCKWISE:
@@ -67,12 +81,20 @@ public class EncoderTurn implements EncoderRoutine {
         switch (turnDirection) {
             case CLOCKWISE:
                 if (driveTrain.RightFrontMotor.getCurrentPosition() < -encoderCounts) {
-                    return true;
+                    if (gyroUtils.isGyroInTolerance(turnDegree, 3)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
                 break;
             case COUNTERCLOCKWISE:
                 if (driveTrain.RightFrontMotor.getCurrentPosition() > encoderCounts) {
-                    return true;
+                    if (gyroUtils.isGyroInTolerance(turnDegree, 3)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
                 break;
         }
