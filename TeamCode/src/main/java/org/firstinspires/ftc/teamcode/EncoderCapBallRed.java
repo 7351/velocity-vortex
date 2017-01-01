@@ -8,7 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
 
 /**
  * Created by Leo on 10/16/2016.
@@ -19,20 +22,13 @@ public class EncoderCapBallRed extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
-
     DriveTrain driveTrain;
-
     GyroUtils gyroUtils;
-
     ColorUtils colorUtils;
-
     GyroSensor gyro;
-
-    DcMotor FlyWheelMotor;
-
-    DcMotor IntakeB;
-
-    DcMotor IntakeA;
+    Intake intake;
+    FlyWheel flyWheel;
+    EncoderDrive drive;
 
 
 
@@ -42,9 +38,8 @@ public class EncoderCapBallRed extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
-        FlyWheelMotor = hardwareMap.dcMotor.get("FlyWheelMotor");
-        IntakeB = hardwareMap.dcMotor.get("IntakeB");
-        IntakeA = hardwareMap.dcMotor.get("IntakeA");
+        flyWheel = new FlyWheel(hardwareMap);
+        intake = new Intake(hardwareMap);
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -71,23 +66,21 @@ public class EncoderCapBallRed extends OpMode {
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
-            driveTrain.RightFrontMotor.setTargetPosition(500);
-            if (driveTrain.RightFrontMotor.isBusy()) {
-                driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                driveTrain.powerRight(.5);
-                driveTrain.powerLeft(.5);
-            } else {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 500, 0.5);
+                drive.run();
+            }
+            if (drive.isCompleted()) {
                 driveTrain.stopRobot();
-                driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 time.reset();
                 stage++;
             }
+
         }
 
         if (stage == 2) {
             if (time.time() > 0.15) {
-                stage = 100;
+                stage++;
                 time.reset();
             }
         }
@@ -121,7 +114,7 @@ public class EncoderCapBallRed extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-                FlyWheelMotor.setPower(.3);
+                flyWheel.FlyWheelMotor.setPower(.3);
             }
         }
 
@@ -138,7 +131,7 @@ public class EncoderCapBallRed extends OpMode {
         {
             if(time.time() < 2.5)
             {
-                IntakeB.setPower(.7);
+                intake.setIntakePower(Intake.IntakeSpec.B, 0.7);
             }
             else
             {
@@ -150,7 +143,7 @@ public class EncoderCapBallRed extends OpMode {
         if (stage == 8)
         {
             if (time.time() < .35)
-                IntakeA.setPower(1);
+                intake.setIntakePower(Intake.IntakeSpec.A, 1);
             else
             {
                 time.reset();
@@ -162,9 +155,9 @@ public class EncoderCapBallRed extends OpMode {
         {
             if(time.time() > 2)
             {
-                IntakeB.setPower(0);
-                IntakeA.setPower(0);
-                FlyWheelMotor.setPower(0);
+                intake.stopIntake(Intake.IntakeSpec.A);
+                intake.stopIntake(Intake.IntakeSpec.B);
+                flyWheel.FlyWheelMotor.setPower(0);
                 time.reset();
                 stage++;
             }
