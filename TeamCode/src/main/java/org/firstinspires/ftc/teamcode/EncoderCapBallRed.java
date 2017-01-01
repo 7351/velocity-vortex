@@ -63,25 +63,26 @@ public class EncoderCapBallRed extends OpMode {
             if (!gyro.isCalibrating()) {
                 stage++;
                 time.reset();
+                driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 450, 0.5);
+                drive = new EncoderDrive(driveTrain, 4 * 460, 0.25);
                 drive.run();
             }
             if (drive.isCompleted()) {
-                drive.completed();
+                driveTrain.stopRobot();
                 time.reset();
                 stage++;
             }
 
         }
 
-        if (stage == 2) {
-            if (time.time() > 0.15) {
+        /*if (stage == 2) {
+            if (time.time() > 0.35) {
                 drive = null;
                 stage++;
                 time.reset();
@@ -91,12 +92,12 @@ public class EncoderCapBallRed extends OpMode {
         if (stage == 3){
             if(turn == null)
             {
-                turn = new EncoderTurn(driveTrain, 40, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 45, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
                 turn.completed();
-                stage = 100;
+                stage++;
                 time.reset();
             }
         }
@@ -111,16 +112,15 @@ public class EncoderCapBallRed extends OpMode {
 
         if (stage == 5)
         {
-            if (time.time() < 1.05)
-            {
-                driveTrain.driveStraight();
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 959, 0.35);
+                drive.run();
             }
-            else
-            {
-                driveTrain.stopRobot();
-                stage++;
+            if (drive.isCompleted()) {
+                drive.completed();
                 time.reset();
                 flyWheel.FlyWheelMotor.setPower(.3);
+                stage++;
             }
         }
 
@@ -128,6 +128,7 @@ public class EncoderCapBallRed extends OpMode {
         {
             if (time.time() > 2)
             {
+                drive = null;
                 time.reset();
                 stage++;
             }
@@ -186,12 +187,14 @@ public class EncoderCapBallRed extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
             }
-        }
+        }*/
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
+        telemetry.addData("Right Power: ", driveTrain.RightFrontMotor.getPower());
+        telemetry.addData("Left Power: ", driveTrain.LeftFrontMotor.getPower());
         /*telemetry.addData("Color: ", String.valueOf(colorUtils.lineColorSensor.red()));
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
