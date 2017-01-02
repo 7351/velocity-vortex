@@ -30,6 +30,8 @@ public class EncoderTurnTest extends OpMode {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
+
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /* Encoder drive sequence
@@ -53,11 +55,12 @@ public class EncoderTurnTest extends OpMode {
         telemetry.addData("Stage", stage);
 
         if (stage == 0) {
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 180, GyroUtils.Direction.CLOCKWISE);
+            if(turn == null)
+            {
+                turn = new EncoderTurn(driveTrain, 180, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
-            if (turn.isCompleted()) {
+            if (turn.isCompleted()){
                 turn.completed();
                 stage++;
             }

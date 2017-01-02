@@ -43,6 +43,7 @@ public class EncoderCapBallRed extends OpMode {
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
 
+        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         gyro = gyroUtils.gyro;
@@ -64,24 +65,25 @@ public class EncoderCapBallRed extends OpMode {
                 stage++;
                 time.reset();
                 driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 4 * 460, 0.25);
+                drive = new EncoderDrive(driveTrain, 4 * 460, 1);
                 drive.run();
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
                 time.reset();
-                stage++;
+                stage = 100;
             }
 
         }
 
-        /*if (stage == 2) {
+        if (stage == 2) {
             if (time.time() > 0.35) {
                 drive = null;
                 stage++;
@@ -187,7 +189,7 @@ public class EncoderCapBallRed extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
             }
-        }*/
+        }
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
