@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "FlyWheelPID", group = "Testing")
+@Disabled
 public class FlyWheelPID extends OpMode {
 
     private boolean DPadUp = false;
