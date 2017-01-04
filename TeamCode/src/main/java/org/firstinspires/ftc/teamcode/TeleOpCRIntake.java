@@ -199,7 +199,7 @@ public class TeleOpCRIntake extends OpMode {
         double right_joystick_y = gamepad2.right_stick_y;
         boolean liftManualMode = gamepad2.left_bumper;
 
-        lift.LiftMotor.setPower(teleOpUtils.scaleInput(right_joystick_y));
+        lift.LiftMotor1.setPower(teleOpUtils.scaleInput(right_joystick_y));
         intake.setIntakePower(IntakeSpec.B, teleOpUtils.scaleInput(right_joystick_y)); // Kevin is using 2 motors for the lift
 
         if (!liftManualMode) { // If it's automatic
