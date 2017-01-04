@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.util.Range;
 
 public class Lift {
 
-    public DcMotor LiftMotor;
+    public DcMotor LiftMotor1;
+    public DcMotor LiftMotor2;
     public Servo LiftServo;
 
     public double minimum = 0; // The minimum (down) servo position
@@ -21,10 +22,16 @@ public class Lift {
     public double currentServoPosition;
 
     public Lift(HardwareMap hardwareMap) {
-        LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
+        LiftMotor1 = hardwareMap.dcMotor.get("LiftMotor");
+        LiftMotor2 = hardwareMap.dcMotor.get("LiftMotor2");
         LiftServo = hardwareMap.servo.get("LiftServo");
 
         currentServoPosition = minimum;
+    }
+
+    public void setLiftPower(double power) {
+        LiftMotor1.setPower(power);
+        LiftMotor2.setPower(power);
     }
 
     public void incrementServo() {
