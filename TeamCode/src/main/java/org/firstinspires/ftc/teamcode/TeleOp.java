@@ -67,11 +67,11 @@ public class TeleOp extends OpMode {
         }
 
         if (gamepad1.left_bumper) {
-            intake.setIntakePower(IntakeSpec.B, -1);
+            intake.setIntakePower(IntakeSpec.B, 1);
         }
 
         if (gamepad1.right_bumper) {
-            intake.setIntakePower(IntakeSpec.B, 1);
+            intake.setIntakePower(IntakeSpec.B, -1);
         }
 
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
@@ -226,7 +226,7 @@ public class TeleOp extends OpMode {
         double right_joystick_y = gamepad2.right_stick_y;
         boolean liftManualMode = gamepad2.left_bumper;
 
-        lift.LiftMotor.setPower(teleOpUtils.scaleInput(right_joystick_y));
+        lift.setLiftPower(teleOpUtils.scaleInput(right_joystick_y));
 
         if (!liftManualMode) { // If it's automatic
             if (gamepad2.dpad_up) {
