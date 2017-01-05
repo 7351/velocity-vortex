@@ -18,12 +18,13 @@ public class EncoderDriveStraightTest extends OpMode {
 
     int stage = 0;
 
+    EncoderDrive drive;
+
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
 
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -37,20 +38,16 @@ public class EncoderDriveStraightTest extends OpMode {
 
     @Override
     public void start() {
-        driveTrain.RightFrontMotor.setTargetPosition(-1000);
-
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        driveTrain.powerLeft(-0.75);
-        driveTrain.powerRight(-0.75);
+        drive = new EncoderDrive(driveTrain, 1000, 0.75);
+        drive.run();
 
     }
 
     @Override
     public void loop() {
 
-        if (driveTrain.RightFrontMotor.getCurrentPosition() < -1000) {
-            driveTrain.stopRobot();
+        if (drive.isCompleted()) {
+            drive.completed();
         }
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
