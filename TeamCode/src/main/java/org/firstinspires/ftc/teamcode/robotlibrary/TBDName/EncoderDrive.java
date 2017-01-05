@@ -28,19 +28,6 @@ public class EncoderDrive implements EncoderRoutine {
 
     }
 
-    public EncoderDrive(DriveTrain driveTrain, int targetPosition) {
-        this.driveTrain = driveTrain;
-        this.targetPosition = targetPosition;
-        this.power = 0.75;
-
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        driveTrain.RightFrontMotor.setTargetPosition(targetPosition);
-
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-
     @Override
     public boolean isCompleted() {
         if (Math.signum(targetPosition) == 1) { // If the target is positive

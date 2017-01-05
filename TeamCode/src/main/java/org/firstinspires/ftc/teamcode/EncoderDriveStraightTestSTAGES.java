@@ -38,10 +38,9 @@ public class EncoderDriveStraightTestSTAGES extends OpMode {
     @Override
     public void loop() {
 
-        if (stage == 0){
-            if (drive == null)
-            {
-                drive = new EncoderDrive(driveTrain, 1000, 0.75);
+        if (stage == 0) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 500, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -49,17 +48,16 @@ public class EncoderDriveStraightTestSTAGES extends OpMode {
                 stage++;
             }
         }
-        if (stage == 1)
-        {
+        if (stage == 1) {
             if (time.time() > 3) {
                 driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                drive = null;
                 stage++;
             }
         }
-        if (stage == 2){
-            if (drive == null)
-            {
-                drive = new EncoderDrive(driveTrain, 1000, 0.75);
+        if (stage == 2) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 500, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()) {

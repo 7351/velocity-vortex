@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "EncoderBeaconBlue", group = "Testing")
+@Autonomous(name = "EncoderBeaconBlue", group = "Encoder")
 public class EncoderBeaconBlue extends OpMode {
 
     int stage = 0;
@@ -33,8 +33,6 @@ public class EncoderBeaconBlue extends OpMode {
     EncoderDrive drive;
     EncoderTurn turn;
 
-
-
     @Override
     public void init() {
 
@@ -44,9 +42,6 @@ public class EncoderBeaconBlue extends OpMode {
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
 
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         gyro = gyroUtils.gyro;
         gyro.calibrate();
 
@@ -54,31 +49,38 @@ public class EncoderBeaconBlue extends OpMode {
 
     @Override
     public void start() {
+
         gyro.calibrate();
         colorUtils.lineColorSensor.enableLed(true);
+
     }
 
     @Override
     public void loop() {
-
         if (stage == 0) { //calibrates to 0
             if (!gyro.isCalibrating()) {
-                driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 nextStage();
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         } if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2 * 460, 0.25);
+                drive = new EncoderDrive(driveTrain, 200, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
-                driveTrain.stopRobot();
+                drive.completed();
                 nextStage();
             }
 
-        } if (stage == 2) {
+        }
+        if (stage == 2) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                drive = null;
+                nextStage();
+            }
+        }
+
+        /*if (stage == 2) {
             flyWheel.currentlyRunning = true;
             flyWheel.currentPower = flyWheel.defaultStartingPower; // Start the fly wheel with default launch power
             nextStage();
@@ -108,7 +110,7 @@ public class EncoderBeaconBlue extends OpMode {
             }
         } if (stage == 8) {
 
-        }
+        }*/
 
         telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
