@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
 
-    public final double DIFFERENCE = 0.04;
+    public final double DIFFERENCE = 0;
     public DcMotor LeftFrontMotor, RightFrontMotor, LeftBackMotor, RightBackMotor;
 
     public DriveTrain(HardwareMap hardwareMap) {

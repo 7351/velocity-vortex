@@ -21,15 +21,10 @@ public class EncoderDrive implements EncoderRoutine {
         this.power = power;
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Set the target position for front motors (Right only)
-        driveTrain.LeftFrontMotor.setTargetPosition(targetPosition);
         driveTrain.RightFrontMotor.setTargetPosition(targetPosition);
 
-        // Set the run mode for only the front motors (Right only)
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
 
@@ -39,15 +34,10 @@ public class EncoderDrive implements EncoderRoutine {
         this.power = 0.75;
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Set the target position for front motors (Right only)
         driveTrain.RightFrontMotor.setTargetPosition(targetPosition);
-        driveTrain.LeftFrontMotor.setTargetPosition(targetPosition);
 
-        // Set the run mode for only the front motors (Right only)
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
@@ -68,14 +58,11 @@ public class EncoderDrive implements EncoderRoutine {
     @Override
     public void completed() {
         driveTrain.stopRobot();
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
     @Override
     public void run() {
-
 
         // Set the power for all 4 motors
         driveTrain.powerLeft((power > 0 && targetPosition < 0) ? -1 * power : power);

@@ -24,7 +24,6 @@ public class EncoderDriveStraightTest extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
@@ -38,21 +37,19 @@ public class EncoderDriveStraightTest extends OpMode {
 
     @Override
     public void start() {
-        driveTrain.RightFrontMotor.setTargetPosition(5000);
-        driveTrain.LeftFrontMotor.setTargetPosition(5000);
+        driveTrain.RightFrontMotor.setTargetPosition(-1000);
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        driveTrain.powerLeft(0.5);
-        driveTrain.powerRight(0.5);
+        driveTrain.powerLeft(-0.75);
+        driveTrain.powerRight(-0.75);
 
     }
 
     @Override
     public void loop() {
 
-        if (!driveTrain.RightFrontMotor.isBusy()) {
+        if (driveTrain.RightFrontMotor.getCurrentPosition() < -1000) {
             driveTrain.stopRobot();
         }
 

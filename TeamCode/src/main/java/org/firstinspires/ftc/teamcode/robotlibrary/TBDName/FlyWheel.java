@@ -21,4 +21,17 @@ public class FlyWheel {
         FlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // We now are going to start using PID for our launches to make them more consistent
     }
+
+    public void powerMotor() {
+        if (currentlyRunning) {
+            if (FlyWheelMotor.getPower() != currentPower) {
+                FlyWheelMotor.setPower(currentPower);
+            }
+        } else {
+            FlyWheelMotor.setPower(0);
+        }
+    }
+
+
+
 }
