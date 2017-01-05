@@ -72,7 +72,7 @@ public class EncoderCapBallRed extends OpMode {
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 4 * 460, 1);
+                drive = new EncoderDrive(driveTrain, 460, .75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -83,7 +83,7 @@ public class EncoderCapBallRed extends OpMode {
 
         }
 
-        if (stage == 2) {
+        /*if (stage == 2) {
             if (time.time() > 0.35) {
                 drive = null;
                 stage++;
