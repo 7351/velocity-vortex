@@ -64,12 +64,12 @@ public class EncoderBeaconBlue extends OpMode {
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         } if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 200, 0.5);
+                drive = new EncoderDrive(driveTrain, 50, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()) {
                 drive.completed();
-                nextStage();
+                stage++;
             }
 
         }
