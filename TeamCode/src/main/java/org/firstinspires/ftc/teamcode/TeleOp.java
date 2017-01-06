@@ -75,7 +75,9 @@ public class TeleOp extends OpMode {
         }
 
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
-            intake.stopIntake(IntakeSpec.B);
+            intake.setIntakePower(IntakeSpec.B, 1);
+            // As per Kevin's request on 1/5/17, the Intake B should
+            // run in reverse when no buttons are pushed
         }
 
         /*
