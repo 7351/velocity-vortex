@@ -11,11 +11,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
 
     public DcMotor IntakeA; // This is the blue roller
-    public CRServo IntakeBServo; // This is the silver roller
+    public CRServo IntakeBServo1; // This is the silver roller
+    public CRServo IntakeBServo2; // Second servo on port 5
+    // Kevin requested two servos for Intake B on 1/8/17
 
     public Intake(HardwareMap hardwareMap) {
         IntakeA = hardwareMap.dcMotor.get("IntakeA");
-        IntakeBServo = hardwareMap.crservo.get("IntakeServo");
+        IntakeBServo1 = hardwareMap.crservo.get("IntakeServoB1");
+        IntakeBServo2 = hardwareMap.crservo.get("IntakeServoB2");
     }
 
     public void setIntakePower(IntakeSpec spec, double power) {
@@ -24,7 +27,8 @@ public class Intake {
                 IntakeA.setPower(power);
                 break;
             case B:
-                IntakeBServo.setPower(power);
+                IntakeBServo1.setPower(power);
+                IntakeBServo2.setPower(power);
                 break;
         }
     }
@@ -37,11 +41,15 @@ public class Intake {
             case B:
                 setIntakePower(IntakeSpec.B, -0.05);
                 break;
+            case BOTH:
+                stopIntake(IntakeSpec.A);
+                stopIntake(IntakeSpec.B);
         }
     }
 
     public enum IntakeSpec {
         A,
-        B
+        B,
+        BOTH
     }
 }
