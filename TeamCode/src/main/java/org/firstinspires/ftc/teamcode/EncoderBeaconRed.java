@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  */
 
 @Autonomous(name = "EncoderCornerBeaconRed", group = "Encoder")
-public class EncoderBeaconRed extends OpMode {
+public class   EncoderBeaconRed extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -158,7 +158,7 @@ public class EncoderBeaconRed extends OpMode {
 
         if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1700, .75);
+                drive = new EncoderDrive(driveTrain, 2200, .75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -178,7 +178,7 @@ public class EncoderBeaconRed extends OpMode {
 
         if (stage == 14) { // Turn to 145
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 30, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 17, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -197,7 +197,7 @@ public class EncoderBeaconRed extends OpMode {
         }
         if (stage == 20) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 700, .75);
+                drive = new EncoderDrive(driveTrain, 800, .75);
                 drive.run();
             }
             if (drive.isCompleted()){
