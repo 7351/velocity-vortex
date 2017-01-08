@@ -57,7 +57,7 @@ public class EncoderTurnTest extends OpMode {
         if (stage == 0) {
             if(turn == null)
             {
-                turn = new EncoderTurn(driveTrain, 180, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 90, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){

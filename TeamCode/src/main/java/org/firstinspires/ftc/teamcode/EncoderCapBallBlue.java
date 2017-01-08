@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "EncoderCapBallRed", group = "Testing")
-public class EncoderCapBallRed extends OpMode {
+@Autonomous(name = "EncoderCapBallBlue", group = "Testing")
+public class EncoderCapBallBlue extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -93,7 +93,7 @@ public class EncoderCapBallRed extends OpMode {
         if (stage == 3){
             if(turn == null)
             {
-                turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){

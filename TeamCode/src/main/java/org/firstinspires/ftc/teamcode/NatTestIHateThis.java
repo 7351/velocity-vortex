@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
@@ -12,8 +13,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
  * Created by Dynamic Signals on 12/6/2016.
  */
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "EncoderDriveTestSTAGES", group = "Testing")
-public class EncoderDriveStraightTestSTAGES extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "IHateThis", group = "Testing")
+public class NatTestIHateThis extends OpMode {
 
     DriveTrain driveTrain;
 
@@ -38,9 +39,10 @@ public class EncoderDriveStraightTestSTAGES extends OpMode {
     @Override
     public void loop() {
 
-        if (stage == 0) {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 500, 0.75);
+        if (stage == 0){
+            if (drive == null)
+            {
+                drive = new EncoderDrive(driveTrain, 300, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -48,16 +50,17 @@ public class EncoderDriveStraightTestSTAGES extends OpMode {
                 stage++;
             }
         }
-        if (stage == 1) {
+        if (stage == 1)
+        {
             if (time.time() > 3) {
                 driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                drive = null;
                 stage++;
             }
         }
-        if (stage == 2) {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 500, 0.75);
+        if (stage == 2){
+            if (drive == null)
+            {
+                drive = new EncoderDrive(driveTrain, -200, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()) {

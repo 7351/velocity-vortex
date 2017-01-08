@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake.IntakeSpec;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
@@ -30,9 +32,9 @@ public class RunToCapBallFarBlue extends OpMode {
 
     DcMotor FlyWheelMotor;
 
-    DcMotor IntakeB;
-
     DcMotor IntakeA;
+
+    Intake intake;
 
 
 
@@ -42,10 +44,9 @@ public class RunToCapBallFarBlue extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
+        intake = new Intake(hardwareMap);
         FlyWheelMotor = hardwareMap.dcMotor.get("FlyWheelMotor");
-        IntakeB = hardwareMap.dcMotor.get("IntakeB");
         IntakeA = hardwareMap.dcMotor.get("IntakeA");
-
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
@@ -87,10 +88,10 @@ public class RunToCapBallFarBlue extends OpMode {
         }
 
         if (stage == 3){
-            if(gyro.getHeading() > 350 || gyro.getHeading() < 29)
+            if(gyro.getHeading() > 350 || gyro.getHeading() < 28)
             {
-                driveTrain.powerLeft(.15);
-                driveTrain.powerRight(-.15);
+                driveTrain.powerLeft(.3);
+                driveTrain.powerRight(-.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -106,7 +107,7 @@ public class RunToCapBallFarBlue extends OpMode {
 
         if (stage == 5)
         {
-            if (time.time() < .90)
+            if (time.time() < .8)
             {
                 driveTrain.driveStraight();
             }
@@ -115,7 +116,7 @@ public class RunToCapBallFarBlue extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-                FlyWheelMotor.setPower(.25);
+                FlyWheelMotor.setPower(.3);
             }
         }
 
@@ -130,9 +131,8 @@ public class RunToCapBallFarBlue extends OpMode {
 
         if (stage == 7)
         {
-            if(time.time() < 2.5)
-            {
-                IntakeB.setPower(.7);
+            if(time.time() < 2.5) {
+                intake.setIntakePower(IntakeSpec.B, -1);
             }
             else
             {
@@ -156,7 +156,7 @@ public class RunToCapBallFarBlue extends OpMode {
         {
             if(time.time() > 2)
             {
-                IntakeB.setPower(0);
+                intake.stopIntake(Intake.IntakeSpec.B);
                 IntakeA.setPower(0);
                 FlyWheelMotor.setPower(0);
                 time.reset();
@@ -175,15 +175,14 @@ public class RunToCapBallFarBlue extends OpMode {
 
 
         if (stage == 11) {
-            if (!colorUtils.aboveBlueLine() && time.time() < 1) {
-                driveTrain.driveStraight();
+            if (!colorUtils.aboveBlueLine() && time.time() < .7) {
+                driveTrain.driveStraight(.8);
             } else {
                 driveTrain.stopRobot();
                 stage++;
             }
         }
-
-        telemetry.addData("Above Blue Line?: ", String.valueOf(colorUtils.aboveBlueLine()));
+        telemetry.addData("Color: ", String.valueOf(colorUtils.lineColorSensor.red()));
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
         telemetry.addData("Time", String.valueOf(time.time()));

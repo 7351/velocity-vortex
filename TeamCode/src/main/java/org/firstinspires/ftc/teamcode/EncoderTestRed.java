@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake.IntakeSpec;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
@@ -14,25 +15,41 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
 
+import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
+
 /**
- * Created by Leo on 10/16/2016.
+ * Created by Dynamic Signals on 12/6/2016.
  */
 
-@Autonomous(name = "EncoderCapBallRed", group = "Testing")
-public class EncoderCapBallRed extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "EncoderTestRed", group = "Testing")
+public class EncoderTestRed extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
+
     DriveTrain driveTrain;
+
     GyroUtils gyroUtils;
+
     ColorUtils colorUtils;
+
     GyroSensor gyro;
+
+    DcMotor FlyWheelMotor;
+
+    DcMotor IntakeA;
+
     Intake intake;
-    FlyWheel flyWheel;
+
     EncoderDrive drive;
+
     EncoderTurn turn;
-
-
 
     @Override
     public void init() {
@@ -40,11 +57,9 @@ public class EncoderCapBallRed extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
-        flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
-
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FlyWheelMotor = hardwareMap.dcMotor.get("FlyWheelMotor");
+        IntakeA = hardwareMap.dcMotor.get("IntakeA");
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
@@ -60,51 +75,47 @@ public class EncoderCapBallRed extends OpMode {
     @Override
     public void loop() {
 
-        if (stage == 0) {//calibrates to 0
-            if (!gyro.isCalibrating()) {
-                stage++;
-                time.reset();
-                driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
-            telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
-        }
-
-        if (stage == 1) { //drives forward 0.25 seconds
+        if (stage == 0) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 300, .75);
+                drive = new EncoderDrive(driveTrain, 460, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                time.reset();
+                drive.completed();
                 stage++;
             }
-
         }
-
-        if (stage == 2) {
-            if (time.time() > 0.35) {
+        if (stage == 1) {
+            if (time.time() > 3) {
+                driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 drive = null;
                 stage++;
-                time.reset();
             }
         }
-        if (stage == 3){
-            if(turn == null)
-            {
-                turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
+        /*if (stage == 2) {
+            if (turn == null) {
+                turn = new EncoderTurn(driveTrain, 45, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
-            if (turn.isCompleted()){
+            if (turn.isCompleted()) {
                 turn.completed();
                 stage++;
-                time.reset();
             }
         }
-        if (stage == 4) {
-            if (time.time() > 0.15) {
+
+        if (stage == 3){
+            if(time.time() < 1)
+            {
+                driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 turn = null;
+                stage = 100;
+            }
+        }
+        if (stage == 4) { //drives forward 0.25 seconds
+            if (time.time() <= 0.325) {
+                driveTrain.driveStraight();
+            } else {
+                driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
@@ -112,23 +123,23 @@ public class EncoderCapBallRed extends OpMode {
 
         if (stage == 5)
         {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1400, 0.5);
-                drive.run();
+            if (time.time() < .8)
+            {
+                driveTrain.driveStraight();
             }
-            if (drive.isCompleted()) {
-                drive.completed();
-                time.reset();
-                flyWheel.FlyWheelMotor.setPower(.65);
+            else
+            {
+                driveTrain.stopRobot();
                 stage++;
+                time.reset();
+                FlyWheelMotor.setPower(.3);
             }
         }
 
         if(stage == 6)
         {
-            if (time.time() > 3)
+            if (time.time() > 2)
             {
-                drive = null;
                 time.reset();
                 stage++;
             }
@@ -136,9 +147,8 @@ public class EncoderCapBallRed extends OpMode {
 
         if (stage == 7)
         {
-            if(time.time() < 2.5)
-            {
-                intake.setIntakePower(Intake.IntakeSpec.B, -0.7);
+            if(time.time() < 2.5) {
+                intake.setIntakePower(IntakeSpec.B, -1);
             }
             else
             {
@@ -150,7 +160,7 @@ public class EncoderCapBallRed extends OpMode {
         if (stage == 8)
         {
             if (time.time() < .35)
-                intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                IntakeA.setPower(1);
             else
             {
                 time.reset();
@@ -160,11 +170,11 @@ public class EncoderCapBallRed extends OpMode {
 
         if (stage == 9)
         {
-            if(time.time() > 4)
+            if(time.time() > 2.5)
             {
-                intake.stopIntake(Intake.IntakeSpec.A);
                 intake.stopIntake(Intake.IntakeSpec.B);
-                flyWheel.FlyWheelMotor.setPower(0);
+                IntakeA.setPower(0);
+                FlyWheelMotor.setPower(0);
                 time.reset();
                 stage++;
             }
@@ -180,28 +190,24 @@ public class EncoderCapBallRed extends OpMode {
         }
 
 
-        if (stage == 11)
-        {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1600, 0.5);
-                drive.run();
-            }
-            if (drive.isCompleted()) {
-                drive.completed();
-                time.reset();
+        if (stage == 11) {
+            if (!colorUtils.aboveRedLine() && time.time() < .7) {
+                driveTrain.driveStraight(.8);
+            } else {
+                driveTrain.stopRobot();
                 stage++;
             }
-        }
+        }*/
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
-        telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
-        /*telemetry.addData("Color: ", String.valueOf(colorUtils.lineColorSensor.red()));*/
+        telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());/*
+        telemetry.addData("Color: ", String.valueOf(colorUtils.lineColorSensor.red()));
         telemetry.addData("Stage", String.valueOf(stage));
-        /*telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
-        telemetry.addData("Time", String.valueOf(time.time()));
-        // telemetry.addData("Fly Wheel Power: ", String.valueOf())*/
+        telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
+        telemetry.addData("Time", String.valueOf(time.time()));*/
+        // telemetry.addData("Fly Wheel Power: ", String.valueOf())
 
     }
 }
