@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 
 public class EncoderTurn implements EncoderRoutine {
 
-    private double turnPerDegree = (((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5;
+    private double turnPerDegree = ((((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5);
 
     private DriveTrain driveTrain;
     private final double power = 0.45;
@@ -29,7 +29,7 @@ public class EncoderTurn implements EncoderRoutine {
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //int currentPos = gyroSensor.getHeading();
-        encoderCounts = 1225;//degreesToTurn * (int)turnPerDegree;
+        encoderCounts = degreesToTurn * (int)turnPerDegree;
 
         switch (turnDirection) {
             case CLOCKWISE:

@@ -7,6 +7,8 @@ public class EncoderDrive implements EncoderRoutine {
     DriveTrain driveTrain;
     double power;
     public int targetPosition;
+    private int startingPositionLeft;
+    private int startingPositionRight;
 
     // We only want to use the FrontRightMotor encoder
 
@@ -20,22 +22,28 @@ public class EncoderDrive implements EncoderRoutine {
         this.targetPosition = targetPosition;
         this.power = power;
 
+        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        driveTrain.RightFrontMotor.setTargetPosition(targetPosition);
-
+        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        startingPositionLeft = driveTrain.LeftFrontMotor.getCurrentPosition();
+        startingPositionRight = driveTrain.RightFrontMotor.getCurrentPosition();
+
+        driveTrain.LeftFrontMotor.setTargetPosition(targetPosition + startingPositionLeft);
+        driveTrain.RightFrontMotor.setTargetPosition(targetPosition + startingPositionRight);
 
     }
 
     @Override
     public boolean isCompleted() {
         if (Math.signum(targetPosition) == 1) { // If the target is positive
-            if (driveTrain.RightFrontMotor.getCurrentPosition() > targetPosition) {
+            if (driveTrain.LeftFrontMotor.getCurrentPosition() > targetPosition + startingPositionLeft && driveTrain.RightFrontMotor.getCurrentPosition() > targetPosition + startingPositionRight) {
                 return true;
             }
         } else { // If it is negative
-            if (driveTrain.RightFrontMotor.getCurrentPosition() < targetPosition) {
+            if (driveTrain.LeftFrontMotor.getCurrentPosition() < targetPosition + startingPositionLeft && driveTrain.RightFrontMotor.getCurrentPosition() < targetPosition + startingPositionRight) {
                 return true;
             }
         }
@@ -45,6 +53,8 @@ public class EncoderDrive implements EncoderRoutine {
     @Override
     public void completed() {
         driveTrain.stopRobot();
+        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
