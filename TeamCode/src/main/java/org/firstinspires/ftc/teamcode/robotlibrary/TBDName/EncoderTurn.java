@@ -12,8 +12,10 @@ public class EncoderTurn implements EncoderRoutine {
     private double turnPerDegree = ((((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5);
 
     private DriveTrain driveTrain;
-    private final double power = 0.45;
+    private final double power = 0.65;
     private int encoderCounts;
+    private int startingPositionLeft;
+    private int startingPositionRight;
     public GyroUtils.Direction turnDirection;
 
     /**
@@ -28,20 +30,23 @@ public class EncoderTurn implements EncoderRoutine {
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        startingPositionLeft = driveTrain.LeftFrontMotor.getCurrentPosition();
+        startingPositionRight = driveTrain.RightFrontMotor.getCurrentPosition();
+
         //int currentPos = gyroSensor.getHeading();
         encoderCounts = degreesToTurn * (int)turnPerDegree;
 
         switch (turnDirection) {
             case CLOCKWISE:
-                driveTrain.LeftFrontMotor.setTargetPosition(encoderCounts);
-                driveTrain.RightFrontMotor.setTargetPosition(-encoderCounts);
+                driveTrain.LeftFrontMotor.setTargetPosition(startingPositionLeft + encoderCounts);
+                driveTrain.RightFrontMotor.setTargetPosition(startingPositionRight - encoderCounts);
 
                 driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case COUNTERCLOCKWISE:
-                driveTrain.LeftFrontMotor.setTargetPosition(-encoderCounts);
-                driveTrain.RightFrontMotor.setTargetPosition(encoderCounts);
+                driveTrain.LeftFrontMotor.setTargetPosition(startingPositionLeft - encoderCounts);
+                driveTrain.RightFrontMotor.setTargetPosition(startingPositionRight + encoderCounts);
 
                 driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
