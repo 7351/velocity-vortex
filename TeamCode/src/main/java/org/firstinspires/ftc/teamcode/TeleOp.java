@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.content.Context;
+import android.media.AudioManager;
+
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
@@ -23,6 +27,7 @@ public class TeleOp extends OpMode {
     private boolean DPadLeft = false;
     private boolean DPadUp2 = false;
     private boolean DPadDown2 = false;
+    private boolean RightTrigger = false;
     private DriveTrain driveTrain;
     private FlyWheel flyWheel;
     private Intake intake;
@@ -37,10 +42,19 @@ public class TeleOp extends OpMode {
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
+
+        AudioManager am =
+                (AudioManager) hardwareMap.appContext.getSystemService(Context.AUDIO_SERVICE);
+
+        am.setStreamVolume(
+                AudioManager.STREAM_MUSIC,
+                am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                0);
     }
 
     @Override
     public void loop() {
+
 
         /*
          * Controller 1 Controls --------------------------------------------------
@@ -75,9 +89,16 @@ public class TeleOp extends OpMode {
         }
 
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
-            intake.setIntakePower(IntakeSpec.B, 1);
-            // As per Kevin's request on 1/5/17, the Intake B should
-            // run in reverse when no buttons are pushed
+            intake.stopIntake(IntakeSpec.B);
+        }
+
+        if (gamepad1.right_bumper) {
+            if (!RightTrigger) {
+                SoundPlayer.getInstance().play(hardwareMap.appContext, R.raw.beah);
+                RightTrigger = true;
+            }
+        } else {
+            RightTrigger = false;
         }
 
         /*
