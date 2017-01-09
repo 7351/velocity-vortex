@@ -220,7 +220,7 @@ public class EncoderBeaconBlue extends OpMode {
 
         if (stage == 22) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 300, .25);
+                drive = new EncoderDrive(driveTrain, 200, .25);
                 drive.run();
             }
             if (drive.isCompleted()){
