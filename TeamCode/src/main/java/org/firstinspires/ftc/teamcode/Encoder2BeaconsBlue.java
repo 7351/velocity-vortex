@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "EncoderCornerBeaconRed", group = "Encoder")
-public class   EncoderBeaconRed extends OpMode {
+@Autonomous(name = "Encoder2BeaconsBlue", group = "Encoder")
+public class Encoder2BeaconsBlue extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -31,7 +31,7 @@ public class   EncoderBeaconRed extends OpMode {
     FlyWheel flyWheel;
     EncoderDrive drive;
     EncoderTurn turn;
-    private String alliance = "Red";
+    private String alliance = "Blue";
 
     @Override
     public void init() {
@@ -67,7 +67,7 @@ public class   EncoderBeaconRed extends OpMode {
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1000, .6);
+                drive = new EncoderDrive(driveTrain, 300, .6);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -87,67 +87,19 @@ public class   EncoderBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 3) {
-            double flyWheelLaunchPower = 0.65;
-            flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
-            stage++;
-        }
-
-        if (stage == 4) {
-            if (time.time() > 3) {
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 5) {
-            if (time.time() < 2) {
-                intake.setIntakePower(Intake.IntakeSpec.B, -1);
-                intake.setIntakePower(Intake.IntakeSpec.A, 1);
-            } else {
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 6) {
-            if (time.time() > 1.2) {
-                time.reset();
-                stage = 8;
-            }
-        }
-
-
-        if (stage == 8) {
-            if (time.time() > 2) {
-                intake.stopIntake(Intake.IntakeSpec.A);
-                intake.stopIntake(Intake.IntakeSpec.B);
-                flyWheel.FlyWheelMotor.setPower(0);
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 9) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-            }
-        }
-
-        if (stage == 10) { // Turn to 90
+        if (stage == 3) { // Turn to 90
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 40, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 30, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
-            if (turn.isCompleted()) {
+            if (turn.isCompleted() || colorUtils.aboveWhiteLine()) {
                 turn.completed();
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 11) {
+        if (stage == 4) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 turn = null;
@@ -156,9 +108,9 @@ public class   EncoderBeaconRed extends OpMode {
         }
 
 
-        if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
+        if (stage == 5) { //drives forward 33 inches in seconds // OUTDATED LENGTH
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1900, .75);
+                drive = new EncoderDrive(driveTrain, 3000, .75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -168,7 +120,7 @@ public class   EncoderBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 13) {
+        if (stage == 6) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 drive = null;
@@ -176,28 +128,28 @@ public class   EncoderBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 14) { // Turn to 145
+        if (stage == 7) { // Turn to 145
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 17, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 33, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
                 turn.completed();
-                stage = 19;
+                stage++;
                 time.reset();
             }
         }
 
-        if (stage == 19) {
+        if (stage == 8) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 turn = null;
                 time.reset();
             }
         }
-        if (stage == 20) {
+        if (stage == 9) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 800, .5);
+                drive = new EncoderDrive(driveTrain, 600, .5);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -207,7 +159,7 @@ public class   EncoderBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 21) {
+        if (stage == 10) {
             if (time.time() > .5) {
                 stage++;
                 drive = null;
@@ -217,7 +169,7 @@ public class   EncoderBeaconRed extends OpMode {
 
         // Initialize the beacon subroutine from BeaconSlamTest
 
-        if (stage == 22) {
+        if (stage == 11) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 200, .25);
                 drive.run();
@@ -228,14 +180,14 @@ public class   EncoderBeaconRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 23) {
+        if (stage == 12) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 drive = null;
                 time.reset();
             }
         }
-        if (stage == 24) {
+        if (stage == 13) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, -75, .5);
                 drive.run();
@@ -246,14 +198,14 @@ public class   EncoderBeaconRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 25) {
+        if (stage == 14) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 drive = null;
                 time.reset();
             }
         }
-        if (stage == 26) {
+        if (stage == 15) {
             switch (colorUtils.beaconColor()) {
                 case RED:
                     switch (alliance) {
@@ -299,9 +251,9 @@ public class   EncoderBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 27) {
+        if (stage == 16) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -800, .5);
+                drive = new EncoderDrive(driveTrain, -600, .5);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -311,9 +263,9 @@ public class   EncoderBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 28) {
+        if (stage == 17) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 75, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
@@ -324,7 +276,7 @@ public class   EncoderBeaconRed extends OpMode {
             }
         }
 
-        if (stage == 29) {
+        if (stage == 18) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 2000, .65);
                 drive.run();
@@ -333,6 +285,129 @@ public class   EncoderBeaconRed extends OpMode {
                 driveTrain.stopRobot();
                 time.reset();
                 stage++;
+            }
+        }
+
+        if (stage == 19) { // Turn to 145
+            if (turn == null) {
+                turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.CLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()) {
+                turn.completed();
+                stage = 19;
+                time.reset();
+            }
+        }
+
+        if (stage == 20) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                turn = null;
+                time.reset();
+            }
+        }
+        if (stage == 21) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 600, .5);
+                drive.run();
+            }
+            if (drive.isCompleted()){
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 22) {
+            if (time.time() > .5) {
+                stage++;
+                drive = null;
+                time.reset();
+            }
+        }
+
+        // Initialize the beacon subroutine from BeaconSlamTest
+
+        if (stage == 23) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 250, .25);
+                drive.run();
+            }
+            if (drive.isCompleted()){
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 24) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                drive = null;
+                time.reset();
+            }
+        }
+        if (stage == 25) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, -75, .5);
+                drive.run();
+            }
+            if (drive.isCompleted()){
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 26) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                drive = null;
+                time.reset();
+            }
+        }
+        if (stage == 27) {
+            switch (colorUtils.beaconColor()) {
+                case RED:
+                    switch (alliance) {
+                        case "Blue":
+                            if (time.time() > 5.1) {
+                                time.reset();
+                                stage = 21;
+                            }
+                            break;
+                        case "Red":
+                            time.reset();
+                            stage++;
+                            break;
+                    }
+                    break;
+                case BLUE:
+                    switch (alliance) {
+                        case "Blue":
+                            time.reset();
+                            stage++;
+                            break;
+                        case "Red":
+                            if (time.time() > 5.1) {
+                                time.reset();
+                                stage = 21;
+                            }
+                            break;
+                    }
+                    break;
+                case NONE:
+                    switch (alliance) {
+                        case "Blue":
+                            if (time.time() > 5.1) {
+                                time.reset();
+                                stage = 21;
+                            }
+                            break;
+                        case "Red":
+                            time.reset();
+                            stage++;
+                            break;
+                    }
             }
         }
 
