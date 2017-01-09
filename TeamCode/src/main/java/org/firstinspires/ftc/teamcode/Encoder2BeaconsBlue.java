@@ -171,7 +171,7 @@ public class Encoder2BeaconsBlue extends OpMode {
 
         if (stage == 11) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 100, .25);
+                drive = new EncoderDrive(driveTrain, 50, .25);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -331,7 +331,7 @@ public class Encoder2BeaconsBlue extends OpMode {
 
         if (stage == 23) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 100, .25);
+                drive = new EncoderDrive(driveTrain, 50, .25);
                 drive.run();
             }
             if (drive.isCompleted()){
