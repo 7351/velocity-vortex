@@ -158,7 +158,7 @@ public class   EncoderBeaconRed extends OpMode {
 
         if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2200, .75);
+                drive = new EncoderDrive(driveTrain, 1900, .75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -197,7 +197,7 @@ public class   EncoderBeaconRed extends OpMode {
         }
         if (stage == 20) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 800, .75);
+                drive = new EncoderDrive(driveTrain, 800, .5);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -219,7 +219,7 @@ public class   EncoderBeaconRed extends OpMode {
 
         if (stage == 22) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 300, .5);
+                drive = new EncoderDrive(driveTrain, 300, .25);
                 drive.run();
             }
             if (drive.isCompleted()){
