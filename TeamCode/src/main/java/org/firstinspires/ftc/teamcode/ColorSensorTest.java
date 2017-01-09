@@ -31,13 +31,10 @@ public class ColorSensorTest extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addData("Bottom", colorData(colorUtils.lineColorSensor));
-        telemetry.addData("Beacon", colorData(colorUtils.beaconColorSensor));
-        telemetry.addData("Beacon", colorUtils.beaconColor());
+        telemetry.addData("Line", "{" + colorUtils.colorData(colorUtils.lineColorSensor) + "} " + "W: " + colorUtils.aboveWhiteLine()
+                + ", R: " + colorUtils.aboveRedLine() + ", B: " + colorUtils.aboveBlueLine());
+        telemetry.addData("Beacon", "{" + colorUtils.colorData(colorUtils.beaconColorSensor) + "} " + colorUtils.beaconColor());
 
     }
 
-    private String colorData(ColorSensor sensor) {
-        return String.valueOf("R: " + sensor.red() + " G: " + sensor.green() + " B: " + sensor.blue());
-    }
 }

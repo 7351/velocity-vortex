@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
  */
 
 @Autonomous(name = "CapBallBlue", group = "Testing")
+@Disabled
 public class RunToCapBallFarBlue extends OpMode {
 
     int stage = 0;
