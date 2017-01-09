@@ -89,7 +89,7 @@ public class Encoder2BeaconsBlue extends OpMode {
 
         if (stage == 3) { // Turn to 90
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 30, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 25, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted() || colorUtils.aboveWhiteLine()) {
@@ -130,7 +130,7 @@ public class Encoder2BeaconsBlue extends OpMode {
 
         if (stage == 7) { // Turn to 145
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 33, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 38, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -171,7 +171,7 @@ public class Encoder2BeaconsBlue extends OpMode {
 
         if (stage == 11) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 200, .25);
+                drive = new EncoderDrive(driveTrain, 100, .25);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -212,7 +212,7 @@ public class Encoder2BeaconsBlue extends OpMode {
                         case "Blue":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage = 11;
                             }
                             break;
                         case "Red":
@@ -230,7 +230,7 @@ public class Encoder2BeaconsBlue extends OpMode {
                         case "Red":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage = 11;
                             }
                             break;
                     }
@@ -331,7 +331,7 @@ public class Encoder2BeaconsBlue extends OpMode {
 
         if (stage == 23) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 250, .25);
+                drive = new EncoderDrive(driveTrain, 100, .25);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -372,7 +372,7 @@ public class Encoder2BeaconsBlue extends OpMode {
                         case "Blue":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage = 23;
                             }
                             break;
                         case "Red":
@@ -390,7 +390,7 @@ public class Encoder2BeaconsBlue extends OpMode {
                         case "Red":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage = 23;
                             }
                             break;
                     }
@@ -400,7 +400,7 @@ public class Encoder2BeaconsBlue extends OpMode {
                         case "Blue":
                             if (time.time() > 5.1) {
                                 time.reset();
-                                stage = 21;
+                                stage = 23;
                             }
                             break;
                         case "Red":
