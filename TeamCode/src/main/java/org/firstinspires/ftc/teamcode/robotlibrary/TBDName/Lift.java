@@ -27,6 +27,8 @@ public class Lift {
         LiftServo = hardwareMap.servo.get("LiftServo");
 
         currentServoPosition = minimum;
+
+        LiftServo.setPosition(currentServoPosition);
     }
 
     public void setLiftPower(double power) {
