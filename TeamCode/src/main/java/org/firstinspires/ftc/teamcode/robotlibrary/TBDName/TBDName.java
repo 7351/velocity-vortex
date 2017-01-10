@@ -14,6 +14,7 @@ public class TBDName {
     public FlyWheel flyWheel;
     public Intake intake;
     public DynamicAutonomousSelector das;
+    public Lift lift;
     Telemetry telemetry;
     HardwareMap hardwareMap;
 
@@ -31,6 +32,7 @@ public class TBDName {
         flyWheel = new FlyWheel(hardwareMap);
         colorUtils = new ColorUtils(hardwareMap);
         das = new DynamicAutonomousSelector();
+        lift = new Lift(hardwareMap);
     }
 
     public TBDName(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -44,6 +46,7 @@ public class TBDName {
         flyWheel = new FlyWheel(hardwareMap);
         colorUtils = new ColorUtils(hardwareMap);
         das = new DynamicAutonomousSelector();
+        lift = new Lift(hardwareMap);
     }
 
     public void start() {
