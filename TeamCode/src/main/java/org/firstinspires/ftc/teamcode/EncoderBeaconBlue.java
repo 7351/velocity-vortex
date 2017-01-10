@@ -223,7 +223,7 @@ public class EncoderBeaconBlue extends OpMode {
                 drive = new EncoderDrive(driveTrain, 200, .25);
                 drive.run();
             }
-            if (drive.isCompleted()){
+            if (drive.isCompleted() || time.time() > 5){
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
