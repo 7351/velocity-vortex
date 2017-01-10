@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  */
 
 @Autonomous(name = "Encoder2BeaconsBlue", group = "Encoder")
+@Disabled // TODO: This program is to be worked on for Meet 4
 public class Encoder2BeaconsBlue extends OpMode {
 
     int stage = 0;

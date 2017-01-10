@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "EncoderCapBallBlue", group = "Testing")
-public class EncoderCapBallBlue extends OpMode {
+@Autonomous(name = "CapBallFarBlue", group = "Encoder Autonomous")
+public class CapBallFarBlue extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();

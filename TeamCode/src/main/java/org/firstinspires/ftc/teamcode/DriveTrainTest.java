@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DynamicAutonomousSele
  */
 
 @Autonomous(name = "DriveTrainTest", group = "Testing")
+@Disabled
 public class DriveTrainTest extends OpMode {
 
     DriveTrain driveTrain;
