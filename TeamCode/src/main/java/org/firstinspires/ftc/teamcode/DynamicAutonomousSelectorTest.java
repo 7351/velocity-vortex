@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DynamicAutonomousSelector;
@@ -13,6 +14,7 @@ import java.util.Map;
  */
 
 @Autonomous(name = "SelectorTest", group = "concept")
+@Disabled
 public class DynamicAutonomousSelectorTest extends OpMode {
 
     DynamicAutonomousSelector das;

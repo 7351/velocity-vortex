@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,11 +11,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
 
     public DcMotor IntakeA; // This is the blue roller
-    public DcMotor IntakeB; // This is the silver roller
+    public CRServo IntakeBServo1; // This is the silver roller
+    public CRServo IntakeBServo2; // Second servo on port 5
+    // Kevin requested two servos for Intake B on 1/8/17
 
     public Intake(HardwareMap hardwareMap) {
         IntakeA = hardwareMap.dcMotor.get("IntakeA");
-        IntakeB = hardwareMap.dcMotor.get("IntakeB");
+        IntakeBServo1 = hardwareMap.crservo.get("IntakeServoB1");
+        IntakeBServo2 = hardwareMap.crservo.get("IntakeServoB2");
     }
 
     public void setIntakePower(IntakeSpec spec, double power) {
@@ -23,7 +27,8 @@ public class Intake {
                 IntakeA.setPower(power);
                 break;
             case B:
-                IntakeB.setPower(power);
+                IntakeBServo1.setPower(power);
+                IntakeBServo2.setPower(power);
                 break;
         }
     }
@@ -34,13 +39,17 @@ public class Intake {
                 setIntakePower(IntakeSpec.A, 0);
                 break;
             case B:
-                setIntakePower(IntakeSpec.B, 0);
+                setIntakePower(IntakeSpec.B, -0.05);
                 break;
+            case BOTH:
+                stopIntake(IntakeSpec.A);
+                stopIntake(IntakeSpec.B);
         }
     }
 
     public enum IntakeSpec {
         A,
-        B
+        B,
+        BOTH
     }
 }

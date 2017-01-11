@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.content.Context;
+import android.media.AudioManager;
+
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
@@ -37,10 +41,12 @@ public class TeleOp extends OpMode {
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
+
     }
 
     @Override
     public void loop() {
+
 
         /*
          * Controller 1 Controls --------------------------------------------------
@@ -67,11 +73,11 @@ public class TeleOp extends OpMode {
         }
 
         if (gamepad1.left_bumper) {
-            intake.setIntakePower(IntakeSpec.B, -1);
+            intake.setIntakePower(IntakeSpec.B, 1);
         }
 
         if (gamepad1.right_bumper) {
-            intake.setIntakePower(IntakeSpec.B, 1);
+            intake.setIntakePower(IntakeSpec.B, -1);
         }
 
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
@@ -226,7 +232,7 @@ public class TeleOp extends OpMode {
         double right_joystick_y = gamepad2.right_stick_y;
         boolean liftManualMode = gamepad2.left_bumper;
 
-        lift.LiftMotor.setPower(teleOpUtils.scaleInput(right_joystick_y));
+        lift.setLiftPower(teleOpUtils.scaleInput(right_joystick_y));
 
         if (!liftManualMode) { // If it's automatic
             if (gamepad2.dpad_up) {

@@ -3,18 +3,12 @@ package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
 
-    public final double DEFAULTDIFFERENCE = 0.04;
-    public DcMotor LeftFrontMotor;
-    public DcMotor RightFrontMotor;
-    public DcMotor LeftBackMotor;
-    public DcMotor RightBackMotor;
-    private VoltageSensor LeftDriveTrainVoltage;
-    private VoltageSensor RightDriveTrainVoltage;
+    public final double DIFFERENCE = 0;
+    public DcMotor LeftFrontMotor, RightFrontMotor, LeftBackMotor, RightBackMotor;
 
     public DriveTrain(HardwareMap hardwareMap) {
         if (hardwareMap != null) {
@@ -23,11 +17,10 @@ public class DriveTrain {
             LeftBackMotor = hardwareMap.dcMotor.get("LeftBackMotor");
             RightBackMotor = hardwareMap.dcMotor.get("RightBackMotor");
 
-            LeftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            LeftBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            LeftDriveTrainVoltage = hardwareMap.voltageSensor.get("Left Drive Train");
-            RightDriveTrainVoltage = hardwareMap.voltageSensor.get("Right Drive Train");
+            RightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            RightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         }
 
     }
@@ -60,7 +53,7 @@ public class DriveTrain {
     }
 
     public void driveStraight(double startingPower) {
-        driveStraight(startingPower, DEFAULTDIFFERENCE);
+        driveStraight(startingPower, DIFFERENCE);
     }
 
     public void driveStraight() {
@@ -90,12 +83,31 @@ public class DriveTrain {
         powerRight(0);
     }
 
-    public double getVoltage() {
-        double averageVoltage = 0;
-        averageVoltage = LeftDriveTrainVoltage.getVoltage() + RightDriveTrainVoltage.getVoltage();
-        averageVoltage /= 2;
-        return averageVoltage;
+    public void setMode(DcMotor.RunMode mode) {
+        LeftFrontMotor.setMode(mode);
+        LeftBackMotor.setMode(mode);
+        RightFrontMotor.setMode(mode);
+        RightBackMotor.setMode(mode);
     }
 
+    /*
+    public double getVoltage() {
+        double averageVoltage = 0;
+        for (DcMotor motor : DcMotors) {
+            VoltageSensor sensor = (VoltageSensor) motor;
+            if (sensor != null) {
+                averageVoltage += sensor.getVoltage();
+            }
+        }
+        averageVoltage /= 4;
+        return averageVoltage;
+    }
+    */
+
+    public boolean isBusy() {
+        return LeftFrontMotor.isBusy() || RightFrontMotor.isBusy();
+    }
 
 }
+
+

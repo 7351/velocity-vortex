@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
  */
 
 @Autonomous(name = "RedBeaconCorner", group = "Testing")
+@Disabled
 public class CloseTwoBeaconsRed extends OpMode {
 
 
@@ -32,7 +34,6 @@ public class CloseTwoBeaconsRed extends OpMode {
     private GyroSensor gyro;
     private Intake intake;
     private FlyWheel flyWheel;
-
 
 
     private String alliance = "Red";
@@ -69,8 +70,8 @@ public class CloseTwoBeaconsRed extends OpMode {
         }
 
         if (stage == 1) { //drives forward 33 inches in seconds
-            if (time.time() <= 0.64) {
-                driveTrain.driveStraight();
+            if (time.time() <= 0.7) {
+                driveTrain.driveStraight(.5);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -86,7 +87,7 @@ public class CloseTwoBeaconsRed extends OpMode {
         }
 
         if (stage == 3) {
-            double flyWheelLaunchPower = 0.25;
+            double flyWheelLaunchPower = 0.65;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
@@ -100,7 +101,7 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if (stage == 5) {
             if (time.time() < 2) {
-                intake.setIntakePower(Intake.IntakeSpec.B, 1);
+                intake.setIntakePower(Intake.IntakeSpec.B, -1);
             } else {
                 time.reset();
                 stage++;
@@ -145,9 +146,9 @@ public class CloseTwoBeaconsRed extends OpMode {
         if (stage == 10) { // Turn to 90
             int difference = 13;
             int angle = 270;
-            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+            if (gyro.getHeading() > 300 || gyro.getHeading() < 10) {
+                driveTrain.powerLeft(-.3);
+                driveTrain.powerRight(.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -164,8 +165,9 @@ public class CloseTwoBeaconsRed extends OpMode {
 
 
         if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
-            if (time.time() <= 0.8) {
+            if (time.time() <= 0.6) {
                 driveTrain.driveStraight(1);
+                intake.setIntakePower(Intake.IntakeSpec.A, 1);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -183,9 +185,9 @@ public class CloseTwoBeaconsRed extends OpMode {
         if (stage == 14) { // Turn to 145
             int difference = 9;
             int angle = 317;
-            if (!gyroUtils.isGyroInTolerance(angle, difference)) {
-                driveTrain.powerLeft(.15);
-                driveTrain.powerRight(-.15);
+            if (gyro.getHeading() < 300) {
+                driveTrain.powerLeft(.3);
+                driveTrain.powerRight(-.3);
             } else {
                 RobotLog.d("13." + "Statement true at gyro degree " + gyro.getHeading());
                 driveTrain.stopRobot();
@@ -196,7 +198,7 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if (stage == 15) {
             if (!colorUtils.aboveWhiteLine()) {
-                driveTrain.driveStraight(.3);
+                driveTrain.driveStraight(.25);
             } else {
                 driveTrain.stopRobot();
                 time.reset();
@@ -211,7 +213,7 @@ public class CloseTwoBeaconsRed extends OpMode {
         }
 
         if (stage == 17) {
-            if (time.time() < .3) {
+            if (time.time() < .5) {
                 driveTrain.driveStraight(-.3);
             } else {
                 driveTrain.stopRobot();
@@ -223,9 +225,9 @@ public class CloseTwoBeaconsRed extends OpMode {
         if (stage == 18) { // Turn to 90
             int difference = 13;
             int angle = 270;
-            if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+            if (gyro.getHeading() > 300 || gyro.getHeading() < 10) {
+                driveTrain.powerLeft(-.3);
+                driveTrain.powerRight(.3);
             } else {
                 driveTrain.stopRobot();
                 stage++;
@@ -278,6 +280,7 @@ public class CloseTwoBeaconsRed extends OpMode {
                 driveTrain.driveStraight(-0.5);
             } else {
                 driveTrain.stopRobot();
+                intake.stopIntake(Intake.IntakeSpec.A);
                 stage++;
                 time.reset();
             }
@@ -323,7 +326,7 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if(stage == 27)
         {
-            if (time.time() < 0.5) {
+            if (time.time() < 0.2) {
                 driveTrain.driveStraight(-0.5);
             } else {
                 driveTrain.stopRobot();
@@ -337,8 +340,8 @@ public class CloseTwoBeaconsRed extends OpMode {
             int difference = 13;
             int angle = 0;
             if (gyro.getHeading() > 210) {
-                driveTrain.powerLeft(-.15);
-                driveTrain.powerRight(.15);
+                driveTrain.powerLeft(-.3);
+                driveTrain.powerRight(.3);
             } else {
                 driveTrain.stopRobot();
                 time.reset();
@@ -348,7 +351,7 @@ public class CloseTwoBeaconsRed extends OpMode {
 
         if (stage == 29)
         {
-            if (time.time() < 1.25)
+            if (time.time() < .9)
             {
                 driveTrain.powerRight(1);
                 driveTrain.powerLeft(1);

@@ -72,5 +72,9 @@ public class ColorUtils {
         NONE
     }
 
+    public String colorData(ColorSensor sensor) {
+        return String.valueOf("R: " + sensor.red() + " G: " + sensor.green() + " B: " + sensor.blue());
+    }
+
 
 }

@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TBDName;
 
 import java.util.Iterator;
@@ -37,9 +38,12 @@ public class Autonomous extends OpMode {
     private DriveTrain driveTrain;
     private GyroUtils gyroUtils;
     private ColorUtils colorUtils;
-    private GyroSensor gyro;
     private Intake intake;
     private FlyWheel flyWheel;
+    private Lift lift;
+
+    private EncoderTurn turn;
+    private EncoderDrive drive;
 
     @Override
     public void init() {
@@ -49,9 +53,9 @@ public class Autonomous extends OpMode {
         driveTrain = tbdName.driveTrain;
         gyroUtils = tbdName.gyroUtils;
         colorUtils = tbdName.colorUtils;
-        gyro = gyroUtils.gyro;
         intake = tbdName.intake;
         flyWheel = tbdName.flyWheel;
+        lift = tbdName.lift;
 
         delay = tbdName.das.getNumberDouble("delay", 0); // 0 default wait time
         alliance = tbdName.das.getRadio("alliance", "ns"); // Not selected - ns
@@ -62,6 +66,7 @@ public class Autonomous extends OpMode {
     @Override
     public void init_loop() {
 
+        // We log all the selector choices just to show the drive team if what they type in was correct
         Iterator it = tbdName.das.getSelectorChoices().entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
@@ -96,31 +101,31 @@ public class Autonomous extends OpMode {
             telemetry.addData("Calibrating", String.valueOf(tbdName.gyroUtils.gyro.isCalibrating()));
         }
         if (alliance.equals("Red")) {
-            if (target.equals("Beacon")) {
-                if (stage == 1) { //drives forward 33 inches in seconds
-                    if (time.time() <= 0.64) {
-                        driveTrain.driveStraight();
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
+            if (target.equals("Cap ball close")) {
+                if (stage == 1) { //drives forward 0.25 seconds
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 700, .6);
+                        drive.run();
                     }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
                 }
 
                 if (stage == 2) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
-                        if (shoot == 0) {
-                            stage = 10;
-                        } else {
-                            stage++;
-                            time.reset();
-                        }
-
+                        stage++;
+                        drive = null;
+                        turn = null;
+                        time.reset();
                     }
                 }
 
                 if (stage == 3) {
-                    double flyWheelLaunchPower = 0.25;
+                    double flyWheelLaunchPower = 0.65;
                     flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
                     stage++;
                 }
@@ -134,7 +139,8 @@ public class Autonomous extends OpMode {
 
                 if (stage == 5) {
                     if (time.time() < 2) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, 1);
+                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     } else {
                         time.reset();
                         stage++;
@@ -142,24 +148,9 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 6) {
-                    if (shoot == 2) {
-                        if (time.time() > 1.2) {
-                            stage++;
-                            time.reset();
-                        }
-                    } else if (shoot == 1) {
+                    if (time.time() > 1.2) {
+                        time.reset();
                         stage = 8;
-                        time.reset();
-                    }
-
-                }
-
-                if (stage == 7) {
-                    if (time.time() < .35)
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    else {
-                        time.reset();
-                        stage++;
                     }
                 }
 
@@ -180,14 +171,13 @@ public class Autonomous extends OpMode {
                     }
                 }
 
-                if (stage == 10) { // Turn to 90
-                    int difference = 13;
-                    int angle = 270;
-                    if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                        driveTrain.powerLeft(-.15);
-                        driveTrain.powerRight(.15);
-                    } else {
-                        driveTrain.stopRobot();
+                if (stage == 10) { // Turn to z90
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
                         stage++;
                         time.reset();
                     }
@@ -196,15 +186,279 @@ public class Autonomous extends OpMode {
                 if (stage == 11) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        turn = null;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 12) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1000, .6);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
+                }
+
+                if (stage == 13) {
+                    if (time.time() > .5) {
+                        stage++;
+                        drive = null;
+                        time.reset();
+                    }
+                }
+                if (stage == 14) {
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 15) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        turn = null;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 16) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1500, .6);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
+                }
+
+                if (stage == 17) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        drive = null;
+                        time.reset();
+                    }
+                }
+            }
+            if (target.equals("Cap ball far")) {
+                if (stage == 1) { //drives forward 0.25 seconds
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 300, .75);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
+                }
+
+                if (stage == 2) {
+                    if (time.time() > 0.35) {
+                        drive = null;
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 3) {
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 4) {
+                    if (time.time() > 0.15) {
+                        turn = null;
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 5) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1400, 0.5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        drive.completed();
+                        time.reset();
+                        flyWheel.FlyWheelMotor.setPower(.65);
+                        stage++;
+                    }
+                }
+
+                if (stage == 6) {
+                    if (time.time() > 3) {
+                        drive = null;
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 7) {
+                    if (time.time() < 2.5) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, -0.7);
+                    } else {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 8) {
+                    if (time.time() < .35)
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                    else {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 9) {
+                    if (time.time() > 4) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 10) {
+                    if (time.time() > .25) {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+
+                if (stage == 11) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1600, 0.5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        drive.completed();
+                        time.reset();
+                        stage++;
+                    }
+                }
+            }
+            if (target.equals("Beacon")) {
+                if (stage == 1) { //drives forward 0.25 seconds
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1000, .6);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
+                }
+
+                if (stage == 2) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        drive = null;
+                        turn = null;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 3) {
+                    double flyWheelLaunchPower = 0.65;
+                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
+                    stage++;
+                }
+
+                if (stage == 4) {
+                    if (time.time() > 3) {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 5) {
+                    if (time.time() < 2) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                    } else {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 6) {
+                    if (time.time() > 1.2) {
+                        time.reset();
+                        stage = 8;
+                    }
+                }
+
+
+                if (stage == 8) {
+                    if (time.time() > 2) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 9) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 10) { // Turn to 90
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 40, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 11) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        turn = null;
                         time.reset();
                     }
                 }
 
 
                 if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
-                    if (time.time() <= 0.8) {
-                        driveTrain.driveStraight(1);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 2400, .75);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -214,59 +468,19 @@ public class Autonomous extends OpMode {
                 if (stage == 13) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
 
                 if (stage == 14) { // Turn to 145
-                    int difference = 9;
-                    int angle = 317;
-                    if (!gyroUtils.isGyroInTolerance(angle, difference)) {
-                        driveTrain.powerLeft(.15);
-                        driveTrain.powerRight(-.15);
-                    } else {
-                        RobotLog.d("13." + "Statement true at gyro degree " + gyro.getHeading());
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 17, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
                     }
-                }
-
-                if (stage == 15) {
-                    if (!colorUtils.aboveWhiteLine()) {
-                        driveTrain.driveStraight(.3);
-                    } else {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-                }
-                if (stage == 16) {
-                    if (time.time() < AutonomousUtils.WAITTIME) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 17) {
-                    if (time.time() < .3) {
-                        driveTrain.driveStraight(-.3);
-                    } else {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 18) { // Turn to 90
-                    int difference = 13;
-                    int angle = 270;
-                    if (gyro.getHeading() > (angle + difference) || gyro.getHeading() < 10) {
-                        driveTrain.powerLeft(-.15);
-                        driveTrain.powerRight(.15);
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
+                    if (turn.isCompleted()) {
+                        turn.completed();
+                        stage = 19;
                         time.reset();
                     }
                 }
@@ -274,13 +488,16 @@ public class Autonomous extends OpMode {
                 if (stage == 19) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        turn = null;
                         time.reset();
                     }
                 }
                 if (stage == 20) {
-                    if (time.time() < 1) {
-                        driveTrain.driveStraight(.3);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 500, .5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -290,6 +507,7 @@ public class Autonomous extends OpMode {
                 if (stage == 21) {
                     if (time.time() > .5) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
@@ -297,9 +515,11 @@ public class Autonomous extends OpMode {
                 // Initialize the beacon subroutine from BeaconSlamTest
 
                 if (stage == 22) {
-                    if (time.time() < 1) {
-                        driveTrain.driveStraight(0.3);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 500, 0.15);
+                        drive.run();
+                    }
+                    if (drive.isCompleted() || time.time() > 5) { // 5 second time override
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -308,13 +528,16 @@ public class Autonomous extends OpMode {
                 if (stage == 23) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
                 if (stage == 24) {
-                    if (time.time() < 0.15) {
-                        driveTrain.driveStraight(-0.5);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, -175, 0.5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -323,6 +546,7 @@ public class Autonomous extends OpMode {
                 if (stage == 25) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
@@ -356,13 +580,28 @@ public class Autonomous extends OpMode {
                                     break;
                             }
                             break;
+                        case NONE:
+                            switch (alliance) {
+                                case "Blue":
+                                    time.reset();
+                                    stage++;
+                                    break;
+                                case "Red":
+                                    if (time.time() > 5.1) {
+                                        time.reset();
+                                        stage = 21;
+                                    }
+                                    break;
+                            }
                     }
                 }
 
                 if (stage == 27) {
-                    if (time.time() < 0.5) {
-                        driveTrain.driveStraight(-0.5);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, -800, .5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -370,169 +609,57 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 28) {
-                    int difference = 13;
-                    int angle = 0;
-                    if (gyro.getHeading() > 210) {
-                        driveTrain.powerLeft(-.15);
-                        driveTrain.powerRight(.15);
-                    } else {
-                        driveTrain.stopRobot();
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 75, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
                         time.reset();
+                        drive = null;
                         stage++;
                     }
                 }
 
                 if (stage == 29) {
-                    if (time.time() < 1.25) {
-                        driveTrain.powerRight(1);
-                        driveTrain.powerLeft(1);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 2400, .65);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         time.reset();
-                        stage++;
-                    }
-                }
-            }
-            if (target.equals("Cap ball")) {
-                if (stage == 1) { //drives forward 0.25 seconds
-                    if (time.time() <= 0.325) {
-                        driveTrain.driveStraight();
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 2) {
-                    if (time.time() > 0.15) {
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 3) {
-                    if (gyro.getHeading() > 334 || gyro.getHeading() < 10) {
-                        driveTrain.powerLeft(-.15);
-                        driveTrain.powerRight(.15);
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 4) {
-                    if (time.time() > 0.15) {
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 5) {
-                    if (time.time() < 1.05) {
-                        driveTrain.driveStraight();
-                    } else {
-                        if (shoot == 0) {
-                            stage = 10;
-                            time.reset();
-                        } else {
-                            driveTrain.stopRobot();
-                            stage++;
-                            time.reset();
-                            flyWheel.FlyWheelMotor.setPower(.3);
-                        }
-                    }
-                }
-
-                if (stage == 6) {
-                    if (time.time() > 2) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 7) {
-                    if (time.time() < 2.5) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, .7);
-                    } else {
-                        time.reset();
-                        if (shoot == 1) {
-                            time.reset();
-                            stage = 9;
-                        }
-                        if (shoot == 2) {
-                            stage++;
-                            time.reset();
-                        }
-
-                    }
-                }
-
-                if (stage == 8) {
-                    if (time.time() < .35) {
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    } else {
-                        time.reset();
-                        stage++;
-                    }
-
-                }
-
-                if (stage == 9) {
-                    if (time.time() > 2) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 10) {
-                    if (time.time() > .25) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-
-                if (stage == 11) {
-                    if (!colorUtils.aboveRedLine() && time.time() < 1) {
-                        driveTrain.driveStraight();
-                    } else {
-                        driveTrain.stopRobot();
                         stage++;
                     }
                 }
             }
         }
         if (alliance.equals("Blue")) {
-            if (target.equals("Beacon")) {
-
-                if (stage == 1) { //drives forward 33 inches in seconds
-                    if (time.time() <= 0.64) {
-                        driveTrain.driveStraight();
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
+            if (target.equals("Cap ball close")) {
+                if (stage == 1) { //drives forward 0.25 seconds
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 700, .6);
+                        drive.run();
                     }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
                 }
 
                 if (stage == 2) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
-                        if (shoot == 0) {
-                            stage = 10;
-                        } else {
-                            stage++;
-                            time.reset();
-                        }
-
+                        stage++;
+                        drive = null;
+                        turn = null;
+                        time.reset();
                     }
                 }
 
                 if (stage == 3) {
-                    double flyWheelLaunchPower = 0.25;
+                    double flyWheelLaunchPower = 0.65;
                     flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
                     stage++;
                 }
@@ -546,7 +673,8 @@ public class Autonomous extends OpMode {
 
                 if (stage == 5) {
                     if (time.time() < 2) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, 1);
+                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     } else {
                         time.reset();
                         stage++;
@@ -554,26 +682,270 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 6) {
-                    if (shoot == 2) {
-                        if (time.time() > 1.2) {
-                            time.reset();
-                            stage++;
-                        }
-                    } else if (shoot == 1) {
-                        stage = 8;
+                    if (time.time() > 1.2) {
                         time.reset();
+                        stage = 8;
+                    }
+                }
+
+                if (stage == 8) {
+                    if (time.time() > 2) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 9) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 10) { // Turn to z90
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 11) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        turn = null;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 12) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1000, .6);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
                     }
 
                 }
 
+                if (stage == 13) {
+                    if (time.time() > .5) {
+                        stage++;
+                        drive = null;
+                        time.reset();
+                    }
+                }
+                if (stage == 14) {
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 15) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        turn = null;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 16) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1500, .6);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
+                }
+
+                if (stage == 17) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        drive = null;
+                        time.reset();
+                    }
+                }
+            }
+            if (target.equals("Cap ball far")) {
+                if (stage == 1) { //drives forward 0.25 seconds
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 300, .75);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
+                }
+
+                if (stage == 2) {
+                    if (time.time() > 0.35) {
+                        drive = null;
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 3) {
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 4) {
+                    if (time.time() > 0.15) {
+                        turn = null;
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 5) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1400, 0.5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        drive.completed();
+                        time.reset();
+                        flyWheel.FlyWheelMotor.setPower(.65);
+                        stage++;
+                    }
+                }
+
+                if (stage == 6) {
+                    if (time.time() > 3) {
+                        drive = null;
+                        time.reset();
+                        stage++;
+                    }
+                }
+
                 if (stage == 7) {
+                    if (time.time() < 2.5) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, -0.7);
+                    } else {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 8) {
                     if (time.time() < .35)
                         intake.setIntakePower(Intake.IntakeSpec.A, 1);
                     else {
                         time.reset();
                         stage++;
                     }
+                }
 
+                if (stage == 9) {
+                    if (time.time() > 4) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        intake.stopIntake(Intake.IntakeSpec.B);
+                        flyWheel.FlyWheelMotor.setPower(0);
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 10) {
+                    if (time.time() > .25) {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+
+                if (stage == 11) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 1600, 0.5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        drive.completed();
+                        time.reset();
+                        stage++;
+                    }
+                }
+            }
+            if (target.equals("Beacon")) {
+                if (stage == 1) { //drives forward 0.25 seconds
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 600, .6);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        time.reset();
+                        stage++;
+                    }
+
+                }
+
+                if (stage == 2) {
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        drive = null;
+                        turn = null;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 3) {
+                    double flyWheelLaunchPower = 0.65;
+                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
+                    stage++;
+                }
+
+                if (stage == 4) {
+                    if (time.time() > 3) {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 5) {
+                    if (time.time() < 2) {
+                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
+                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                    } else {
+                        time.reset();
+                        stage++;
+                    }
+                }
+
+                if (stage == 6) {
+                    if (time.time() > 1.2) {
+                        time.reset();
+                        stage = 8;
+                    }
                 }
 
                 if (stage == 8) {
@@ -594,13 +966,12 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 10) { // Turn to 90
-                    int difference = 13;
-                    int angle = 80;
-                    if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
-                        driveTrain.powerLeft(.15);
-                        driveTrain.powerRight(-.15);
-                    } else {
-                        driveTrain.stopRobot();
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 25, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
                         stage++;
                         time.reset();
                     }
@@ -609,15 +980,18 @@ public class Autonomous extends OpMode {
                 if (stage == 11) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        turn = null;
                         time.reset();
                     }
                 }
 
 
                 if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
-                    if (time.time() <= 0.85) {
-                        driveTrain.driveStraight(1);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 2600, .75);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -627,59 +1001,19 @@ public class Autonomous extends OpMode {
                 if (stage == 13) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
 
                 if (stage == 14) { // Turn to 145
-                    int difference = 9;
-                    int angle = 30;
-                    if (!gyroUtils.isGyroInTolerance(angle, difference)) {
-                        driveTrain.powerLeft(-.15);
-                        driveTrain.powerRight(.15);
-                    } else {
-                        RobotLog.d("13." + "Statement true at gyro degree " + gyro.getHeading());
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 38, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
                     }
-                }
-
-                if (stage == 15) {
-                    if (!colorUtils.aboveWhiteLine()) {
-                        driveTrain.driveStraight(.3);
-                    } else {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-                }
-                if (stage == 16) {
-                    if (time.time() < AutonomousUtils.WAITTIME) {
-                        time.reset();
-                        stage = 18;
-                    }
-                }
-
-        /*if (stage == 17) {
-            if (time.time() < .3) {
-                driveTrain.driveStraight(-.3);
-            } else {
-                driveTrain.stopRobot();
-                time.reset();
-                stage++;
-            }
-        }*/
-
-                if (stage == 18) { // Turn to 90
-                    int difference = 13;
-                    int angle = 80;
-                    if (gyro.getHeading() < (angle - difference) || gyro.getHeading() > 350) {
-                        driveTrain.powerLeft(.15);
-                        driveTrain.powerRight(-.15);
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
+                    if (turn.isCompleted()) {
+                        turn.completed();
+                        stage = 19;
                         time.reset();
                     }
                 }
@@ -687,13 +1021,16 @@ public class Autonomous extends OpMode {
                 if (stage == 19) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        turn = null;
                         time.reset();
                     }
                 }
                 if (stage == 20) {
-                    if (time.time() < 1) {
-                        driveTrain.driveStraight(.3);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 600, .5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -703,6 +1040,7 @@ public class Autonomous extends OpMode {
                 if (stage == 21) {
                     if (time.time() > .5) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
@@ -710,9 +1048,11 @@ public class Autonomous extends OpMode {
                 // Initialize the beacon subroutine from BeaconSlamTest
 
                 if (stage == 22) {
-                    if (time.time() < 1) {
-                        driveTrain.driveStraight(0.3);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 200, .25);
+                        drive.run();
+                    }
+                    if (drive.isCompleted() || time.time() > 5) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -721,13 +1061,16 @@ public class Autonomous extends OpMode {
                 if (stage == 23) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
                 if (stage == 24) {
-                    if (time.time() < 0.15) {
-                        driveTrain.driveStraight(-0.5);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, -75, .5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -736,6 +1079,7 @@ public class Autonomous extends OpMode {
                 if (stage == 25) {
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        drive = null;
                         time.reset();
                     }
                 }
@@ -769,13 +1113,28 @@ public class Autonomous extends OpMode {
                                     break;
                             }
                             break;
+                        case NONE:
+                            switch (alliance) {
+                                case "Blue":
+                                    if (time.time() > 5.1) {
+                                        time.reset();
+                                        stage = 21;
+                                    }
+                                    break;
+                                case "Red":
+                                    time.reset();
+                                    stage++;
+                                    break;
+                            }
                     }
                 }
 
                 if (stage == 27) {
-                    if (time.time() < 0.5) {
-                        driveTrain.driveStraight(-0.5);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, -800, .5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -783,136 +1142,26 @@ public class Autonomous extends OpMode {
                 }
 
                 if (stage == 28) {
-                    int difference = 13;
-                    int angle = 0;
-                    if (gyro.getHeading() < 150) {
-                        driveTrain.powerLeft(.15);
-                        driveTrain.powerRight(-.15);
-                    } else {
-                        driveTrain.stopRobot();
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 75, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        turn.completed();
                         time.reset();
+                        drive = null;
                         stage++;
                     }
                 }
 
                 if (stage == 29) {
-                    if (time.time() < 1.25) {
-                        driveTrain.powerRight(1);
-                        driveTrain.powerLeft(1);
-                    } else {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 2000, .65);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         time.reset();
-                        stage++;
-                    }
-                }
-            }
-            if (target.equals("Cap ball")) {
-                if (stage == 1) { //drives forward 0.25 seconds
-                    if (time.time() <= 0.325) {
-                        driveTrain.driveStraight();
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 2) {
-                    if (time.time() > 0.15) {
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 3) {
-                    if (gyro.getHeading() > 350 || gyro.getHeading() < 29) {
-                        driveTrain.powerLeft(.15);
-                        driveTrain.powerRight(-.15);
-                    } else {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 4) {
-                    if (time.time() > 0.15) {
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 5) {
-                    if (time.time() < .90) {
-                        driveTrain.driveStraight();
-                    } else {
-                        if (shoot == 0) {
-                            stage = 10;
-                            time.reset();
-                        } else {
-                            driveTrain.stopRobot();
-                            stage++;
-                            time.reset();
-                            flyWheel.FlyWheelMotor.setPower(.3);
-                        }
-                    }
-                }
-
-                if (stage == 6) {
-                    if (time.time() > 2) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 7) {
-                    if (time.time() < 2.5) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, .7);
-                    } else {
-                        time.reset();
-                        if (shoot == 1) {
-                            time.reset();
-                            stage = 9;
-                        }
-                        if (shoot == 2) {
-                            stage++;
-                            time.reset();
-                        }
-
-                    }
-                }
-
-                if (stage == 8) {
-                    if (time.time() < .35)
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    else {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 9) {
-                    if (time.time() > 2) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 10) {
-                    if (time.time() > .25) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-
-                if (stage == 11) {
-                    if (!colorUtils.aboveBlueLine() && time.time() < 1) {
-                        driveTrain.driveStraight();
-                    } else {
-                        driveTrain.stopRobot();
                         stage++;
                     }
                 }

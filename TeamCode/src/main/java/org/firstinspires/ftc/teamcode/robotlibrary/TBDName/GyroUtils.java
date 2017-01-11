@@ -68,7 +68,7 @@ public class GyroUtils {
         return isGyroInTolerance(degree, TOLERANCE);
     }
 
-    private int spoofedZero(int zeroDegree) {
+    public int spoofedZero(int zeroDegree) {
         int ActualDegree = gyro.getHeading();
         int degree = ActualDegree - zeroDegree;
         if (degree > 360) {
