@@ -27,11 +27,11 @@ public class TeleOp extends OpMode {
     private boolean DPadLeft = false;
     private boolean DPadUp2 = false;
     private boolean DPadDown2 = false;
-    private DriveTrain driveTrain;
-    private FlyWheel flyWheel;
-    private Intake intake;
-    private Lift lift;
-    private TeleOpUtils teleOpUtils;
+    DriveTrain driveTrain;
+    FlyWheel flyWheel;
+    Intake intake;
+    Lift lift;
+    TeleOpUtils teleOpUtils;
 
     @Override
     public void init() {
@@ -54,6 +54,8 @@ public class TeleOp extends OpMode {
 
         /*
          * Intake controls
+         * Left - Out
+         * Right - In
          * Left Trigger - Intake A sets power to -1
          * Right Trigger - Intake A sets power to 1
          * Left Bumper - Intake B sets power to -1
@@ -61,11 +63,11 @@ public class TeleOp extends OpMode {
          */
 
         if (gamepad1.left_trigger >= 0.5) {
-            intake.setIntakePower(IntakeSpec.A, -1);
+            intake.setIntakeMode(IntakeSpec.A, Intake.IntakeMode.OUT);
         }
 
         if (gamepad1.right_trigger >= 0.5) {
-            intake.setIntakePower(IntakeSpec.A, 1);
+            intake.setIntakeMode(IntakeSpec.A, Intake.IntakeMode.IN);
         }
 
         if (gamepad1.left_trigger < 0.5 && gamepad1.right_trigger < 0.5) {
@@ -73,11 +75,11 @@ public class TeleOp extends OpMode {
         }
 
         if (gamepad1.left_bumper) {
-            intake.setIntakePower(IntakeSpec.B, 1);
+            intake.setIntakeMode(IntakeSpec.B, Intake.IntakeMode.OUT);
         }
 
         if (gamepad1.right_bumper) {
-            intake.setIntakePower(IntakeSpec.B, -1);
+            intake.setIntakeMode(IntakeSpec.B, Intake.IntakeMode.IN);
         }
 
         if (!gamepad1.left_bumper && !gamepad1.right_bumper) {

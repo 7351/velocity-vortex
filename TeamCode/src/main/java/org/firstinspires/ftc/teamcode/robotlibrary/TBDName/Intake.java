@@ -33,6 +33,19 @@ public class Intake {
         }
     }
 
+    public void setIntakeMode(IntakeSpec spec, IntakeMode mode) {
+        double power = (mode.equals(IntakeMode.IN)) ? 1 : -1;
+        switch (spec) {
+            case A:
+                IntakeA.setPower(power);
+                break;
+            case B:
+                IntakeBServo1.setPower(-power);
+                IntakeBServo2.setPower(-power);
+                break;
+        }
+    }
+
     public void stopIntake(IntakeSpec spec) {
         switch (spec) {
             case A:
@@ -51,5 +64,10 @@ public class Intake {
         A,
         B,
         BOTH
+    }
+
+    public enum IntakeMode {
+        IN,
+        OUT,
     }
 }
