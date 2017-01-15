@@ -1,0 +1,113 @@
+package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
+public class DriveTrain {
+
+    public final double DIFFERENCE = 0;
+    public DcMotor LeftFrontMotor, RightFrontMotor, LeftBackMotor, RightBackMotor;
+
+    public DriveTrain(HardwareMap hardwareMap) {
+        if (hardwareMap != null) {
+            LeftFrontMotor = hardwareMap.dcMotor.get("LeftFrontMotor");
+            RightFrontMotor = hardwareMap.dcMotor.get("RightFrontMotor");
+            LeftBackMotor = hardwareMap.dcMotor.get("LeftBackMotor");
+            RightBackMotor = hardwareMap.dcMotor.get("RightBackMotor");
+
+
+            RightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            RightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        }
+
+    }
+
+    public void driveStraight(double startingPower, double difference) {
+        if (startingPower > 0) {
+            if (difference > 0) {
+                powerLeft(startingPower);
+                powerRight(startingPower - difference);
+            }
+            if (difference < 0) {
+                powerLeft(startingPower - difference);
+                powerRight(startingPower);
+            }
+        }
+        if (startingPower < 0) {
+            if (difference > 0) {
+                powerLeft(startingPower);
+                powerRight(startingPower + difference);
+            }
+            if (difference < 0) {
+                powerLeft(startingPower + difference);
+                powerRight(startingPower);
+            }
+        }
+        if (difference == 0) {
+            powerLeft(startingPower);
+            powerRight(startingPower);
+        }
+    }
+
+    public void driveStraight(double startingPower) {
+        driveStraight(startingPower, DIFFERENCE);
+    }
+
+    public void driveStraight() {
+        driveStraight(1);
+    }
+
+    public void powerLeft(double power) {
+        double clippedPower = Range.clip(power, -1, 1);
+        double previousPower = LeftFrontMotor.getPower();
+        if (clippedPower != previousPower) {
+            LeftFrontMotor.setPower(clippedPower);
+            LeftBackMotor.setPower(clippedPower);
+        }
+    }
+
+    public void powerRight(double power) {
+        double clippedPower = Range.clip(power, -1, 1);
+        double previousPower = RightFrontMotor.getPower();
+        if (clippedPower != previousPower) {
+            RightFrontMotor.setPower(clippedPower);
+            RightBackMotor.setPower(clippedPower);
+        }
+    }
+
+    public void stopRobot() {
+        powerLeft(0);
+        powerRight(0);
+    }
+
+    public void setMode(DcMotor.RunMode mode) {
+        LeftFrontMotor.setMode(mode);
+        LeftBackMotor.setMode(mode);
+        RightFrontMotor.setMode(mode);
+        RightBackMotor.setMode(mode);
+    }
+
+    /*
+    public double getVoltage() {
+        double averageVoltage = 0;
+        for (DcMotor motor : DcMotors) {
+            VoltageSensor sensor = (VoltageSensor) motor;
+            if (sensor != null) {
+                averageVoltage += sensor.getVoltage();
+            }
+        }
+        averageVoltage /= 4;
+        return averageVoltage;
+    }
+    */
+
+    public boolean isBusy() {
+        return LeftFrontMotor.isBusy() || RightFrontMotor.isBusy();
+    }
+
+}
+
+

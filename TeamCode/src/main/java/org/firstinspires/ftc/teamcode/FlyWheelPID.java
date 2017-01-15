@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 
 /**
  * Created by Dynamic Signals on 1/1/2017.

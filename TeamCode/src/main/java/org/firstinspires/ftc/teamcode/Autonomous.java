@@ -3,16 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.AutonomousUtils;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.ColorUtils;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderDrive;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.EncoderTurn;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.FlyWheel;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.GyroUtils;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Intake;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.Lift;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.TBDName;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.AutonomousUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BigAl;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.Map;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Autonomous", group = "Autonomous")
 public class Autonomous extends OpMode {
 
-    TBDName tbdName; // Robot object
+    BigAl bigAl; // Robot object
 
     private int stage = -1; // First stage is -1 (wait time)
     private ElapsedTime time = new ElapsedTime(); // regular match time variable minus gyro cal. and wait
@@ -48,26 +48,26 @@ public class Autonomous extends OpMode {
     @Override
     public void init() {
 
-        tbdName = new TBDName(hardwareMap, telemetry, false);
+        bigAl = new BigAl(hardwareMap, telemetry, false);
 
-        driveTrain = tbdName.driveTrain;
-        gyroUtils = tbdName.gyroUtils;
-        colorUtils = tbdName.colorUtils;
-        intake = tbdName.intake;
-        flyWheel = tbdName.flyWheel;
-        lift = tbdName.lift;
+        driveTrain = bigAl.driveTrain;
+        gyroUtils = bigAl.gyroUtils;
+        colorUtils = bigAl.colorUtils;
+        intake = bigAl.intake;
+        flyWheel = bigAl.flyWheel;
+        lift = bigAl.lift;
 
-        delay = tbdName.das.getNumberDouble("delay", 0); // 0 default wait time
-        alliance = tbdName.das.getRadio("alliance", "ns"); // Not selected - ns
-        shoot = tbdName.das.getNumberInt("shoot", 2); // We want to shoot twice by default
-        target = tbdName.das.getRadio("target", "ns"); // Not selected - ns
+        delay = bigAl.das.getNumberDouble("delay", 0); // 0 default wait time
+        alliance = bigAl.das.getRadio("alliance", "ns"); // Not selected - ns
+        shoot = bigAl.das.getNumberInt("shoot", 2); // We want to shoot twice by default
+        target = bigAl.das.getRadio("target", "ns"); // Not selected - ns
     }
 
     @Override
     public void init_loop() {
 
         // We log all the selector choices just to show the drive team if what they type in was correct
-        Iterator it = tbdName.das.getSelectorChoices().entrySet().iterator();
+        Iterator it = bigAl.das.getSelectorChoices().entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             telemetry.addData((String) pair.getKey(), pair.getValue());
@@ -79,7 +79,7 @@ public class Autonomous extends OpMode {
     @Override
     public void start() {
 
-        tbdName.start();
+        bigAl.start();
         time.reset();
         delayTime.reset();
 
@@ -94,11 +94,11 @@ public class Autonomous extends OpMode {
             }
         }
         if (stage == 0) {
-            if (!tbdName.gyroUtils.gyro.isCalibrating()) {
+            if (!bigAl.gyroUtils.gyro.isCalibrating()) {
                 stage++;
                 time.reset();
             }
-            telemetry.addData("Calibrating", String.valueOf(tbdName.gyroUtils.gyro.isCalibrating()));
+            telemetry.addData("Calibrating", String.valueOf(bigAl.gyroUtils.gyro.isCalibrating()));
         }
         if (alliance.equals("Red")) {
             if (target.equals("Cap ball close")) {
@@ -1170,9 +1170,9 @@ public class Autonomous extends OpMode {
 
 
         telemetry.addData("Stage", String.valueOf(stage));
-        telemetry.addData("Gyro", String.valueOf(tbdName.gyroUtils.gyro.getHeading()));
+        telemetry.addData("Gyro", String.valueOf(bigAl.gyroUtils.gyro.getHeading()));
         telemetry.addData("Time", String.valueOf(time.time()));
-        telemetry.addData("Beacon Color: ", String.valueOf(tbdName.colorUtils.beaconColor()));
+        telemetry.addData("Beacon Color: ", String.valueOf(bigAl.colorUtils.beaconColor()));
 
     }
 }

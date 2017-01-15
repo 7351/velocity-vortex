@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.robotlibrary.TBDName;
+package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
@@ -17,6 +18,7 @@ public class FlyWheel {
 
     public FlyWheel(HardwareMap hardwareMap) {
         FlyWheelMotor = hardwareMap.dcMotor.get("FlyWheelMotor");
+        FlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         FlyWheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // We now are going to start using PID for our launches to make them more consistent

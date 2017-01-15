@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.TBDName.DynamicAutonomousSelector;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DynamicAutonomousSelector;
 
 /**
  * Created by Dynamic Signals on 10/30/2016.
