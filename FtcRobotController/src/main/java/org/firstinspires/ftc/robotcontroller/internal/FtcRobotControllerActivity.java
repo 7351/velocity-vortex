@@ -314,7 +314,9 @@ public class FtcRobotControllerActivity extends Activity {
     RobotLog.vv(TAG, "onStop()");
 
     // We *do* shutdown the robot even when we go into configuration editing
-    controllerService.shutdownRobot();
+    if (controllerService != null) {
+      controllerService.shutdownRobot();
+    }
   }
 
   @Override
