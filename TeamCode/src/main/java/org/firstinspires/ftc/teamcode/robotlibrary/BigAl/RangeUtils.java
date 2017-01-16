@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
- * Created by Leo on 1/15/2017.
+ * Created by Dynamic Signals on 1/15/2017.
  */
 
 public class RangeUtils {
@@ -32,8 +32,6 @@ public class RangeUtils {
                 break;
             case CM:
                 if (rawDistance < 230) distance = rawDistance;
-                break;
-            default:
                 break;
         }
         return distance;

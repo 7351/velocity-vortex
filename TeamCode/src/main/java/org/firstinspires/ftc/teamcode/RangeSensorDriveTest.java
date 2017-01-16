@@ -26,8 +26,6 @@ public class RangeSensorDriveTest extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         rangeUtils = new RangeUtils(hardwareMap);
 
-        rangeUtils.rangeSensor.resetDeviceConfigurationForOpMode();
-
     }
 
     @Override
@@ -37,14 +35,12 @@ public class RangeSensorDriveTest extends OpMode {
 
         if (stage == 0) {
 
-            if (distance < targetDistance) {
-                double power = -Range.clip(((targetDistance - distance) / targetDistance), 0, 1);
-                driveTrain.powerLeft(power);
-                driveTrain.powerRight(power);
+            if (distance < 3) { // If the distance sensor is less than 3 inches
+                driveTrain.powerLeft(-0.25); // Drive -0.25
+                driveTrain.powerRight(0.25);
             } else {
-                RobotLog.d("Condition satisfied with " + String.valueOf(distance));
-                driveTrain.stopRobot();
-                stage++;
+                stage++; // Go to the next stage when we are greater than 3 inches
+                driveTrain.stopRobot(); // Stop the drive train from moving
             }
         }
 

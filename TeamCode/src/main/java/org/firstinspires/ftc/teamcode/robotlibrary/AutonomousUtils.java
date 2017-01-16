@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
+package org.firstinspires.ftc.teamcode.robotlibrary;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Created by Dynamic Signals on 11/6/2016.
  */
-@Deprecated
+
 public class AutonomousUtils {
 
     public static final double WAITTIME = 0.15;

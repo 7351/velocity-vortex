@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake.IntakeSpec;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.TeleOpUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.TeleOpUtils;
 
 /**
  * Created by Dynamic Signals on 10/21/2016.
