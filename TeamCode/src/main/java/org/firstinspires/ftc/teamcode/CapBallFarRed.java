@@ -183,7 +183,7 @@ public class CapBallFarRed extends OpMode {
         if (stage == 11)
         {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1600, 0.5);
+                drive = new EncoderDrive(driveTrain, 1900, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
@@ -24,6 +25,7 @@ public class BeaconRed extends OpMode {
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
+    Servo nate;
     GyroUtils gyroUtils;
     ColorUtils colorUtils;
     GyroSensor gyro;
@@ -39,6 +41,7 @@ public class BeaconRed extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
+        nate = hardwareMap.servo.get("Nate");
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
 
@@ -67,7 +70,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1000, .6);
+                drive = new EncoderDrive(driveTrain, 1500, .6);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -88,7 +91,7 @@ public class BeaconRed extends OpMode {
         }
 
         if (stage == 3) {
-            double flyWheelLaunchPower = 0.65;
+            double flyWheelLaunchPower = 1;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
@@ -137,7 +140,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 10) { // Turn to 90
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 40, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 50, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -158,10 +161,10 @@ public class BeaconRed extends OpMode {
 
         if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2400, .75);
+                drive = new EncoderDrive(driveTrain, 2200, .75);
                 drive.run();
             }
-            if (drive.isCompleted()) {
+            if (drive.isCompleted() || colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
@@ -178,7 +181,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 14) { // Turn to 145
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 17, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 11, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -189,7 +192,7 @@ public class BeaconRed extends OpMode {
         }
 
         if (stage == 19) {
-            if (time.time() > AutonomousUtils.WAITTIME) {
+            if (time.time() > AutonomousUtils.WAITTIME){
                 stage++;
                 turn = null;
                 time.reset();
@@ -197,7 +200,7 @@ public class BeaconRed extends OpMode {
         }
         if (stage == 20) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 500, .5);
+                drive = new EncoderDrive(driveTrain, 300, .5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -219,7 +222,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 22) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 500, 0.15);
+                drive = new EncoderDrive(driveTrain, -500, 0.15);
                 drive.run();
             }
             if (drive.isCompleted() || time.time() > 5) { // 5 second time override
@@ -230,7 +233,7 @@ public class BeaconRed extends OpMode {
         }
         if (stage == 23) {
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
+                stage = 100;
                 drive = null;
                 time.reset();
             }
