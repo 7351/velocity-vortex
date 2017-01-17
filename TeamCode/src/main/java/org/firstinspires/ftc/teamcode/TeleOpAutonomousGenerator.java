@@ -18,135 +18,21 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TeleOpUtils;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "AutonomousGenerator")
 public class TeleOpAutonomousGenerator extends OpMode {
 
-    private boolean DPadUp = false;
-    private boolean DPadDown = false;
-    private boolean DPadRight = false;
-    private boolean DPadLeft = false;
-    private boolean DPadUp2 = false;
-    private boolean DPadDown2 = false;
     private DriveTrain driveTrain;
-    private FlyWheel flyWheel;
-    private Intake intake;
-    private Lift lift;
     private TeleOpUtils teleOpUtils;
 
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        flyWheel = new FlyWheel(hardwareMap);
-        intake = new Intake(hardwareMap);
-        lift = new Lift(hardwareMap);
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
+
+        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
     @Override
     public void loop() {
-
-
-        /*
-         * Controller 1 Controls --------------------------------------------------
-         */
-
-        /*
-         * Intake controls
-         * Left Trigger - Intake A sets power to -1
-         * Right Trigger - Intake A sets power to 1
-         * Left Bumper - Intake B sets power to -1
-         * Right Bumper - Intake B sets power to 1
-         */
-
-        if (gamepad1.left_trigger >= 0.5) {
-            intake.setIntakePower(IntakeSpec.A, -1);
-        }
-
-        if (gamepad1.right_trigger >= 0.5) {
-            intake.setIntakePower(IntakeSpec.A, 1);
-        }
-
-        if (gamepad1.left_trigger < 0.5 && gamepad1.right_trigger < 0.5) {
-            intake.stopIntake(IntakeSpec.A);
-        }
-
-        if (gamepad1.left_bumper) {
-            intake.setIntakePower(IntakeSpec.B, 1);
-        }
-
-        if (gamepad1.right_bumper) {
-            intake.setIntakePower(IntakeSpec.B, -1);
-        }
-
-        if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
-            intake.stopIntake(IntakeSpec.B);
-        }
-
-        /*
-         * Fly wheel controls
-         * D-pad up - Increment the power by 0.05
-         * D-pad down - Decrease the power by 0.05
-         * D-pad right - Kill the motor
-         * D-pad left - Set the power to default no-matter the position
-         */
-
-        boolean DPadUpPressed = gamepad1.dpad_up;
-        boolean DPadDownPressed = gamepad1.dpad_down;
-        boolean DPadRightPressed = gamepad1.dpad_right;
-        boolean DPadLeftPressed = gamepad1.dpad_left;
-
-        if (DPadDownPressed) {
-            if (!DPadDown) {
-                flyWheel.currentlyRunning = true;
-                flyWheel.currentPower -= flyWheel.incrementValue;
-                DPadDown = true;
-            }
-        } else {
-            DPadDown = false;
-        }
-
-        if (DPadUpPressed) {
-            if (!DPadUp) {
-                flyWheel.currentlyRunning = true;
-                flyWheel.currentPower += flyWheel.incrementValue;
-                DPadUp = true;
-            }
-        } else {
-            DPadUp = false;
-        }
-
-        if (DPadRightPressed) {
-            if (!DPadRight) {
-                flyWheel.currentlyRunning = false;
-                DPadRight = true;
-            }
-        } else {
-            DPadRight = false;
-        }
-
-        if (DPadLeftPressed) {
-            if (!DPadLeft) {
-                flyWheel.currentlyRunning = true;
-                flyWheel.currentPower = flyWheel.defaultStartingPower;
-                DPadLeft = true;
-            }
-        } else {
-            DPadLeft = false;
-        }
-
-        flyWheel.currentPower = Range.clip(flyWheel.currentPower, 0, 1);
-
-        if (flyWheel.currentPower == 0) {
-            flyWheel.currentlyRunning = false;
-        }
-
-        if (flyWheel.currentlyRunning) {
-            flyWheel.FlyWheelMotor.setPower(flyWheel.currentPower);
-        } else {
-            flyWheel.FlyWheelMotor.setPower(0);
-        }
-
-        telemetry.addData("FlyWheel", String.valueOf(flyWheel.FlyWheelMotor.getPower()));
-
 
         /*
          * Driving controls
@@ -184,6 +70,11 @@ public class TeleOpAutonomousGenerator extends OpMode {
             left = throttle1;
         }
 
+        if ((throttle1 == 0) && (direction2 == 0)) {
+            right = 0;
+            left = 0;
+        }
+
         /*
         right = throttle - direction;
         left = throttle + direction;
@@ -202,6 +93,7 @@ public class TeleOpAutonomousGenerator extends OpMode {
             driveTrain.stopRobot();
             driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } else {
             // write the values to the motors
             driveTrain.powerLeft(left);
@@ -214,59 +106,6 @@ public class TeleOpAutonomousGenerator extends OpMode {
         telemetry.addData("Encoder Front", "L: " + String.valueOf(driveTrain.LeftFrontMotor.getCurrentPosition()) +
                 ", R: " + driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("Time", String.valueOf(time));
-
-
-
-        /*
-         * Controller 2 Controls --------------------------------------------------
-         */
-
-        /*
-         * Lift controls
-         * Right joystick Y Up - Lift positive power
-         * Right joystick Y Down - Lift negative power
-         * D-pad up (without the top bumper) - Put the lift servo up
-         * D-pad down (without the top bumper) - Put the lift servo down
-         * D-pad up (with top bumper) - Increment the servo up
-         * D-pad down (with top bumper) - Increment the servo down
-         */
-
-        double right_joystick_y = gamepad2.right_stick_y;
-        boolean liftManualMode = gamepad2.left_bumper;
-
-        lift.setLiftPower(teleOpUtils.scaleInput(right_joystick_y));
-
-        if (!liftManualMode) { // If it's automatic
-            if (gamepad2.dpad_up) {
-                lift.currentServoPosition = lift.maximum;
-            } if (gamepad2.dpad_down) {
-                lift.currentServoPosition = lift.minimum;
-            } if (gamepad2.dpad_left) {
-                lift.currentServoPosition = lift.ideal;
-            }
-        } else {
-            if (gamepad2.dpad_up) {
-                if (!DPadUp2) {
-                    lift.incrementServo();
-                    DPadUp2 = true;
-                }
-            } else {
-                DPadUp2 = false;
-            }
-            if (gamepad2.dpad_down) {
-                if (!DPadDown2) {
-                    lift.decrementServo();
-                    DPadDown2 = true;
-                }
-            } else {
-                DPadDown2 = false;
-            }
-        }
-        lift.currentServoPosition = Range.clip(lift.currentServoPosition, -1, 1);
-        lift.LiftServo.setPosition(lift.currentServoPosition);
-
-
-        telemetry.addData("Lift Servo", String.valueOf(lift.currentServoPosition));
 
     }
 }
