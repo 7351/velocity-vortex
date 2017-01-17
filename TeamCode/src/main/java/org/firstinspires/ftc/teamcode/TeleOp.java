@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TeleOpUtils;
  * Created by Dynamic Signals on 10/21/2016.
  */
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 public class TeleOp extends OpMode {
 
     private boolean DPadUp = false;
