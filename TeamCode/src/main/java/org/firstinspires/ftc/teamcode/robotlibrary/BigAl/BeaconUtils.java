@@ -13,7 +13,7 @@ public class BeaconUtils {
     private ColorUtils colorUtils;
 
     public BeaconUtils(HardwareMap hardwareMap, ColorUtils colorUtils, String alliance) {
-        hardwareMap.servo.get("BeaconServo");
+        BeaconServo = hardwareMap.servo.get("BeaconServo");
         this.colorUtils = colorUtils;
     }
 
