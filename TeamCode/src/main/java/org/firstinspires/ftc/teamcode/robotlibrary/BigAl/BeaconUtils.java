@@ -18,6 +18,7 @@ public class BeaconUtils {
         BeaconServo = hardwareMap.servo.get("BeaconServo");
         this.colorUtils = colorUtils;
         this.alliance = alliance;
+        rotateServo(ServoPosition.CENTER);
     }
 
     public enum ServoPosition {

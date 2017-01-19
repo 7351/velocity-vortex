@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
@@ -25,18 +26,15 @@ public class BeaconRed extends OpMode {
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
-    Servo beaconServo;
     GyroUtils gyroUtils;
     ColorUtils colorUtils;
+    BeaconUtils beaconUtils;
     GyroSensor gyro;
     Intake intake;
     FlyWheel flyWheel;
     EncoderDrive drive;
     EncoderTurn turn;
     private String alliance = "Red";
-    double rightButtonPosition = 0.2;
-    double leftButtonPosition = 0.5;
-    double middlePosition = 0.5;
 
     @Override
     public void init() {
@@ -44,9 +42,9 @@ public class BeaconRed extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
-        beaconServo = hardwareMap.servo.get("BeaconServo");
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
+        beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
@@ -58,7 +56,6 @@ public class BeaconRed extends OpMode {
 
         gyro.calibrate();
         colorUtils.lineColorSensor.enableLed(true);
-        beaconServo.setPosition(middlePosition);
     }
 
     @Override
@@ -126,8 +123,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 7) {
             if (time.time() > 2) {
-                intake.stopIntake(Intake.IntakeSpec.A);
-                intake.stopIntake(Intake.IntakeSpec.B);
+                intake.stopIntake(Intake.IntakeSpec.BOTH);
                 flyWheel.FlyWheelMotor.setPower(0);
                 time.reset();
                 stage++;
@@ -221,47 +217,14 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        // Initialize the beacon subroutine with beacon pusher
-        /*if (stage == 17) {
-            switch (colorUtils.beaconColor()) {
-                case RED:
-                    switch (alliance) {
-                        case "Blue":
-                            beaconServo.setPosition(rightButtonPosition);
-                            time.reset();
-                            stage++;
-                            break;
-                        case "Red":
-                            beaconServo.setPosition(leftButtonPosition);
-                            time.reset();
-                            stage++;
-                            break;
-                    }
-                    break;
-                case BLUE:
-                    switch (alliance) {
-                        case "Blue":
-                            beaconServo.setPosition(leftButtonPosition);
-                            time.reset();
-                            stage++;
-                            break;
-                        case "Red":
-                            beaconServo.setPosition(rightButtonPosition);
-                            time.reset();
-                            stage++;
-                            break;
-                    }
-            }
-        }*/
-
         if (stage == 18) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 200, 0.35);
                 drive.run();
             }
+            beaconUtils.actOnBeaconWithColorSensor();
             if (drive.isCompleted() || time.time() > 2) { // 5 second time override
                 driveTrain.stopRobot();
-                beaconServo.setPosition(middlePosition);
                 stage++;
                 time.reset();
             }
