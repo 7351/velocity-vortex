@@ -45,10 +45,10 @@ public class BeaconUtils {
         if (alliance.equals("Red")) {
             switch (beaconColor) {
                 case RED:
-
+                    rotateServo(ServoPosition.TRIGGER_LEFT);
                     break;
                 case BLUE:
-
+                    rotateServo(ServoPosition.TRIGGER_RIGHT);
                     break;
                 default:
                     // Case for reading nothing or white (the beacon)
@@ -58,10 +58,10 @@ public class BeaconUtils {
         if (alliance.equals("Blue")) {
             switch (beaconColor) {
                 case RED:
-
+                    rotateServo(ServoPosition.TRIGGER_RIGHT);
                     break;
                 case BLUE:
-
+                    rotateServo(ServoPosition.TRIGGER_LEFT);
                     break;
                 default:
                     // Case for reading nothing or white (the beacon)
