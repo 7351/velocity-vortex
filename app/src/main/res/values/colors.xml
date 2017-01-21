@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="dividerColor">#000000</color>
     <color name="splash_color">#424242</color>
+    <color name="tab1">#1976D2</color>
+    <color name="tab2">#E64A19</color>
 </resources>

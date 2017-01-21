@@ -30,7 +30,8 @@ class UserOptions {
             new RadioOption(new String[]{"Red", "Blue"}, "Alliance?", "alliance"),
             new NumberOption(2, "Delay before match?", "delay"),
             new RadioOption(new String[]{"0", "1", "2"}, "How many debris to shoot?", "shoot"),
-            new RadioOption(new String[]{"Beacon", "Cap ball"}, "Target?", "target")
+            new RadioOption(new String[]{"Beacon", "Cap ball"}, "Target?", "target"),
+            new NumberOption(3, "Test", "Test")
 
     };
 }
