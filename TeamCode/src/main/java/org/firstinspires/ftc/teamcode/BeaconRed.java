@@ -68,7 +68,7 @@ public class BeaconRed extends OpMode {
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
 
-        if (stage == 1) { //drives forward 0.25 seconds
+        if (stage == 1) { //drives forward a little bit
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 1300, .6);
                 drive.run();
@@ -81,7 +81,7 @@ public class BeaconRed extends OpMode {
 
         }
 
-        if (stage == 2) {
+        if (stage == 2) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 drive = null;
@@ -90,20 +90,20 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 3) {
+        if (stage == 3) { // Start flywheel
             double flyWheelLaunchPower = 1;
             flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
             stage++;
         }
 
-        if (stage == 4) {
+        if (stage == 4) { // Wait 2 seconds
             if (time.time() > 2) {
                 time.reset();
                 stage++;
             }
         }
 
-        if (stage == 5) {
+        if (stage == 5) { // Start intakes
             if (time.time() < 1) {
                 intake.setIntakePower(Intake.IntakeSpec.B, -1);
                 intake.setIntakePower(Intake.IntakeSpec.A, 1);
@@ -113,7 +113,7 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 6) {
+        if (stage == 6) { // Wait almost 1 second
             if (time.time() > .7) {
                 time.reset();
                 stage++;
@@ -122,7 +122,7 @@ public class BeaconRed extends OpMode {
 
 
         if (stage == 7) {
-            if (time.time() > 2) {
+            if (time.time() > 2) { // Wait 2 seconds then turn off intakes and flywheel
                 intake.stopIntake(Intake.IntakeSpec.BOTH);
                 flyWheel.FlyWheelMotor.setPower(0);
                 time.reset();
@@ -130,14 +130,14 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 8) {
+        if (stage == 8) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 9) { // Turn to 90
+        if (stage == 9) { // Turn
             if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 13, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
@@ -149,7 +149,7 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 10) {
+        if (stage == 10) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 turn = null;
