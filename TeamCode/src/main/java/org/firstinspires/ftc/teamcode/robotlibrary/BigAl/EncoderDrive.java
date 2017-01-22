@@ -65,4 +65,9 @@ public class EncoderDrive implements EncoderRoutine {
         // We do this funky equation to make sure that we will eventually reach the target and it won't run forever.
         // If the target is negative, and you specified positive power, it will change it to negative power
     }
+
+    public void runWithDecrementPower(double subtractivePower) {
+        power -= subtractivePower;
+        run();
+    }
 }

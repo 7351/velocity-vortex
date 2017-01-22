@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
@@ -28,6 +30,8 @@ public class TeleOp extends OpMode {
     private Intake intake;
     private Lift lift;
     private TeleOpUtils teleOpUtils;
+    private BeaconUtils beaconUtils;
+    private ColorUtils colorUtils;
 
     @Override
     public void init() {
@@ -37,6 +41,8 @@ public class TeleOp extends OpMode {
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
+        colorUtils = new ColorUtils(hardwareMap);
+        beaconUtils = new BeaconUtils(hardwareMap, colorUtils, "NS");
 
     }
 

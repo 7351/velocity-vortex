@@ -59,7 +59,7 @@ public class BeaconUtils {
     }
 
     public void actOnBeaconWithColorSensor() {
-        ColorUtils.Color beaconColor = colorUtils.beaconColor();
+        ColorUtils.Color beaconColor = ColorUtils.Color.BLUE; // FIXME: Beacon Color sensor.
         if (alliance.equals("Red")) {
             switch (beaconColor) {
                 case RED:
