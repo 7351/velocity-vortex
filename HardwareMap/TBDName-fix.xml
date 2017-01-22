@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <MotorController name="Launch &amp; Lift Motor Controller" serialNumber="AL00VM5X">
+        <Motor name="FlyWheelMotor" port="1" />
+        <Motor name="LiftMotor" port="2" />
+    </MotorController>
+    <ServoController name="Servo Controller" serialNumber="AL026DRM">
+        <Servo name="LiftServo" port="1" />
+        <Servo name="BeaconServo" port="3" />
+        <ContinuousRotationServo name="IntakeServoB1" port="5" />
+        <ContinuousRotationServo name="IntakeServoB2" port="6" />
+    </ServoController>
+    <MotorController name="Intake Motor Controller" serialNumber="AI049PCI">
+        <Motor name="IntakeA" port="1" />
+        <Motor name="LiftMotor2" port="2" />
+    </MotorController>
+    <MotorController name="Left Drive Train" serialNumber="AL00YCFA">
+        <Motor name="LeftFrontMotor" port="1" />
+        <Motor name="LeftBackMotor" port="2" />
+    </MotorController>
+    <MotorController name="Right Drive Train" serialNumber="AL00VM5S">
+        <Motor name="RightFrontMotor" port="1" />
+        <Motor name="RightBackMotor" port="2" />
+    </MotorController>
+    <DeviceInterfaceModule name="Device Interface Module" serialNumber="AL00VDA6">
+        <Gyro name="gyro" port="0" />
+        <ColorSensor name="lineColorSensor" port="3" />
+        <ColorSensor name="beaconColorSensor" port="4" />
+    </DeviceInterfaceModule>
+</Robot>
