@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import android.support.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -11,10 +13,10 @@ public class BeaconUtils {
 
     public Servo BeaconServo;
     private ColorUtils colorUtils;
-    private String alliance;
+    private String alliance = "NS";
     private double leftPosition = 0.14, center = 0.37, rightPosition = 0.65;
 
-    public BeaconUtils(HardwareMap hardwareMap, ColorUtils colorUtils, String alliance) {
+    public BeaconUtils(HardwareMap hardwareMap, ColorUtils colorUtils, @NonNull String alliance) {
         BeaconServo = hardwareMap.servo.get("BeaconServo");
         this.colorUtils = colorUtils;
         this.alliance = alliance;
@@ -24,11 +26,16 @@ public class BeaconUtils {
     public BeaconUtils(HardwareMap hardwareMap, ColorUtils colorUtils) {
         BeaconServo = hardwareMap.servo.get("BeaconServo");
         this.colorUtils = colorUtils;
+        alliance = "NS";
         rotateServo(ServoPosition.CENTER);
     }
 
     public void setAlliance(String alliance) {
         this.alliance = alliance;
+    }
+
+    public String getAlliance() {
+        return alliance;
     }
 
     public enum ServoPosition {

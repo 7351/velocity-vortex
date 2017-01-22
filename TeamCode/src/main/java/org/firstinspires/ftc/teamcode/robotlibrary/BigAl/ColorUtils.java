@@ -18,12 +18,12 @@ public class ColorUtils {
         this.hardwareMap = hardwareMap;
         // Initialize bottom color sensor with i2c addr 0x5c
         lineColorSensor = hardwareMap.colorSensor.get("lineColorSensor");
-        lineColorSensor.setI2cAddress(I2cAddr.create7bit(0x2e));
+        lineColorSensor.setI2cAddress(I2cAddr.create7bit(0x5c/2));
         lineColorSensor.enableLed(false);
 
         // Initialize bottom color sensor with i2c addr 0x4c
         beaconColorSensor = hardwareMap.colorSensor.get("beaconColorSensor");
-        beaconColorSensor.setI2cAddress(I2cAddr.create7bit(0x26));
+        beaconColorSensor.setI2cAddress(I2cAddr.create7bit(0x4c/2));
         beaconColorSensor.enableLed(false);
     }
 

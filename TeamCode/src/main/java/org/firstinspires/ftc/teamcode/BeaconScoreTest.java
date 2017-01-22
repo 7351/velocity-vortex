@@ -24,7 +24,7 @@ public class BeaconScoreTest extends OpMode {
     RangeUtils rangeUtils;
     String alliance;
     int stage = 0;
-    boolean withRange = true;
+    boolean withRange = false;
     ElapsedTime time;
 
     @Override
@@ -40,10 +40,11 @@ public class BeaconScoreTest extends OpMode {
     @Override
     public void init_loop() {
 
-        telemetry.addData("", "Left D-Pad: Red alliance, Right D-Pad: Blue alliance");
+        telemetry.addData("Alliance", "Left: Red, Right: Blue");
         if (gamepad1.dpad_left) alliance = "Red";
         if (gamepad1.dpad_right) alliance = "Blue";
         beaconUtils.setAlliance(alliance);
+        telemetry.addData("Selection", beaconUtils.getAlliance());
 
     }
 
@@ -67,28 +68,51 @@ public class BeaconScoreTest extends OpMode {
                     time.reset();
                 }
             } else {
-                stage++;
-                time.reset();
+                if (time.time() < 2) {
+                    driveTrain.powerLeft(0.2);
+                    driveTrain.powerRight(0.2);
+                } else {
+                    driveTrain.stopRobot();
+                    stage++;
+                    time.reset();
+                }
+
             }
         }
 
         if (stage == 1) {
             beaconUtils.actOnBeaconWithColorSensor();
-            if (time.time() > 0.5) stage++;
-
-        }
-
-        if (stage == 2) {
-            if (rangeUtils.getDistance(INCH) < 12) {
-                driveTrain.powerLeft(-0.2);
-                driveTrain.powerRight(-0.2);
-            } else {
-                driveTrain.stopRobot();
+            driveTrain.powerLeft(0.15);
+            driveTrain.powerRight(0.15);
+            if (time.time() > 0.5) {
                 stage++;
+                time.reset();
             }
         }
 
-        telemetry.addData("Distance", rangeUtils.getDistance(INCH));
+        if (stage == 2) {
+            if (withRange) {
+                if (rangeUtils.getDistance(INCH) < 12) {
+                    driveTrain.powerLeft(-0.2);
+                    driveTrain.powerRight(-0.2);
+                } else {
+                    driveTrain.stopRobot();
+                    stage++;
+                }
+            } else {
+                if (time.time() < 1) {
+                    driveTrain.powerLeft(-0.2);
+                    driveTrain.powerRight(-0.2);
+                } else {
+                    driveTrain.stopRobot();
+                    stage++;
+                }
+            }
+
+        }
+
+
+        if (withRange) telemetry.addData("Distance", rangeUtils.getDistance(INCH));
         telemetry.addData("Beacon Color", colorUtils.beaconColor().toString());
 
 

@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
  * Created by Dynamic Signals on 10/25/2016.
  */
 @Autonomous(name = "ColorTest", group = "Testing")
-@Disabled
 public class ColorSensorTest extends OpMode {
 
     ColorUtils colorUtils;
