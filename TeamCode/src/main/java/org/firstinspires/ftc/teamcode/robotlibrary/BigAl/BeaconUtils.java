@@ -21,6 +21,16 @@ public class BeaconUtils {
         rotateServo(ServoPosition.CENTER);
     }
 
+    public BeaconUtils(HardwareMap hardwareMap, ColorUtils colorUtils) {
+        BeaconServo = hardwareMap.servo.get("BeaconServo");
+        this.colorUtils = colorUtils;
+        rotateServo(ServoPosition.CENTER);
+    }
+
+    public void setAlliance(String alliance) {
+        this.alliance = alliance;
+    }
+
     public enum ServoPosition {
         TRIGGER_LEFT,
         CENTER,

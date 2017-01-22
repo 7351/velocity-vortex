@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "RangeSensorDriveTest", group = "Testing")
+@Disabled
 public class RangeSensorDriveTest extends OpMode {
 
     DriveTrain driveTrain;
@@ -37,7 +38,7 @@ public class RangeSensorDriveTest extends OpMode {
 
             if (distance < 3) { // If the distance sensor is less than 3 inches
                 driveTrain.powerLeft(-0.25); // Drive -0.25
-                driveTrain.powerRight(0.25);
+                driveTrain.powerRight(-0.25);
             } else {
                 stage++; // Go to the next stage when we are greater than 3 inches
                 driveTrain.stopRobot(); // Stop the drive train from moving
