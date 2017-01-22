@@ -97,14 +97,14 @@ public class BeaconRed extends OpMode {
         }
 
         if (stage == 4) {
-            if (time.time() > 3) {
+            if (time.time() > 2) {
                 time.reset();
                 stage++;
             }
         }
 
         if (stage == 5) {
-            if (time.time() < 2) {
+            if (time.time() < 1) {
                 intake.setIntakePower(Intake.IntakeSpec.B, -1);
                 intake.setIntakePower(Intake.IntakeSpec.A, 1);
             } else {
@@ -114,7 +114,7 @@ public class BeaconRed extends OpMode {
         }
 
         if (stage == 6) {
-            if (time.time() > 1.2) {
+            if (time.time() > .7) {
                 time.reset();
                 stage++;
             }
@@ -139,7 +139,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 9) { // Turn to 90
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 45, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 13, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -160,16 +160,15 @@ public class BeaconRed extends OpMode {
 
         if (stage == 11) { //drives forward 33 inches in seconds // OUTDATED LENGTH
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2700, .75);
+                drive = new EncoderDrive(driveTrain, 3000, .75);
                 drive.run();
             }
-            if (drive.isCompleted() || colorUtils.aboveWhiteLine()) {
+            if (drive.isCompleted()) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
         }
-
         if (stage == 12) {
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
@@ -180,7 +179,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 13) { // Turn to 145
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 11, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 5, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -199,10 +198,10 @@ public class BeaconRed extends OpMode {
         }
         if (stage == 15) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 350, .5);
+                drive = new EncoderDrive(driveTrain, 1400, .2);
                 drive.run();
             }
-            if (drive.isCompleted() || time.time() > 2) {
+            if (drive.isCompleted() || colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
@@ -211,20 +210,34 @@ public class BeaconRed extends OpMode {
 
         if (stage == 16) {
             if (time.time() > .5) {
-                stage = 18;
+                stage++;
                 drive = null;
+                time.reset();
+            }
+        }
+
+        if (stage == 17){
+            if (turn == null){
+                turn = new EncoderTurn(driveTrain, 39, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted())
+            {
+                driveTrain.stopRobot();
+                stage++;
                 time.reset();
             }
         }
 
         if (stage == 18) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 200, 0.35);
+                drive = new EncoderDrive(driveTrain, 300, 0.35);
                 drive.run();
             }
             beaconUtils.actOnBeaconWithColorSensor();
             if (drive.isCompleted() || time.time() > 2) { // 5 second time override
                 driveTrain.stopRobot();
+                turn = null;
                 stage++;
                 time.reset();
             }
@@ -238,10 +251,10 @@ public class BeaconRed extends OpMode {
         }
         if (stage == 20) {
             if (drive == null){
-                drive = new EncoderDrive(driveTrain, -500, .5);
+                drive = new EncoderDrive(driveTrain, 300, .25);
                 drive.run();
             }
-            if (drive.isCompleted()) {
+            if (drive.isCompleted() || time.time() > 3) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
@@ -254,43 +267,27 @@ public class BeaconRed extends OpMode {
                 stage++;
             }
         }
-        if (stage == 21){
-            if (turn == null){
-                turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()){
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-            }
-        }
+
         if (stage == 22){
-            if (time.time() > 0.25)
-            {
-                turn = null;
-                time.reset();
-                stage++;
-            }
-        }
-        if (stage == 23){
             if (drive == null){
-                drive = new EncoderDrive(driveTrain, 3000, .5);
+                drive = new EncoderDrive(driveTrain, -400, .5);
                 drive.run();
             }
-            if (drive.isCompleted() || colorUtils.aboveWhiteLine()){
+            if (drive.isCompleted()){
                 driveTrain.stopRobot();
-                stage++;
                 time.reset();
+                stage++;
             }
         }
-        if (stage == 24){
+
+        if (stage == 23){
             if (time.time() > .25){
                 drive = null;
                 time.reset();
                 stage++;
             }
         }
+
 
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
