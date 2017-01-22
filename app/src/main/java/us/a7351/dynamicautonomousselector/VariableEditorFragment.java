@@ -158,12 +158,6 @@ public class VariableEditorFragment extends Fragment implements View.OnClickList
             pushButton = (Button) v.findViewById(R.id.pushButton);
             pushButton.setOnClickListener(this);
 
-            try {
-                hoster = new JsonHoster();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
             // Inject the options into the linearlayout
             initializeOptions();
         }

@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnMenuTabClickListener;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements OnMenuTabClickListener {
 
     private final String TAG = MainActivity.class.getName();
@@ -69,6 +71,12 @@ public class MainActivity extends AppCompatActivity implements OnMenuTabClickLis
 
         // We want to make sure that we can write to the hard drive
         verifyStoragePermissions(this);
+
+        try {
+            hoster = new JsonHoster();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
