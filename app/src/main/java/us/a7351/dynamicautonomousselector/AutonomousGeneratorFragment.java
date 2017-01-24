@@ -28,6 +28,7 @@ import com.google.common.io.Files;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
@@ -45,6 +46,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
+import us.a7351.dynamicautonomousselector.autonomousgenerator.Program;
 import us.a7351.dynamicautonomousselector.autonomousgenerator.Routine;
 
 import static us.a7351.dynamicautonomousselector.MainActivity.hoster;
@@ -58,6 +60,8 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
     RecyclerView recyclerView;
     Spinner programSpinner;
     File programDir;
+    HashMap<File, Program> programMap;
+    File selectedFile;
 
     public AutonomousGeneratorFragment() {
         // Required empty public constructor
@@ -96,15 +100,7 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
                 programDir = new File(Environment.getExternalStorageDirectory() + File.separator + "FIRST" + File.separator + "Programs" + File.separator);
                 programDir.mkdirs();
 
-                List<String> programs = new ArrayList<>();
-                for (File file: programDir.listFiles()) {
-                    String fileContent = Files.toString(file, Charsets.UTF_8);
-                    List<Routine> routines = new Gson().fromJson(fileContent, new TypeToken<List<Routine>>(){}.getType());
-                    programs.add(file.getName());
-                }
-                ArrayAdapter<String> programAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, programs);
-                programSpinner.setAdapter(programAdapter);
-
+                repopulateMapAndSpinner();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -115,6 +111,30 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
     public void onStart() {
         super.onStart();
 
+    }
+
+    private void repopulateMapAndSpinner() throws Exception {
+        programMap = new HashMap<>();
+
+        List<String> programs = new ArrayList<>();
+        for (File file: programDir.listFiles()) {
+            String fileContent = Files.toString(file, Charsets.UTF_8);
+            try {
+                new JSONObject(fileContent);
+                Program program = new Gson().fromJson(fileContent, Program.class);
+                if (program.type.equals("Program")) {
+                    Log.d(TAG, "Program discovered: " + file.getName());
+                    programs.add(file.getName());
+                    programMap.put(file, program);
+                } else {
+                    Log.d(TAG, "Found an object, but it doesn't match the 'Program' type");
+                }
+            } catch (JSONException e) {
+                Log.d(TAG, "Discovered " + file.getName() + ", but it isn't a program!");
+            }
+        }
+        ArrayAdapter<String> programAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, programs);
+        programSpinner.setAdapter(programAdapter);
     }
 
     @Override
@@ -129,7 +149,7 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (view != null) {
             String fileName = ((TextView) view).getText().toString();
-            File selectedFile = new File(programDir.getPath() + File.separator + fileName);
+            selectedFile = new File(programDir.getPath() + File.separator + fileName);
             Log.d(TAG, selectedFile.getName() + " selected!");
         }
     }

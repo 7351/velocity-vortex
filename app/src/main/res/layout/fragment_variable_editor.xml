@@ -21,6 +21,9 @@
 
             <LinearLayout
                 android:id="@+id/options_linear_layout"
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"

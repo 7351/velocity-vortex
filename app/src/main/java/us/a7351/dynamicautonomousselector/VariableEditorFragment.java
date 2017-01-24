@@ -153,6 +153,9 @@ public class VariableEditorFragment extends Fragment implements View.OnClickList
 
             optionsLinearLayout = (LinearLayout) v.findViewById(R.id.options_linear_layout);
 
+            optionsLinearLayout.requestFocus();
+            optionsLinearLayout.requestFocusFromTouch();
+
             translater = new OptionTranslater(optionsLinearLayout, context);
 
             pushButton = (Button) v.findViewById(R.id.pushButton);
