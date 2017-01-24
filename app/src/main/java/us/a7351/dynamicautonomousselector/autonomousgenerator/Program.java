@@ -1,5 +1,6 @@
 package us.a7351.dynamicautonomousselector.autonomousgenerator;
 
+import java.io.File;
 import java.util.List;
 
 /**

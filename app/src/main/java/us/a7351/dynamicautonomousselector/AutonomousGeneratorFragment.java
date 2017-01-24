@@ -1,6 +1,7 @@
 package us.a7351.dynamicautonomousselector;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,7 +52,7 @@ import us.a7351.dynamicautonomousselector.autonomousgenerator.Routine;
 
 import static us.a7351.dynamicautonomousselector.MainActivity.hoster;
 
-public class AutonomousGeneratorFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class AutonomousGeneratorFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private static final String TAG = AutonomousGeneratorFragment.class.getName();
 
@@ -92,6 +93,7 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
         if (v != null) {
 
             try {
+                v.findViewById(R.id.new_program_button).setOnClickListener(this);
                 programSpinner = (Spinner) v.findViewById(R.id.programSpinner);
                 programSpinner.setOnItemSelectedListener(this);
                 coordinatorLayout = (CoordinatorLayout) v.getParent().getParent().getParent();
@@ -117,6 +119,7 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
         programMap = new HashMap<>();
 
         List<String> programs = new ArrayList<>();
+        programs.add(0, "---");
         for (File file: programDir.listFiles()) {
             String fileContent = Files.toString(file, Charsets.UTF_8);
             try {
@@ -157,5 +160,25 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.new_program_button:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View view = inflater.inflate(R.layout.new_file_dialog_layout, new LinearLayout(context));
+                alertDialog.setView(view);
+                alertDialog.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText fileNameEditText = (EditText) view.findViewById(R.id.file_name_edittext);
+                        Log.d(TAG, fileNameEditText.getText().toString());
+                    }
+                });
+                alertDialog.create().show();
+                break;
+        }
     }
 }
