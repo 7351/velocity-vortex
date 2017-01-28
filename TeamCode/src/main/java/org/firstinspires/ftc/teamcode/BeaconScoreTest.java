@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
@@ -23,7 +24,7 @@ public class BeaconScoreTest extends OpMode {
     ColorUtils colorUtils;
     RangeUtils rangeUtils;
     String alliance;
-    int stage = 0;
+    int stage = 17;
     boolean withRange = false;
     ElapsedTime time;
 
@@ -34,6 +35,7 @@ public class BeaconScoreTest extends OpMode {
         driveTrain = new DriveTrain(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils);
         time = new ElapsedTime();
+        alliance = beaconUtils.getAlliance();
 
     }
 
@@ -56,59 +58,49 @@ public class BeaconScoreTest extends OpMode {
     @Override
     public void loop() {
 
-        if (stage == 0) {
-            beaconUtils.actOnBeaconWithColorSensor();
-            if (withRange) {
-                if (rangeUtils.getDistance(INCH) > 1) {
-                    driveTrain.powerLeft(0.2);
-                    driveTrain.powerRight(0.2);
-                } else {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
-                }
+        if (stage == 17) { // Drive until we're 1 inch away
+            if (rangeUtils.getDistance(DistanceUnit.INCH) < 1) {
+                driveTrain.powerLeft(0.4);
+                driveTrain.powerRight(0.4);
             } else {
-                if (time.time() < 2) {
-                    driveTrain.powerLeft(0.2);
-                    driveTrain.powerRight(0.2);
-                } else {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
-                }
-
-            }
-        }
-
-        if (stage == 1) {
-            beaconUtils.actOnBeaconWithColorSensor();
-            driveTrain.powerLeft(0.15);
-            driveTrain.powerRight(0.15);
-            if (time.time() > 0.5) {
+                driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
         }
-
-        if (stage == 2) {
-            if (withRange) {
-                if (rangeUtils.getDistance(INCH) < 12) {
-                    driveTrain.powerLeft(-0.2);
-                    driveTrain.powerRight(-0.2);
-                } else {
-                    driveTrain.stopRobot();
-                    stage++;
-                }
-            } else {
-                if (time.time() < 1) {
-                    driveTrain.powerLeft(-0.2);
-                    driveTrain.powerRight(-0.2);
-                } else {
-                    driveTrain.stopRobot();
-                    stage++;
-                }
+        if (stage == 18) { // Wait
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
             }
-
+        }
+        if (stage == 19) { // Drive forward with time for 1 second with activating beacon
+            beaconUtils.actOnBeaconWithColorSensor();
+            if (time.time() < 2) {
+                driveTrain.powerLeft(0.25);
+                driveTrain.powerRight(0.25);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.time();
+            }
+        }
+        if (stage == 20) { // Wait regular plus 0.5 sec
+            if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
+                stage++;
+                time.reset();
+                beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+            }
+        }
+        if (stage == 21) { // Drive backwards 8 inches
+            if (rangeUtils.getDistance(DistanceUnit.INCH) < 4) {
+                driveTrain.powerLeft(-0.4);
+                driveTrain.powerRight(-0.4);
+            } else {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
         }
 
 
