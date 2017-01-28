@@ -41,6 +41,7 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:cardview-v7:24.2.1'
     compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.shawnlin:number-picker:2.4.1'
     compile 'com.google.guava:guava:20.0'
     compile 'com.google.code.gson:gson:2.8.0'
     testCompile 'junit:junit:4.12'

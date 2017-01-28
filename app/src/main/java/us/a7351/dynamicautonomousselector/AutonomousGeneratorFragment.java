@@ -152,8 +152,11 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (view != null) {
             String fileName = ((TextView) view).getText().toString();
-            selectedFile = new File(programDir.getPath() + File.separator + fileName);
-            Log.d(TAG, selectedFile.getName() + " selected!");
+            if (!fileName.equals("---")) {
+                selectedFile = new File(programDir.getPath() + File.separator + fileName);
+                Log.d(TAG, selectedFile.getName() + " selected!");
+            }
+
         }
     }
 
@@ -175,10 +178,44 @@ public class AutonomousGeneratorFragment extends Fragment implements AdapterView
                     public void onClick(DialogInterface dialog, int which) {
                         EditText fileNameEditText = (EditText) view.findViewById(R.id.file_name_edittext);
                         Log.d(TAG, fileNameEditText.getText().toString());
+                        Program newProgram = new Program();
+                        selectedFile = new File(programDir.getPath() + File.separator + fileNameEditText.getText().toString());
+                        Snackbar.make(coordinatorLayout, "Created program " + fileNameEditText.getText().toString(), Snackbar.LENGTH_SHORT).show();
+                        downloadAndStoreJson(selectedFile, new Gson().toJson(newProgram));
+                        try {
+                            repopulateMapAndSpinner();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        for (int i = 0; i < programSpinner.getAdapter().getCount(); i++) {
+
+                        }
+
                     }
                 });
                 alertDialog.create().show();
                 break;
         }
+    }
+
+    private void downloadAndStoreJson(File file, String jsonFileContent){
+
+        byte[] jsonArray = jsonFileContent.getBytes();
+
+        BufferedOutputStream bos;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            bos.write(jsonArray);
+            bos.flush();
+            bos.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            jsonArray = null;
+            System.gc();
+        }
+
     }
 }
