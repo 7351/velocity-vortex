@@ -265,6 +265,23 @@ public class TeleOp extends OpMode {
         lift.currentServoPosition = Range.clip(lift.currentServoPosition, -1, 1);
         lift.LiftServo.setPosition(lift.currentServoPosition);
 
+        /*
+         * Beacon sunglasses control
+         * X left rotate servo left
+         * B right rotate servo right
+         */
+
+        if (gamepad2.x && !gamepad2.b) {
+            beaconUtils.rotateServo(BeaconUtils.ServoPosition.TRIGGER_LEFT);
+        }
+        if (gamepad2.b && !gamepad2.x) {
+            beaconUtils.rotateServo(BeaconUtils.ServoPosition.TRIGGER_RIGHT);
+        }
+        if (!gamepad2.x && !gamepad2.b) {
+            beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+        }
+
+        telemetry.addData("Beacon Servo", beaconUtils.BeaconServo.getPosition());
 
         telemetry.addData("Lift Servo", String.valueOf(lift.currentServoPosition));
 

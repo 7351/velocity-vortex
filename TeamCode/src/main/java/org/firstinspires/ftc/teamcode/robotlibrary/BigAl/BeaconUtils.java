@@ -14,7 +14,7 @@ public class BeaconUtils {
     public Servo BeaconServo;
     private ColorUtils colorUtils;
     private String alliance = "NS";
-    private double leftPosition = 0.14, center = 0.37, rightPosition = 0.65;
+    private double leftPosition = 0.1, center = 0.37, rightPosition = 0.65;
 
     public BeaconUtils(HardwareMap hardwareMap, ColorUtils colorUtils, @NonNull String alliance) {
         BeaconServo = hardwareMap.servo.get("BeaconServo");

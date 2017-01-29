@@ -11,7 +11,7 @@ public class EncoderTurn implements EncoderRoutine {
     private double turnPerDegree = ((((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5);
 
     private DriveTrain driveTrain;
-    private final double power = 0.65;
+    private final double power = 0.45;
     private int encoderCounts;
     private int startingPositionLeft;
     private int startingPositionRight;
@@ -21,8 +21,9 @@ public class EncoderTurn implements EncoderRoutine {
      * Constructor for the EncoderTurn object
      *
      * @param driveTrain - The drive train object that should be initialized
+     * @param degreesToTurn
      */
-    public EncoderTurn(DriveTrain driveTrain, int degreesToTurn, GyroUtils.Direction turnDirection) {
+    public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection) {
         this.driveTrain = driveTrain;
         this.turnDirection = turnDirection;
 
@@ -33,7 +34,7 @@ public class EncoderTurn implements EncoderRoutine {
         startingPositionRight = driveTrain.RightFrontMotor.getCurrentPosition();
 
         //int currentPos = gyroSensor.getHeading();
-        encoderCounts = degreesToTurn * (int)turnPerDegree;
+        encoderCounts =(int) (degreesToTurn * turnPerDegree);
 
         switch (turnDirection) {
             case CLOCKWISE:

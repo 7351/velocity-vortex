@@ -21,11 +21,11 @@ public class RangeUtils {
 
     /*
      * Due to the weird value spikes that happen in this sensor, this function cleans them out.
-     * -1 will be the distance that indicates a spike.
+     * You have to pass it a number to indicate a sensor error
      */
-    public double getDistance(DistanceUnit unit) {
+    public double getDistance(DistanceUnit unit, int randomValueNumber) {
         double rawDistance = rangeSensor.getDistance(unit);
-        double distance = -1;
+        double distance = randomValueNumber;
         switch (unit) {
             case INCH:
                 if (rawDistance < 95) distance = rawDistance;
@@ -35,5 +35,9 @@ public class RangeUtils {
                 break;
         }
         return distance;
+    }
+
+    public double getDistance(DistanceUnit unit) {
+        return getDistance(unit, -1);
     }
 }
