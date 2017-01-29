@@ -184,7 +184,7 @@ public class BeaconRedAlt extends OpMode {
         }
         if (stage == 13) { // Drive until white line
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 3500, 0.45);
+                drive = new EncoderDrive(driveTrain, 3600, 0.45);
             }
             drive.runWithDecrementPower(0.000325);
             if (colorUtils.aboveWhiteLine()) {
@@ -258,7 +258,7 @@ public class BeaconRedAlt extends OpMode {
 
         if (stage == 20) { // Wait regular plus 0.5 sec
             if (time.time() > AutonomousUtils.WAITTIME + 1) {
-                stage++;
+                stage=666;
                 time.reset();
                 drive = null;
                 turn = null;
