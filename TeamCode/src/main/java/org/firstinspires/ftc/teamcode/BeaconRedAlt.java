@@ -90,7 +90,7 @@ public class BeaconRedAlt extends OpMode {
 
         if (stage == 2) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage = 9;
+                stage ++;
                 drive = null;
                 turn = null;
                 time.reset();
@@ -131,7 +131,7 @@ public class BeaconRedAlt extends OpMode {
         if (stage == 7) {
             if (time.time() > 2) { // Wait 2 seconds then turn off intakes and flywheel
                 intake.stopIntake(Intake.IntakeSpec.BOTH);
-                flyWheel.FlyWheelMotor.setPower(0);
+                flyWheel.FlyWheelMotor.setPower(1);
                 time.reset();
                 stage++;
             }
@@ -184,7 +184,7 @@ public class BeaconRedAlt extends OpMode {
         }
         if (stage == 13) { // Drive until white line
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 3500, 0.45);
+                drive = new EncoderDrive(driveTrain, 3600, 0.45);
             }
             drive.runWithDecrementPower(0.000325);
             if (colorUtils.aboveWhiteLine()) {
@@ -205,7 +205,7 @@ public class BeaconRedAlt extends OpMode {
         }
         if (stage == 15) { // Turn to face the beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 28.5, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -215,7 +215,7 @@ public class BeaconRedAlt extends OpMode {
             }
         }
         if (stage == 16) { // Wait
-            if (time.time() > AutonomousUtils.WAITTIME) {
+            if (time.time() > .5) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -223,8 +223,8 @@ public class BeaconRedAlt extends OpMode {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }
-        if (stage == 17) { // Drive until we're 10 cm away from the wall
-            if (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) >= 16) {
+        if (stage == 17) { // Drive until we see a color
+            if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
                 driveTrain.powerLeft(0.25);
                 driveTrain.powerRight(0.25);
             } else {
@@ -236,7 +236,7 @@ public class BeaconRedAlt extends OpMode {
         }
 
         if (stage == 18) { // Wait
-            if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
+            if (time.time() > 1) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -257,7 +257,7 @@ public class BeaconRedAlt extends OpMode {
         }
 
         if (stage == 20) { // Wait regular plus 0.5 sec
-            if (time.time() > AutonomousUtils.WAITTIME + 1) {
+            if (time.time() > AutonomousUtils.WAITTIME +.5 ) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -268,7 +268,7 @@ public class BeaconRedAlt extends OpMode {
         if (stage == 21) { // Drive forward till were at the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
-                drive = new EncoderDrive(driveTrain, counts + 25, 0.225); // Just a little umph to hit the button
+                drive = new EncoderDrive(driveTrain, counts + 40, 0.225); // Just a little umph to hit the button
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -288,7 +288,7 @@ public class BeaconRedAlt extends OpMode {
             }
         }
 
-        if (stage == 23) {
+        if (stage == 23) { //Back up 15cm with prox
             if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 15) {
                 driveTrain.powerLeft(-0.65);
                 driveTrain.powerRight(-0.65);
