@@ -271,7 +271,7 @@ public class BeaconRedAlt2 extends OpMode {
                     drive = new EncoderDrive(driveTrain, counts + 40, 0.225); // Just a little umph to hit the button
                     drive.run();
                 } else {
-                    stage=990;
+                    stage++;
                 }
             }
             if (drive.isCompleted()) {
