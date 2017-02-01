@@ -258,7 +258,7 @@ public class BeaconRedAlt extends OpMode {
 
         if (stage == 20) { // Wait regular plus 0.5 sec
             if (time.time() > AutonomousUtils.WAITTIME +.5 ) {
-                stage=99;
+                stage++;
                 time.reset();
                 drive = null;
                 turn = null;
