@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,8 +23,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRedAlt", group = "Encoder Autonomous")
-public class BeaconRedAlt extends OpMode {
+@Autonomous(name = "BeaconBlueAlt", group = "Encoder Autonomous")
+public class BeaconBlueAlt extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -40,7 +38,7 @@ public class BeaconRedAlt extends OpMode {
     EncoderDrive drive;
     EncoderTurn turn;
     RangeUtils rangeUtils;
-    private String alliance = "Red";
+    private String alliance = "Blue";
 
     @Override
     public void init() {
@@ -165,7 +163,7 @@ public class BeaconRedAlt extends OpMode {
         }
         if (stage == 11) {
             if (turn == null) { // Turn to the right direction to get to the white line
-                turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -186,12 +184,12 @@ public class BeaconRedAlt extends OpMode {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 3600, 0.45);
             }
-            drive.runWithDecrementPower(0.000325);
+            drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-            } if (drive.isCompleted()) {
+            } if (drive.isCompleted()) { //fail safe if we miss white line
                 stage = 666;
             }
         }
@@ -205,7 +203,7 @@ public class BeaconRedAlt extends OpMode {
         }
         if (stage == 15) { // Turn to face the beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -258,7 +256,7 @@ public class BeaconRedAlt extends OpMode {
 
         if (stage == 20) { // Wait regular plus 0.5 sec
             if (time.time() > AutonomousUtils.WAITTIME +.5 ) {
-                stage=99;
+                stage++;
                 time.reset();
                 drive = null;
                 turn = null;
@@ -294,9 +292,23 @@ public class BeaconRedAlt extends OpMode {
                 driveTrain.powerRight(-0.65);
             } else {
                 driveTrain.stopRobot();
-                stage=555;
+                stage++;
             }
         }
+
+        if (stage == 24) { //Back up 15cm with prox
+            if (turn == null) { // Turn to the right direction to get to the white line
+                turn = new EncoderTurn(driveTrain, 74, GyroUtils.Direction.CLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        
+
 
 
         telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
