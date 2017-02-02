@@ -19,6 +19,7 @@ public class Intake {
         IntakeA = hardwareMap.dcMotor.get("IntakeA");
         IntakeBServo1 = hardwareMap.crservo.get("IntakeServoB1");
         IntakeBServo2 = hardwareMap.crservo.get("IntakeServoB2");
+        stopIntake(IntakeSpec.BOTH);
     }
 
     public void setIntakePower(IntakeSpec spec, double power) {

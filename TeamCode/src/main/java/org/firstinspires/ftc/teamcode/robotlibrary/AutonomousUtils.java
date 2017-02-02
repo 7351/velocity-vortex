@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode.robotlibrary;
 
+import android.content.Context;
+
+import com.qualcomm.ftccommon.SoundPlayer;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.R;
 
 /**
  * Created by Dynamic Signals on 11/6/2016.
@@ -9,10 +15,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class AutonomousUtils {
 
     public static final double WAITTIME = 0.15;
+    public static final int DEADBEEF = 666;
+    public static final int COMPLETED = 555;
+
     private ElapsedTime time;
 
     public AutonomousUtils() {
-
     }
 
     public AutonomousUtils(ElapsedTime time) {
@@ -31,5 +39,10 @@ public class AutonomousUtils {
             }
         }
          */
+    }
+
+    // I created this function to identify when a failsafe has been triggered.
+    public static void failSafeError(HardwareMap hardwareMap) {
+        SoundPlayer.getInstance().play(hardwareMap.appContext, R.raw.failsafeerrorsound);
     }
 }
