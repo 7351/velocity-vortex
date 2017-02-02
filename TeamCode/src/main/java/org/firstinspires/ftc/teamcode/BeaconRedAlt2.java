@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,8 +23,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRedAlt", group = "Encoder Autonomous")
-public class BeaconRedAlt extends OpMode {
+@Autonomous(name = "BeaconRedAlt2", group = "Encoder Autonomous")
+public class BeaconRedAlt2 extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -90,7 +88,7 @@ public class BeaconRedAlt extends OpMode {
 
         if (stage == 2) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage =9;
+                stage = 9;
                 drive = null;
                 turn = null;
                 time.reset();
@@ -258,7 +256,7 @@ public class BeaconRedAlt extends OpMode {
 
         if (stage == 20) { // Wait regular plus 0.5 sec
             if (time.time() > AutonomousUtils.WAITTIME +.5 ) {
-                stage=99;
+                stage++;
                 time.reset();
                 drive = null;
                 turn = null;
@@ -268,8 +266,13 @@ public class BeaconRedAlt extends OpMode {
         if (stage == 21) { // Drive forward till were at the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
-                drive = new EncoderDrive(driveTrain, counts + 40, 0.225); // Just a little umph to hit the button
-                drive.run();
+                if (counts < 300) {
+
+                    drive = new EncoderDrive(driveTrain, counts + 40, 0.225); // Just a little umph to hit the button
+                    drive.run();
+                } else {
+                    stage=990;
+                }
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
@@ -294,9 +297,10 @@ public class BeaconRedAlt extends OpMode {
                 driveTrain.powerRight(-0.65);
             } else {
                 driveTrain.stopRobot();
-                stage=555;
+                stage++;
             }
         }
+
 
 
         telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());

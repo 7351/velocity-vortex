@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
@@ -30,8 +31,9 @@ public class CapBallFarRed extends OpMode {
     Intake intake;
     FlyWheel flyWheel;
     EncoderDrive drive;
+    BeaconUtils beaconUtils;
     EncoderTurn turn;
-
+    private String alliance = "Red";
 
 
     @Override
@@ -39,6 +41,7 @@ public class CapBallFarRed extends OpMode {
 
         driveTrain = new DriveTrain(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
+        beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
@@ -48,6 +51,7 @@ public class CapBallFarRed extends OpMode {
 
         gyro = gyroUtils.gyro;
         gyro.calibrate();
+        beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
 
     }
 
@@ -93,7 +97,7 @@ public class CapBallFarRed extends OpMode {
         if (stage == 3){
             if(turn == null)
             {
-                turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
@@ -113,13 +117,13 @@ public class CapBallFarRed extends OpMode {
         if (stage == 5)
         {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1400, 0.5);
+                drive = new EncoderDrive(driveTrain, 1800, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
                 drive.completed();
                 time.reset();
-                flyWheel.FlyWheelMotor.setPower(.65);
+                flyWheel.FlyWheelMotor.setPower(1);
                 stage++;
             }
         }
@@ -176,6 +180,7 @@ public class CapBallFarRed extends OpMode {
             {
                 time.reset();
                 stage++;
+                intake.setIntakePower(Intake.IntakeSpec.A, -1);
             }
         }
 
@@ -183,13 +188,21 @@ public class CapBallFarRed extends OpMode {
         if (stage == 11)
         {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1900, 0.5);
+                drive = new EncoderDrive(driveTrain, 1500, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
                 drive.completed();
                 time.reset();
                 stage++;
+            }
+        }
+        if (stage == 12)
+        {
+            if (time.time() > 2) {
+                intake.stopIntake(Intake.IntakeSpec.A);
+                stage++;
+                time.reset();
             }
         }
 

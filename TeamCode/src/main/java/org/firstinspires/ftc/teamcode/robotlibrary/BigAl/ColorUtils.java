@@ -53,9 +53,11 @@ public class ColorUtils {
 
     public Color beaconColor() {
         Color returnColor = Color.NONE;
-        if ((beaconColorSensor.red() > beaconColorSensor.green() + 1) && (beaconColorSensor.red() > beaconColorSensor.blue() + 1)) {
-            returnColor = Color.RED;
+        //if ((beaconColorSensor.red() > beaconColorSensor.green() + 1) && (beaconColorSensor.red() > beaconColorSensor.blue() + 1)) {
+        if ((beaconColorSensor.red() > beaconColorSensor.green() + 0) && (beaconColorSensor.red() > beaconColorSensor.blue() + 0)){
+                returnColor = Color.RED;
         }
+
         if ((beaconColorSensor.blue() > beaconColorSensor.red()) && (beaconColorSensor.blue() > beaconColorSensor.green())) {
             returnColor = Color.BLUE;
         }
