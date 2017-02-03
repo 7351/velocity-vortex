@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake.IntakeSpec.A;
+import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake.IntakeSpec.B;
+
 /**
  * Created by Dynamic Signals on 10/31/2016.
  */
@@ -34,17 +37,35 @@ public class Intake {
         }
     }
 
+    public void setIntake(IntakeSpec spec, IntakeDirection direction) {
+        double power = 0;
+        switch (spec) {
+            case A:
+                power = (direction.equals(IntakeDirection.IN)) ? 1 : -1;
+                setIntakePower(A, power);
+                break;
+            case B:
+                power = (direction.equals(IntakeDirection.IN)) ? -1 : 1;
+                setIntakePower(B, power);
+                break;
+            case BOTH:
+                setIntake(A, direction);
+                setIntake(B, direction);
+                break;
+        }
+    }
+
     public void stopIntake(IntakeSpec spec) {
         switch (spec) {
             case A:
-                setIntakePower(IntakeSpec.A, 0);
+                setIntakePower(A, 0);
                 break;
             case B:
-                setIntakePower(IntakeSpec.B, -0.05);
+                setIntakePower(B, -0.05);
                 break;
             case BOTH:
-                stopIntake(IntakeSpec.A);
-                stopIntake(IntakeSpec.B);
+                stopIntake(A);
+                stopIntake(B);
         }
     }
 
@@ -52,5 +73,10 @@ public class Intake {
         A,
         B,
         BOTH
+    }
+
+    public enum IntakeDirection {
+        IN,
+        OUT
     }
 }

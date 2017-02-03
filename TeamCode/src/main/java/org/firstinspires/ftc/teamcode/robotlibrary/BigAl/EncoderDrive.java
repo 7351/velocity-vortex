@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class EncoderDrive implements EncoderRoutine {
+public class EncoderDrive extends RoutineImpl {
 
     DriveTrain driveTrain;
     double power;

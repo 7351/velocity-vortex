@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direct
  * Created by Dynamic Signals on 1/16/2017.
  */
 
-public class GyroTurn implements EncoderRoutine {
+public class GyroTurn extends RoutineImpl {
 
     GyroUtils gyroUtils;
     DriveTrain driveTrain;

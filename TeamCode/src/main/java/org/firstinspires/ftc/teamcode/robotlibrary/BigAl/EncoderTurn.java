@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by leoforney on 12/11/16.
  */
 
-public class EncoderTurn implements EncoderRoutine {
+public class EncoderTurn extends RoutineImpl {
 
     private double turnPerDegree = ((((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5);
 
