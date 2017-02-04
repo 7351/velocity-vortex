@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
-import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -26,8 +23,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRed", group = "Encoder Autonomous")
-public class BeaconRed extends OpMode {
+@Autonomous(name = "BeaconRedAlt", group = "Encoder Autonomous")
+public class BeaconRedAlt extends OpMode {
 
     int stage = 1;
     ElapsedTime time = new ElapsedTime();
@@ -41,6 +38,9 @@ public class BeaconRed extends OpMode {
     EncoderDrive drive;
     EncoderTurn turn;
     RangeUtils rangeUtils;
+
+
+    /* Selector variables */
     private String alliance = "Red";
     private String beaconAmount = "2";
 
@@ -77,76 +77,43 @@ public class BeaconRed extends OpMode {
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }
 
-        if (stage == 1) { //drives forward a little bit
+        if (stage == 1) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 1300, 0.5);
                 drive.run();
+                flyWheel.currentPower = flyWheel.defaultStartingPower;
+                flyWheel.currentlyRunning = true;
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
+
                 time.reset();
                 stage++;
             }
-
         }
 
-        if (stage == 2) { // Wait
+        flyWheel.powerMotor(); // Update flywheel values
+
+        if (stage == 2) {
+            intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+            if (time.time() > 2.5) {
+                stage++;
+                time.reset();
+                //intake.stopIntake(Intake.IntakeSpec.BOTH);
+                flyWheel.currentlyRunning = false;
+            }
+        }
+
+        if (stage == 3) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage = 9;
+                stage++;
                 drive = null;
                 turn = null;
                 time.reset();
             }
         }
 
-        if (stage == 3) { // Start flywheel
-            double flyWheelLaunchPower = 1;
-            flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
-            stage++;
-        }
-
-        if (stage == 4) { // Wait 2 seconds
-            if (time.time() > 2) {
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 5) { // Start intakes
-            if (time.time() < 1) {
-                intake.setIntakePower(Intake.IntakeSpec.B, -1);
-                intake.setIntakePower(Intake.IntakeSpec.A, 1);
-            } else {
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 6) { // Wait almost 1 second
-            if (time.time() > .7) {
-                time.reset();
-                stage++;
-            }
-        }
-
-
-        if (stage == 7) {
-            if (time.time() > 2) { // Wait 2 seconds then turn off intakes and flywheel
-                intake.stopIntake(Intake.IntakeSpec.BOTH);
-                flyWheel.FlyWheelMotor.setPower(1);
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 8) { // Wait
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-            }
-        }
-
-        if (stage == 9) { // Drive backwards a wee bit
+        if (stage == 4) { // Drive backwards a wee bit
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, -900, 0.2);
                 drive.run();
@@ -157,7 +124,8 @@ public class BeaconRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 10) { // Wait
+
+        if (stage == 5) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
@@ -165,7 +133,7 @@ public class BeaconRed extends OpMode {
                 turn = null;
             }
         }
-        if (stage == 11) {
+        if (stage == 6) {
             if (turn == null) { // Turn to the right direction to get to the white line
                 turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
@@ -176,7 +144,7 @@ public class BeaconRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 12) { // Wait
+        if (stage == 7) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
@@ -184,23 +152,22 @@ public class BeaconRed extends OpMode {
                 turn = null;
             }
         }
-        if (stage == 13) { // Drive until white line
+        if (stage == 8) { // Drive until white line
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 3600, 0.45);
             }
-            drive.runWithDecrementPower(0.000325);
+            drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-            }
-            if (drive.isCompleted()) {
+            } if (drive.isCompleted()) { //fail safe if we miss white line
+                stage = AutonomousUtils.DEADBEEF;
                 driveTrain.stopRobot();
                 AutonomousUtils.failSafeError(hardwareMap);
-                stage = 666;
             }
         }
-        if (stage == 14) { // Wait
+        if (stage == 9) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
@@ -208,9 +175,9 @@ public class BeaconRed extends OpMode {
                 turn = null;
             }
         }
-        if (stage == 15) { // Turn to face the beacon
+        if (stage == 10) { // Turn to face the beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 32, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -219,7 +186,7 @@ public class BeaconRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 16) { // Wait
+        if (stage == 11) { // Wait
             if (time.time() > .5) {
                 stage++;
                 time.reset();
@@ -228,7 +195,7 @@ public class BeaconRed extends OpMode {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }
-        if (stage == 17) { // Drive until we see a color
+        if (stage == 12) { // Drive until we see a color
             if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 20) {
                 driveTrain.powerLeft(0.25);
                 driveTrain.powerRight(0.25);
@@ -240,7 +207,7 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 18) { // Wait
+        if (stage == 13) { // Wait
             if (time.time() > 1) {
                 stage++;
                 time.reset();
@@ -248,21 +215,22 @@ public class BeaconRed extends OpMode {
                 turn = null;
             }
         }
-
-        if (stage == 19) { // Act on beacon with color sensor
+        
+        if (stage == 14) { // Act on beacon with color sensor
             if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
                 beaconUtils.actOnBeaconWithColorSensor();
                 stage++;
                 time.reset();
             } else {
-                stage = 666;
+                stage = AutonomousUtils.DEADBEEF;
+                AutonomousUtils.failSafeError(hardwareMap);
                 time.reset();
             }
 
         }
 
-        if (stage == 20) { // Wait regular plus 0.5 sec
-            if (time.time() > AutonomousUtils.WAITTIME + .5) {
+        if (stage == 15) { // Wait regular plus 0.5 sec
+            if (time.time() > AutonomousUtils.WAITTIME +.5 ) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -270,20 +238,20 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 21) { // Drive forward till were at the wall
+        if (stage == 16) { // Drive forward till we're at the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
-                drive = new EncoderDrive(driveTrain, counts + 120, 0.225); // Just a little umph to hit the button
+                drive = new EncoderDrive(driveTrain, counts + 100, 0.225); // Just a little umph to hit the button
                 drive.run();
             }
-            if (drive.isCompleted() || time.time() > 3) { // Time failsafe just in case we need to bail
+            if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
         }
 
-        if (stage == 22) { // Wait plus a little extra
+        if (stage == 17) { // Wait plus a little extra
             if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
                 stage++;
                 time.reset();
@@ -293,18 +261,21 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 23) { //Back up 15cm with prox
-            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 15) {
-                driveTrain.powerLeft(-0.65);
-                driveTrain.powerRight(-0.65);
+        if (stage == 18) { //Back up 15cm with prox
+            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 12) {
+                driveTrain.powerLeft(-0.55);
+                driveTrain.powerRight(-0.55);
             } else {
                 driveTrain.stopRobot();
-                stage++;
+                beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+                if (beaconAmount.equals("1")) stage = AutonomousUtils.COMPLETED;
+                if (beaconAmount.equals("2")) stage++;
             }
         }
+
         if (stage == 19) { // Turn towards the white line of the second beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 76.5, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 66, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -333,8 +304,7 @@ public class BeaconRed extends OpMode {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
-            }
-            if (drive.isCompleted()) { //fail safe if we miss white line
+            } if (drive.isCompleted()) { //fail safe if we miss white line
                 stage = AutonomousUtils.DEADBEEF;
                 driveTrain.stopRobot();
                 AutonomousUtils.failSafeError(hardwareMap);
@@ -373,7 +343,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 25) { // Turn stage to face the beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 77, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 77, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -447,14 +417,14 @@ public class BeaconRed extends OpMode {
                 if (beaconAmount.equals("1")) stage = AutonomousUtils.COMPLETED;
                 if (beaconAmount.equals("2")) stage++;
             }
-
-            telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
-            telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
-            telemetry.addData("Range", rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
-            telemetry.addData("Beacon", colorUtils.beaconColor().toString());
-            telemetry.addData("Stage", String.valueOf(stage));
-            telemetry.addData("Time", String.valueOf(time.time()));
-
         }
+
+        telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
+        telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
+        telemetry.addData("Range", rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("Beacon", colorUtils.beaconColor().toString());
+        telemetry.addData("Stage", String.valueOf(stage));
+        telemetry.addData("Time", String.valueOf(time.time()));
+
     }
 }

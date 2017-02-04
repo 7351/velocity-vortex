@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 @Autonomous(name = "BeaconBlue", group = "Encoder Autonomous")
 public class BeaconBlue extends OpMode {
 
-    int stage = 0;
+    int stage = 1;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
     GyroUtils gyroUtils;
@@ -79,13 +79,14 @@ public class BeaconBlue extends OpMode {
 
         if (stage == 1) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1400, 0.5);
+                drive = new EncoderDrive(driveTrain, 1235, 0.5);
                 drive.run();
                 flyWheel.currentPower = flyWheel.defaultStartingPower;
                 flyWheel.currentlyRunning = true;
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
+
                 time.reset();
                 stage++;
             }
@@ -98,7 +99,7 @@ public class BeaconBlue extends OpMode {
             if (time.time() > 2.5) {
                 stage++;
                 time.reset();
-                intake.stopIntake(Intake.IntakeSpec.BOTH);
+                //intake.stopIntake(Intake.IntakeSpec.BOTH);
                 flyWheel.currentlyRunning = false;
             }
         }
@@ -114,7 +115,7 @@ public class BeaconBlue extends OpMode {
 
         if (stage == 4) { // Drive backwards a wee bit
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -1000, 0.2);
+                drive = new EncoderDrive(driveTrain, -1025, 0.2);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -261,7 +262,7 @@ public class BeaconBlue extends OpMode {
         }
 
         if (stage == 18) { //Back up 15cm with prox
-            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 15) {
+            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 12) {
                 driveTrain.powerLeft(-0.55);
                 driveTrain.powerRight(-0.55);
             } else {
@@ -296,7 +297,7 @@ public class BeaconBlue extends OpMode {
 
         if (stage == 21) { // Drive to the white line of the second beacon
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -3300, 0.45);
+                drive = new EncoderDrive(driveTrain, -3100, 0.45);
             }
             drive.runWithDecrementPower(0.000325); // slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine() && Math.abs(driveTrain.RightFrontMotor.getCurrentPosition()) > 1000) {
@@ -367,7 +368,7 @@ public class BeaconBlue extends OpMode {
                 stage++;
                 time.reset();
             } else {
-                stage = AutonomousUtils.DEADBEEF;
+                stage = 627;
                 AutonomousUtils.failSafeError(hardwareMap);
                 time.reset();
             }
