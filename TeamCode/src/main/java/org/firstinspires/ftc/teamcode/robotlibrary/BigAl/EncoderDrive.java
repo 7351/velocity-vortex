@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 public class EncoderDrive extends RoutineImpl {
 
@@ -67,7 +68,7 @@ public class EncoderDrive extends RoutineImpl {
     }
 
     public void runWithDecrementPower(double subtractivePower) {
-        power -= subtractivePower;
+        power = Range.clip(power - subtractivePower, 0, 1);
         run();
     }
 }

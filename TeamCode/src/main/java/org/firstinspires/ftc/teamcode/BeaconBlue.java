@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 @Autonomous(name = "BeaconBlue", group = "Encoder Autonomous")
 public class BeaconBlue extends OpMode {
 
-    int stage = 1;
+    int stage = 0;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
     GyroUtils gyroUtils;
@@ -43,6 +43,7 @@ public class BeaconBlue extends OpMode {
     /* Selector variables */
     private String alliance = "Blue";
     private String beaconAmount = "2";
+    private int shoot = 0;
 
     @Override
     public void init() {
@@ -81,12 +82,13 @@ public class BeaconBlue extends OpMode {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 1235, 0.5);
                 drive.run();
-                flyWheel.currentPower = flyWheel.defaultStartingPower;
-                flyWheel.currentlyRunning = true;
+                if (shoot > 0) {
+                    flyWheel.currentPower = flyWheel.defaultStartingPower;
+                    flyWheel.currentlyRunning = true;
+                }
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
-
                 time.reset();
                 stage++;
             }
@@ -95,11 +97,15 @@ public class BeaconBlue extends OpMode {
         flyWheel.powerMotor(); // Update flywheel values
 
         if (stage == 2) {
-            intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
-            if (time.time() > 2.5) {
+            if (shoot == 1) {
+                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+            } if (shoot == 2) {
+                intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+            }
+            if (time.time() > 2.5 || shoot <= 0) {
                 stage++;
                 time.reset();
-                //intake.stopIntake(Intake.IntakeSpec.BOTH);
+                intake.stopIntake(Intake.IntakeSpec.BOTH);
                 flyWheel.currentlyRunning = false;
             }
         }
