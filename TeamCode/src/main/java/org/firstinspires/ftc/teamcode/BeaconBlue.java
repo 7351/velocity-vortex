@@ -43,7 +43,7 @@ public class BeaconBlue extends OpMode {
     /* Selector variables */
     private String alliance = "Blue";
     private String beaconAmount = "2";
-    private int shoot = 0;
+    private int shoot = 2;
 
     @Override
     public void init() {

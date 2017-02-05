@@ -68,7 +68,8 @@ public class ShootingTest extends OpMode {
         if (stage == 2) {
             if (shoot == 1) {
                 intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
-            } if (shoot == 2) {
+            }
+            if (shoot == 2) {
                 intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
             }
             if (time.time() > 2.5 || shoot <= 0) {
@@ -78,7 +79,6 @@ public class ShootingTest extends OpMode {
                 flyWheel.currentlyRunning = false;
             }
         }
-
 
 
         telemetry.addData("Stage", String.valueOf(stage));

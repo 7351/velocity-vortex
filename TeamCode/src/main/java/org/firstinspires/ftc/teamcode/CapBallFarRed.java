@@ -34,6 +34,7 @@ public class CapBallFarRed extends OpMode {
     BeaconUtils beaconUtils;
     EncoderTurn turn;
     private String alliance = "Red";
+    private int shoot = 2;
 
 
     @Override
@@ -94,13 +95,12 @@ public class CapBallFarRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 3){
-            if(turn == null)
-            {
+        if (stage == 3) {
+            if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
-            if (turn.isCompleted()){
+            if (turn.isCompleted()) {
                 turn.completed();
                 stage++;
                 time.reset();
@@ -114,79 +114,42 @@ public class CapBallFarRed extends OpMode {
             }
         }
 
-        if (stage == 5)
-        {
+        if (stage == 5) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 1800, 0.5);
                 drive.run();
+                if (shoot > 0) {
+                    flyWheel.currentPower = flyWheel.defaultStartingPower;
+                    flyWheel.currentlyRunning = true;
+                }
             }
             if (drive.isCompleted()) {
-                drive.completed();
-                time.reset();
-                flyWheel.FlyWheelMotor.setPower(1);
-                stage++;
-            }
-        }
-
-        if(stage == 6)
-        {
-            if (time.time() > 3)
-            {
-                drive = null;
+                driveTrain.stopRobot();
                 time.reset();
                 stage++;
             }
         }
 
-        if (stage == 7)
-        {
-            if(time.time() < 2.5)
-            {
-                intake.setIntakePower(Intake.IntakeSpec.B, -0.7);
-            }
-            else
-            {
-                time.reset();
-                stage++;
-            }
-        }
+        flyWheel.powerMotor(); // Update flywheel values
 
-        if (stage == 8)
-        {
-            if (time.time() < .35)
-                intake.setIntakePower(Intake.IntakeSpec.A, 1);
-            else
-            {
-                time.reset();
-                stage++;
+        if (stage == 6) {
+            if (shoot == 1) {
+                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
             }
-        }
-
-        if (stage == 9)
-        {
-            if(time.time() > 4)
-            {
-                intake.stopIntake(Intake.IntakeSpec.A);
-                intake.stopIntake(Intake.IntakeSpec.B);
-                flyWheel.FlyWheelMotor.setPower(0);
-                time.reset();
-                stage++;
+            if (shoot == 2) {
+                intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
             }
-        }
-
-        if (stage == 10)
-        {
-            if (time.time() > .25)
-            {
-                time.reset();
+            if (time.time() > 2.5 || shoot <= 0) {
                 stage++;
-                intake.setIntakePower(Intake.IntakeSpec.A, -1);
+                time.reset();
+                intake.stopIntake(Intake.IntakeSpec.BOTH);
+                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
+                flyWheel.currentlyRunning = false;
             }
         }
 
 
-        if (stage == 11)
-        {
+        if (stage == 7) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 1500, 0.5);
                 drive.run();
@@ -197,8 +160,8 @@ public class CapBallFarRed extends OpMode {
                 stage++;
             }
         }
-        if (stage == 12)
-        {
+
+        if (stage == 8) {
             if (time.time() > 2) {
                 intake.stopIntake(Intake.IntakeSpec.A);
                 stage++;
