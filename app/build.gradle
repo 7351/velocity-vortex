@@ -4,6 +4,15 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
     defaultConfig {
+        applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                project.ext { appName = 'DynamicAutonomousSelector' }
+                def newName = output.outputFile.name
+                newName = newName.replace("app-", "$project.ext.appName-") //"MyAppName" -> I set my app variables in the root project
+                //noinspection GroovyAssignabilityCheck
+                output.outputFile = new File(output.outputFile.parent, newName)
+            }
+        }
         applicationId "us.a7351.dynamicautonomousselector"
         minSdkVersion 19
         targetSdkVersion 24
