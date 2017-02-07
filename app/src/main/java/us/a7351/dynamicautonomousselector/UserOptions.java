@@ -29,8 +29,9 @@ class UserOptions {
             */
             new RadioOption(new String[]{"Red", "Blue"}, "Alliance?", "alliance"),
             new NumberOption(2, "Delay before match?", "delay"),
-            //new RadioOption(new String[]{"0", "1", "2"}, "How many particles to shoot?", "shoot"),
-            new RadioOption(new String[]{"Beacon", "Cap ball close", "Cap ball far"}, "Target?", "target"),
+            new RadioOption(new String[]{"0", "1", "2"}, "How many particles to shoot?", "shoot"),
+            new RadioOption(new String[]{"Close to Corner Vortex", "Far from Corner Vortex"}, "Where are you starting?", "starting"),
+            new RadioOption(new String[]{"1 Beacon", "2 Beacons", "Cap ball"}, "Target?", "target"),
 
     };
 }

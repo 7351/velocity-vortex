@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/tab_variable_editor" android:icon="@drawable/ic_variable_editor" android:title="Variable Editor" />
-    <item android:id="@+id/tab_autonomous_generator" android:icon="@drawable/ic_autonomous_generator" android:title="Autonomous Generator" />
+    <item
+        android:id="@+id/tab_variable_editor"
+        android:icon="@drawable/ic_variable_editor"
+        android:title="Variable Editor" />
+    <item
+        android:id="@+id/tab_autonomous_generator"
+        android:icon="@drawable/ic_autonomous_generator"
+        android:title="Autonomous Generator" />
 
 </menu>
