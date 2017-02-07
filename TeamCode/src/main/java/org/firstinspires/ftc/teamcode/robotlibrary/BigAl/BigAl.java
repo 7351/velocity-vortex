@@ -10,21 +10,19 @@ public class BigAl {
     public VuforiaSystem vuforiaSystem;
     public DriveTrain driveTrain;
     public GyroUtils gyroUtils;
+    public BeaconUtils beaconUtils;
     public ColorUtils colorUtils;
     public FlyWheel flyWheel;
     public Intake intake;
+    public RangeUtils rangeUtils;
     public DynamicAutonomousSelector das;
     public Lift lift;
-    Telemetry telemetry;
-    HardwareMap hardwareMap;
 
     public BigAl(HardwareMap hardwareMap, Telemetry telemetry, boolean VuforiaEnabled) {
-        this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
         if (VuforiaEnabled) {
             vuforiaSystem = new VuforiaSystem();
         }
-
+        rangeUtils = new RangeUtils(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap);
         intake = new Intake(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
@@ -33,25 +31,16 @@ public class BigAl {
         colorUtils = new ColorUtils(hardwareMap);
         das = new DynamicAutonomousSelector();
         lift = new Lift(hardwareMap);
+        beaconUtils = new BeaconUtils(hardwareMap, colorUtils);
     }
 
     public BigAl(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
-
-        driveTrain = new DriveTrain(hardwareMap);
-        intake = new Intake(hardwareMap);
-        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
-        gyroUtils.gyro.calibrate();
-        flyWheel = new FlyWheel(hardwareMap);
-        colorUtils = new ColorUtils(hardwareMap);
-        das = new DynamicAutonomousSelector();
-        lift = new Lift(hardwareMap);
+        this(hardwareMap, telemetry, false);
     }
 
     public void start() {
         colorUtils.lineColorSensor.enableLed(true);
-        gyroUtils.gyro.calibrate();
+        //gyroUtils.gyro.calibrate();
     }
 
 }

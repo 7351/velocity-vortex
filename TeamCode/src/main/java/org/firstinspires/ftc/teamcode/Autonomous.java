@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BigAl;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
@@ -13,9 +17,12 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLETED;
 
 /**
  * Created by Dynamic Signals on 11/10/2016.
@@ -33,7 +40,10 @@ public class Autonomous extends OpMode {
     private double delay;
     private String alliance;
     private int shoot;
+    private String starting;
     private String target;
+
+    private String beaconAmount;
 
     private DriveTrain driveTrain;
     private GyroUtils gyroUtils;
@@ -41,6 +51,8 @@ public class Autonomous extends OpMode {
     private Intake intake;
     private FlyWheel flyWheel;
     private Lift lift;
+    private BeaconUtils beaconUtils;
+    private RangeUtils rangeUtils;
 
     private EncoderTurn turn;
     private EncoderDrive drive;
@@ -56,11 +68,18 @@ public class Autonomous extends OpMode {
         intake = bigAl.intake;
         flyWheel = bigAl.flyWheel;
         lift = bigAl.lift;
+        beaconUtils = bigAl.beaconUtils;
+        rangeUtils = bigAl.rangeUtils;
 
         delay = bigAl.das.getNumberDouble("delay", 0); // 0 default wait time
         alliance = bigAl.das.getRadio("alliance", "ns"); // Not selected - ns
         shoot = bigAl.das.getNumberInt("shoot", 2); // We want to shoot twice by default
         target = bigAl.das.getRadio("target", "ns"); // Not selected - ns
+        starting = bigAl.das.get("starting", "ns");
+
+        if (target.equals("2 Beacons")) beaconAmount = "2";
+        if (target.equals("1 Beacon")) beaconAmount = "1";
+        beaconUtils.setAlliance(alliance);
     }
 
     @Override
@@ -100,22 +119,42 @@ public class Autonomous extends OpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(bigAl.gyroUtils.gyro.isCalibrating()));
         }
-        if (alliance.equals("Red")) {
-            if (target.equals("Cap ball close")) {
-                if (stage == 1) { //drives forward 0.25 seconds
+
+        if (target.equals("2 Beacons") || target.equals("1 Beacon")) {
+            if (alliance.equals("Red")) {
+                if (stage == 1) {
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 700, .6);
+                        drive = new EncoderDrive(driveTrain, 1300, 0.5);
                         drive.run();
+                        if (shoot > 0) {
+                            flyWheel.currentPower = flyWheel.defaultStartingPower;
+                            flyWheel.currentlyRunning = true;
+                        }
                     }
                     if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         time.reset();
                         stage++;
                     }
-
                 }
 
+                flyWheel.powerMotor(); // Update flywheel values
+
                 if (stage == 2) {
+                    if (shoot == 1) {
+                        intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                    } if (shoot == 2) {
+                        intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                    }
+                    if (time.time() > 2.5 || shoot <= 0) {
+                        stage++;
+                        time.reset();
+                        //intake.stopIntake(Intake.IntakeSpec.BOTH);
+                        flyWheel.currentlyRunning = false;
+                    }
+                }
+
+                if (stage == 3) { // Wait
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
                         drive = null;
@@ -124,910 +163,606 @@ public class Autonomous extends OpMode {
                     }
                 }
 
-                if (stage == 3) {
-                    double flyWheelLaunchPower = 0.65;
-                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
-                    stage++;
-                }
-
-                if (stage == 4) {
-                    if (time.time() > 3) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 5) {
-                    if (time.time() < 2) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    } else {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 6) {
-                    if (time.time() > 1.2) {
-                        time.reset();
-                        stage = 8;
-                    }
-                }
-
-                if (stage == 8) {
-                    if (time.time() > 2) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 9) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 10) { // Turn to z90
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.CLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        turn.completed();
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 11) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        turn = null;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 12) {
+                if (stage == 4) { // Drive backwards a wee bit
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1000, .6);
+                        drive = new EncoderDrive(driveTrain, -900, 0.2);
                         drive.run();
                     }
                     if (drive.isCompleted()) {
                         driveTrain.stopRobot();
-                        time.reset();
                         stage++;
+                        time.reset();
                     }
-
                 }
 
-                if (stage == 13) {
+                if (stage == 5) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+                if (stage == 6) {
+                    if (turn == null) { // Turn to the right direction to get to the white line
+                        turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 7) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+                if (stage == 8) { // Drive until white line
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 3600, 0.45);
+                    }
+                    drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
+                    if (colorUtils.aboveWhiteLine()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    } if (drive.isCompleted()) { //fail safe if we miss white line
+                        stage = AutonomousUtils.DEADBEEF;
+                        driveTrain.stopRobot();
+                        AutonomousUtils.failSafeError(hardwareMap);
+                    }
+                }
+                if (stage == 9) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+                if (stage == 10) { // Turn to face the beacon
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+                if (stage == 11) { // Wait
                     if (time.time() > .5) {
                         stage++;
+                        time.reset();
                         drive = null;
+                        turn = null;
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }
+                }
+                if (stage == 12) { // Drive until we see a color
+                    if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 17) {
+                        driveTrain.powerLeft(0.25);
+                        driveTrain.powerRight(0.25);
+                    } else {
+                        RobotLog.d("Attempted to stop robot at " + rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
+                        driveTrain.stopRobot();
+                        stage++;
                         time.reset();
                     }
                 }
-                if (stage == 14) {
+
+                if (stage == 13) { // Wait
+                    if (time.time() > 1) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 14) { // Act on beacon with color sensor
+                    if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
+                        beaconUtils.actOnBeaconWithColorSensor();
+                        stage++;
+                        time.reset();
+                    } else {
+                        stage = AutonomousUtils.DEADBEEF;
+                        AutonomousUtils.failSafeError(hardwareMap);
+                        time.reset();
+                    }
+
+                }
+
+                if (stage == 15) { // Wait regular plus 0.5 sec
+                    if (time.time() > AutonomousUtils.WAITTIME + .5 ) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 16) { // Drive forward till we're at the wall
+                    if (drive == null) {
+                        int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
+                        drive = new EncoderDrive(driveTrain, counts + 100, 0.225); // Just a little umph to hit the button
+                        drive.run();
+                    }
+                    if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 17) { // Wait plus a little extra
+                    if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }
+                }
+
+                if (stage == 18) { //Back up 15cm with prox
+                    if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 12) {
+                        driveTrain.powerLeft(-0.55);
+                        driveTrain.powerRight(-0.55);
+                    } else {
+                        driveTrain.stopRobot();
+                        beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+                        if (beaconAmount.equals("1")) stage = COMPLETED;
+                        if (beaconAmount.equals("2")) stage++;
+                    }
+                }
+
+                if (stage == 19) { // Turn towards the white line of the second beacon
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 69, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
                     if (turn.isCompleted()) {
                         driveTrain.stopRobot();
-                        time.reset();
                         stage++;
+                        time.reset();
                     }
                 }
 
-                if (stage == 15) {
+                if (stage == 20) { // Wait plus a little extra
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
-                        turn = null;
                         time.reset();
+                        drive = null;
+                        turn = null;
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     }
                 }
 
-                if (stage == 16) {
+                if (stage == 21) { // Drive to the white line of the second beacon
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1500, .6);
+                        drive = new EncoderDrive(driveTrain, -3100, 0.45);
+                    }
+                    drive.runWithDecrementPower(0.000325); // slows down gradually to hit white line
+                    if (colorUtils.aboveWhiteLine() && Math.abs(driveTrain.RightFrontMotor.getCurrentPosition()) > 1000) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    } if (drive.isCompleted()) { //fail safe if we miss white line
+                        stage = AutonomousUtils.DEADBEEF;
+                        driveTrain.stopRobot();
+                        AutonomousUtils.failSafeError(hardwareMap);
+                    }
+                }
+
+                if (stage == 22) { // Wait plus a little extra
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 23) { // Back up
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 125, 0.3);
                         drive.run();
                     }
                     if (drive.isCompleted()) {
                         driveTrain.stopRobot();
-                        time.reset();
                         stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 24) { // Wait plus a little extra
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 25) { // Turn stage to face the beacon
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 71, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
+                    }
+                    if (turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 26) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 27) { // We just need a little distance to help identify color
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 100, 0.25);
+                        drive.run();
+                    }
+                    if (drive.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }
+                }
+
+                if (stage == 28) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 29) { // Drive until we see a color
+                    if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
+                        driveTrain.powerLeft(0.25);
+                        driveTrain.powerRight(0.25);
+                    } else {
+                        RobotLog.d("Attempted to stop robot at " + rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 30) { // Wait
+                    if (time.time() > 1) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 31) { // Act on beacon with color sensor
+                    if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
+                        beaconUtils.actOnBeaconWithColorSensor();
+                        stage++;
+                        time.reset();
+                    } else {
+                        stage = 627;
+                        AutonomousUtils.failSafeError(hardwareMap);
+                        time.reset();
                     }
 
                 }
 
-                if (stage == 17) {
+                if (stage == 32) { // Wait regular plus 0.5 sec
+                    if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 33) { // Drive forward till we're at the wall
+                    if (drive == null) {
+                        int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
+                        drive = new EncoderDrive(driveTrain, counts + 140, 0.225); // Just a little umph to hit the button
+                        drive.run();
+                    }
+                    if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 34) { // Wait plus a little extra
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
-                        drive = null;
                         time.reset();
+                        drive = null;
+                        turn = null;
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }
+                }
+
+                if (stage == 35) { //Back up 15cm with prox
+                    if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
+                        driveTrain.powerLeft(-0.55);
+                        driveTrain.powerRight(-0.55);
+                    } else {
+                        driveTrain.stopRobot();
+                        beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+                        stage = COMPLETED;
                     }
                 }
             }
-            if (target.equals("Cap ball far")) {
-                if (stage == 1) { //drives forward 0.25 seconds
+            if (alliance.equals("Blue")) {
+                if (stage == 1) {
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 300, .75);
+                        drive = new EncoderDrive(driveTrain, 1235, 0.5);
                         drive.run();
+                        if (shoot > 0) {
+                            flyWheel.currentPower = flyWheel.defaultStartingPower;
+                            flyWheel.currentlyRunning = true;
+                        }
                     }
                     if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         time.reset();
                         stage++;
                     }
-
                 }
+
+                flyWheel.powerMotor(); // Update flywheel values
 
                 if (stage == 2) {
-                    if (time.time() > 0.35) {
+                    if (shoot == 1) {
+                        intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                    } if (shoot == 2) {
+                        intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                    }
+                    if (time.time() > 2.5 || shoot <= 0) {
+                        stage++;
+                        time.reset();
+                        intake.stopIntake(Intake.IntakeSpec.BOTH);
+                        flyWheel.currentlyRunning = false;
+                    }
+                }
+
+                if (stage == 3) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
                         drive = null;
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 3) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        turn.completed();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 4) {
-                    if (time.time() > 0.15) {
                         turn = null;
-                        stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 5) {
+                if (stage == 4) { // Drive backwards a wee bit
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1400, 0.5);
+                        drive = new EncoderDrive(driveTrain, -1025, 0.2);
                         drive.run();
                     }
                     if (drive.isCompleted()) {
-                        drive.completed();
-                        time.reset();
-                        flyWheel.FlyWheelMotor.setPower(.65);
+                        driveTrain.stopRobot();
                         stage++;
+                        time.reset();
                     }
                 }
 
+                if (stage == 5) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
                 if (stage == 6) {
-                    if (time.time() > 3) {
-                        drive = null;
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 7) {
-                    if (time.time() < 2.5) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, -0.7);
-                    } else {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 8) {
-                    if (time.time() < .35)
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    else {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 9) {
-                    if (time.time() > 4) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 10) {
-                    if (time.time() > .25) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-
-                if (stage == 11) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1600, 0.5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        drive.completed();
-                        time.reset();
-                        stage++;
-                    }
-                }
-            }
-            if (target.equals("Beacon")) {
-                if (stage == 1) { //drives forward 0.25 seconds
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1000, .6);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-
-                }
-
-                if (stage == 2) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        drive = null;
-                        turn = null;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 3) {
-                    double flyWheelLaunchPower = 0.65;
-                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
-                    stage++;
-                }
-
-                if (stage == 4) {
-                    if (time.time() > 3) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 5) {
-                    if (time.time() < 2) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    } else {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 6) {
-                    if (time.time() > 1.2) {
-                        time.reset();
-                        stage = 8;
-                    }
-                }
-
-
-                if (stage == 8) {
-                    if (time.time() > 2) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 9) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 10) { // Turn to 90
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 40, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    if (turn == null) { // Turn to the right direction to get to the white line
+                        turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
                     if (turn.isCompleted()) {
-                        turn.completed();
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 11) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        turn = null;
-                        time.reset();
-                    }
-                }
-
-
-                if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 2400, .75);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
-
-                if (stage == 13) {
+                if (stage == 7) { // Wait
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
-                        drive = null;
                         time.reset();
+                        drive = null;
+                        turn = null;
                     }
                 }
-
-                if (stage == 14) { // Turn to 145
+                if (stage == 8) { // Drive until white line
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 3600, 0.45);
+                    }
+                    drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
+                    if (colorUtils.aboveWhiteLine()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    } if (drive.isCompleted()) { //fail safe if we miss white line
+                        stage = AutonomousUtils.DEADBEEF;
+                        driveTrain.stopRobot();
+                        AutonomousUtils.failSafeError(hardwareMap);
+                    }
+                }
+                if (stage == 9) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+                if (stage == 10) { // Turn to face the beacon
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 17, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 32, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
                     if (turn.isCompleted()) {
-                        turn.completed();
-                        stage = 19;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 19) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        turn = null;
-                        time.reset();
-                    }
-                }
-                if (stage == 20) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 500, .5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
-
-                if (stage == 21) {
+                if (stage == 11) { // Wait
                     if (time.time() > .5) {
                         stage++;
-                        drive = null;
                         time.reset();
-                    }
-                }
-
-                // Initialize the beacon subroutine from BeaconSlamTest
-
-                if (stage == 22) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 500, 0.15);
-                        drive.run();
-                    }
-                    if (drive.isCompleted() || time.time() > 5) { // 5 second time override
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 23) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        drive = null;
-                        time.reset();
-                    }
-                }
-                if (stage == 24) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, -175, 0.5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 25) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        drive = null;
-                        time.reset();
-                    }
-                }
-                if (stage == 26) {
-                    switch (colorUtils.beaconColor()) {
-                        case RED:
-                            switch (alliance) {
-                                case "Blue":
-                                    if (time.time() > 5.1) {
-                                        time.reset();
-                                        stage = 21;
-                                    }
-                                    break;
-                                case "Red":
-                                    time.reset();
-                                    stage++;
-                                    break;
-                            }
-                            break;
-                        case BLUE:
-                            switch (alliance) {
-                                case "Blue":
-                                    time.reset();
-                                    stage++;
-                                    break;
-                                case "Red":
-                                    if (time.time() > 5.1) {
-                                        time.reset();
-                                        stage = 21;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case NONE:
-                            switch (alliance) {
-                                case "Blue":
-                                    time.reset();
-                                    stage++;
-                                    break;
-                                case "Red":
-                                    if (time.time() > 5.1) {
-                                        time.reset();
-                                        stage = 21;
-                                    }
-                                    break;
-                            }
-                    }
-                }
-
-                if (stage == 27) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, -800, .5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 28) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 75, GyroUtils.Direction.COUNTERCLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        turn.completed();
-                        time.reset();
-                        drive = null;
-                        stage++;
-                    }
-                }
-
-                if (stage == 29) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 2400, .65);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-                }
-            }
-        }
-        if (alliance.equals("Blue")) {
-            if (target.equals("Cap ball close")) {
-                if (stage == 1) { //drives forward 0.25 seconds
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 700, .6);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-
-                }
-
-                if (stage == 2) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
                         drive = null;
                         turn = null;
-                        time.reset();
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     }
                 }
-
-                if (stage == 3) {
-                    double flyWheelLaunchPower = 0.65;
-                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
-                    stage++;
-                }
-
-                if (stage == 4) {
-                    if (time.time() > 3) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 5) {
-                    if (time.time() < 2) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                if (stage == 12) { // Drive until we see a color
+                    if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 20) {
+                        driveTrain.powerLeft(0.25);
+                        driveTrain.powerRight(0.25);
                     } else {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 6) {
-                    if (time.time() > 1.2) {
-                        time.reset();
-                        stage = 8;
-                    }
-                }
-
-                if (stage == 8) {
-                    if (time.time() > 2) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 9) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        RobotLog.d("Attempted to stop robot at " + rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 10) { // Turn to z90
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        turn.completed();
+                if (stage == 13) { // Wait
+                    if (time.time() > 1) {
                         stage++;
                         time.reset();
-                    }
-                }
-
-                if (stage == 11) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
+                        drive = null;
                         turn = null;
-                        time.reset();
                     }
                 }
 
-                if (stage == 12) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1000, .6);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-
-                }
-
-                if (stage == 13) {
-                    if (time.time() > .5) {
-                        stage++;
-                        drive = null;
-                        time.reset();
-                    }
-                }
-                if (stage == 14) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.CLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 15) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        turn = null;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 16) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1500, .6);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-
-                }
-
-                if (stage == 17) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        drive = null;
-                        time.reset();
-                    }
-                }
-            }
-            if (target.equals("Cap ball far")) {
-                if (stage == 1) { //drives forward 0.25 seconds
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 300, .75);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
-                    }
-
-                }
-
-                if (stage == 2) {
-                    if (time.time() > 0.35) {
-                        drive = null;
+                if (stage == 14) { // Act on beacon with color sensor
+                    if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
+                        beaconUtils.actOnBeaconWithColorSensor();
                         stage++;
                         time.reset();
-                    }
-                }
-                if (stage == 3) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.CLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        turn.completed();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 4) {
-                    if (time.time() > 0.15) {
-                        turn = null;
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 5) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1400, 0.5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        drive.completed();
-                        time.reset();
-                        flyWheel.FlyWheelMotor.setPower(.65);
-                        stage++;
-                    }
-                }
-
-                if (stage == 6) {
-                    if (time.time() > 3) {
-                        drive = null;
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 7) {
-                    if (time.time() < 2.5) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, -0.7);
                     } else {
+                        stage = AutonomousUtils.DEADBEEF;
+                        AutonomousUtils.failSafeError(hardwareMap);
                         time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 8) {
-                    if (time.time() < .35)
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
-                    else {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 9) {
-                    if (time.time() > 4) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 10) {
-                    if (time.time() > .25) {
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-
-                if (stage == 11) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1600, 0.5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        drive.completed();
-                        time.reset();
-                        stage++;
-                    }
-                }
-            }
-            if (target.equals("Beacon")) {
-                if (stage == 1) { //drives forward 0.25 seconds
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 600, .6);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        time.reset();
-                        stage++;
                     }
 
                 }
 
-                if (stage == 2) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
+                if (stage == 15) { // Wait regular plus 0.5 sec
+                    if (time.time() > AutonomousUtils.WAITTIME +.5 ) {
                         stage++;
+                        time.reset();
                         drive = null;
                         turn = null;
-                        time.reset();
                     }
                 }
 
-                if (stage == 3) {
-                    double flyWheelLaunchPower = 0.65;
-                    flyWheel.FlyWheelMotor.setPower(flyWheelLaunchPower);
-                    stage++;
-                }
-
-                if (stage == 4) {
-                    if (time.time() > 3) {
-                        time.reset();
+                if (stage == 16) { // Drive forward till we're at the wall
+                    if (drive == null) {
+                        int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
+                        drive = new EncoderDrive(driveTrain, counts + 100, 0.225); // Just a little umph to hit the button
+                        drive.run();
+                    }
+                    if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
+                        driveTrain.stopRobot();
                         stage++;
+                        time.reset();
                     }
                 }
 
-                if (stage == 5) {
-                    if (time.time() < 2) {
-                        intake.setIntakePower(Intake.IntakeSpec.B, -1);
-                        intake.setIntakePower(Intake.IntakeSpec.A, 1);
+                if (stage == 17) { // Wait plus a little extra
+                    if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }
+                }
+
+                if (stage == 18) { //Back up 15cm with prox
+                    if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 12) {
+                        driveTrain.powerLeft(-0.55);
+                        driveTrain.powerRight(-0.55);
                     } else {
-                        time.reset();
-                        stage++;
+                        driveTrain.stopRobot();
+                        beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+                        if (beaconAmount.equals("1")) stage = AutonomousUtils.COMPLETED;
+                        if (beaconAmount.equals("2")) stage++;
                     }
                 }
 
-                if (stage == 6) {
-                    if (time.time() > 1.2) {
-                        time.reset();
-                        stage = 8;
-                    }
-                }
-
-                if (stage == 8) {
-                    if (time.time() > 2) {
-                        intake.stopIntake(Intake.IntakeSpec.A);
-                        intake.stopIntake(Intake.IntakeSpec.B);
-                        flyWheel.FlyWheelMotor.setPower(0);
-                        time.reset();
-                        stage++;
-                    }
-                }
-
-                if (stage == 9) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 10) { // Turn to 90
+                if (stage == 19) { // Turn towards the white line of the second beacon
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 25, GyroUtils.Direction.CLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 76.5, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
                     if (turn.isCompleted()) {
-                        turn.completed();
+                        driveTrain.stopRobot();
                         stage++;
                         time.reset();
                     }
                 }
 
-                if (stage == 11) {
+                if (stage == 20) { // Wait plus a little extra
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        time.reset();
+                        drive = null;
                         turn = null;
-                        time.reset();
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     }
                 }
 
-
-                if (stage == 12) { //drives forward 33 inches in seconds // OUTDATED LENGTH
+                if (stage == 21) { // Drive to the white line of the second beacon
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 2600, .75);
-                        drive.run();
+                        drive = new EncoderDrive(driveTrain, -3100, 0.45);
                     }
-                    if (drive.isCompleted()) {
+                    drive.runWithDecrementPower(0.000325); // slows down gradually to hit white line
+                    if (colorUtils.aboveWhiteLine() && Math.abs(driveTrain.RightFrontMotor.getCurrentPosition()) > 1000) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
+                    } if (drive.isCompleted()) { //fail safe if we miss white line
+                        stage = AutonomousUtils.DEADBEEF;
+                        driveTrain.stopRobot();
+                        AutonomousUtils.failSafeError(hardwareMap);
                     }
                 }
 
-                if (stage == 13) {
+                if (stage == 22) { // Wait plus a little extra
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        time.reset();
                         drive = null;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 14) { // Turn to 145
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 38, GyroUtils.Direction.CLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        turn.completed();
-                        stage = 19;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 19) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
                         turn = null;
-                        time.reset();
                     }
                 }
-                if (stage == 20) {
+
+                if (stage == 23) { // Back up
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 600, .5);
+                        drive = new EncoderDrive(driveTrain, 75, 0.3);
                         drive.run();
                     }
                     if (drive.isCompleted()) {
@@ -1037,142 +772,570 @@ public class Autonomous extends OpMode {
                     }
                 }
 
-                if (stage == 21) {
-                    if (time.time() > .5) {
-                        stage++;
-                        drive = null;
-                        time.reset();
-                    }
-                }
-
-                // Initialize the beacon subroutine from BeaconSlamTest
-
-                if (stage == 22) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 200, .25);
-                        drive.run();
-                    }
-                    if (drive.isCompleted() || time.time() > 5) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 23) {
+                if (stage == 24) { // Wait plus a little extra
                     if (time.time() > AutonomousUtils.WAITTIME) {
                         stage++;
+                        time.reset();
                         drive = null;
-                        time.reset();
-                    }
-                }
-                if (stage == 24) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, -75, .5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 25) {
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        drive = null;
-                        time.reset();
-                    }
-                }
-                if (stage == 26) {
-                    switch (colorUtils.beaconColor()) {
-                        case RED:
-                            switch (alliance) {
-                                case "Blue":
-                                    if (time.time() > 5.1) {
-                                        time.reset();
-                                        stage = 21;
-                                    }
-                                    break;
-                                case "Red":
-                                    time.reset();
-                                    stage++;
-                                    break;
-                            }
-                            break;
-                        case BLUE:
-                            switch (alliance) {
-                                case "Blue":
-                                    time.reset();
-                                    stage++;
-                                    break;
-                                case "Red":
-                                    if (time.time() > 5.1) {
-                                        time.reset();
-                                        stage = 21;
-                                    }
-                                    break;
-                            }
-                            break;
-                        case NONE:
-                            switch (alliance) {
-                                case "Blue":
-                                    if (time.time() > 5.1) {
-                                        time.reset();
-                                        stage = 21;
-                                    }
-                                    break;
-                                case "Red":
-                                    time.reset();
-                                    stage++;
-                                    break;
-                            }
+                        turn = null;
                     }
                 }
 
-                if (stage == 27) {
-                    if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, -800, .5);
-                        drive.run();
-                    }
-                    if (drive.isCompleted()) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-
-                if (stage == 28) {
+                if (stage == 25) { // Turn stage to face the beacon
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 75, GyroUtils.Direction.CLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 77, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
                     if (turn.isCompleted()) {
-                        turn.completed();
-                        time.reset();
-                        drive = null;
+                        driveTrain.stopRobot();
                         stage++;
+                        time.reset();
                     }
                 }
 
-                if (stage == 29) {
+                if (stage == 26) { // Wait
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 27) { // Act on beacon with color sensor
+                    if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
+                        beaconUtils.actOnBeaconWithColorSensor();
+                        stage++;
+                        time.reset();
+                    } else {
+                        stage = 627;
+                        AutonomousUtils.failSafeError(hardwareMap);
+                        time.reset();
+                    }
+
+                }
+
+                if (stage == 28) { // Wait regular plus 0.5 sec
+                    if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                    }
+                }
+
+                if (stage == 29) { // Drive forward till we're at the wall
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 2000, .65);
+                        int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
+                        drive = new EncoderDrive(driveTrain, counts + 100, 0.225); // Just a little umph to hit the button
                         drive.run();
                     }
-                    if (drive.isCompleted()) {
+                    if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
                         driveTrain.stopRobot();
-                        time.reset();
                         stage++;
+                        time.reset();
+                    }
+                }
+
+                if (stage == 30) { // Wait plus a little extra
+                    if (time.time() > AutonomousUtils.WAITTIME) {
+                        stage++;
+                        time.reset();
+                        drive = null;
+                        turn = null;
+                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    }
+                }
+
+                if (stage == 31) { //Back up 15cm with prox
+                    if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
+                        driveTrain.powerLeft(-0.55);
+                        driveTrain.powerRight(-0.55);
+                    } else {
+                        driveTrain.stopRobot();
+                        beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+                        if (beaconAmount.equals("1")) stage = AutonomousUtils.COMPLETED;
+                        if (beaconAmount.equals("2")) stage++;
                     }
                 }
             }
         }
 
+        if (target.equals("Cap Ball")) {
+            if (starting.equals("Close to Corner Vortex")) {
+                if (alliance.equals("Red")) {
+                    if (stage == 1) { //drives forward 0.25 seconds
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 700, .6);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
 
+                    }
+
+                    if (stage == 2) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            drive = null;
+                            turn = null;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 3) {
+                        if (shoot > 0) {
+                            flyWheel.currentPower = flyWheel.defaultStartingPower;
+                            flyWheel.currentlyRunning = true;
+                        }
+                        stage++;
+                    }
+
+                    flyWheel.powerMotor(); // Update flywheel values
+
+                    if (stage == 4) {
+                        if (shoot == 1) {
+                            intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                        }
+                        if (shoot == 2) {
+                            intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                        }
+                        if (time.time() > 2.5 || shoot <= 0) {
+                            stage++;
+                            time.reset();
+                            intake.stopIntake(Intake.IntakeSpec.BOTH);
+                            flyWheel.currentlyRunning = false;
+                        }
+                    }
+
+                    if (stage == 5) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 6) { // Turn to z90
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.CLOCKWISE);
+                            turn.run();
+                        }
+                        if (turn.isCompleted()) {
+                            turn.completed();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 7) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            turn = null;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 8) {
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1000, .6);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+
+                    }
+
+                    if (stage == 9) {
+                        if (time.time() > .5) {
+                            stage++;
+                            drive = null;
+                            time.reset();
+                        }
+                    }
+                    if (stage == 10) {
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                            turn.run();
+                        }
+                        if (turn.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+                    }
+
+                    if (stage == 11) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            turn = null;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 12){
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1500, .6);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+
+                    }
+
+                    if (stage == 13) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            drive = null;
+                            time.reset();
+                        }
+                    }
+                }
+                if (alliance.equals("Blue")) {
+                    if (stage == 1) { //drives forward 0.25 seconds
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 700, .6);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+
+                    }
+
+                    if (stage == 2) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            drive = null;
+                            turn = null;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 3) {
+                        if (shoot > 0) {
+                            flyWheel.currentPower = flyWheel.defaultStartingPower;
+                            flyWheel.currentlyRunning = true;
+                        }
+                        stage++;
+                    }
+
+                    flyWheel.powerMotor(); // Update flywheel values
+
+                    if (stage == 4) {
+                        if (shoot == 1) {
+                            intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                        }
+                        if (shoot == 2) {
+                            intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                        }
+                        if (time.time() > 2.5 || shoot <= 0) {
+                            stage++;
+                            time.reset();
+                            intake.stopIntake(Intake.IntakeSpec.BOTH);
+                            flyWheel.currentlyRunning = false;
+                        }
+                    }
+
+                    if (stage == 5) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 6) { // Turn to z90
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
+                            turn.run();
+                        }
+                        if (turn.isCompleted()) {
+                            turn.completed();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 7) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            turn = null;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 8) {
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1000, .6);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+
+                    }
+
+                    if (stage == 9) {
+                        if (time.time() > .5) {
+                            stage++;
+                            drive = null;
+                            time.reset();
+                        }
+                    }
+                    if (stage == 10) {
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.CLOCKWISE);
+                            turn.run();
+                        }
+                        if (turn.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+                    }
+
+                    if (stage == 11) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            turn = null;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 12) {
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1500, .6);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+
+                    }
+
+                    if (stage == 13) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            stage++;
+                            drive = null;
+                            time.reset();
+                        }
+                    }
+                }
+            }
+            if (starting.equals("Far from Corner Vortex")) {
+                if (alliance.equals("Red")) {
+                    if (stage == 1) { //drives forward 0.25 seconds
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 300, .75);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+
+                    }
+
+                    if (stage == 2) {
+                        if (time.time() > 0.35) {
+                            drive = null;
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    if (stage == 3) {
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
+                            turn.run();
+                        }
+                        if (turn.isCompleted()) {
+                            turn.completed();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    if (stage == 4) {
+                        if (time.time() > 0.15) {
+                            turn = null;
+                            stage++;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 5) {
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1800, 0.5);
+                            drive.run();
+                            if (shoot > 0) {
+                                flyWheel.currentPower = flyWheel.defaultStartingPower;
+                                flyWheel.currentlyRunning = true;
+                            }
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+                    }
+
+                    flyWheel.powerMotor(); // Update flywheel values
+
+                    if (stage == 6) {
+                        if (shoot == 1) {
+                            intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                        }
+                        if (shoot == 2) {
+                            intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                        }
+                        if (time.time() > 2.5 || shoot <= 0) {
+                            stage++;
+                            time.reset();
+                            intake.stopIntake(Intake.IntakeSpec.BOTH);
+                            intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
+                            flyWheel.currentlyRunning = false;
+                        }
+                    }
+
+
+                    if (stage == 7) {
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1500, 0.5);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            drive.completed();
+                            time.reset();
+                            stage++;
+                        }
+                    }
+
+                    if (stage == 8) {
+                        if (time.time() > 2) {
+                            intake.stopIntake(Intake.IntakeSpec.A);
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                }
+                if (alliance.equals("Blue")) {
+                    if (stage == 1) { //drives forward 0.25 seconds
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 400, .75);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+
+                    }
+
+                    if (stage == 2) {
+                        if (time.time() > 0.35) {
+                            drive = null;
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    if (stage == 3) {
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 33, GyroUtils.Direction.CLOCKWISE);
+                            turn.run();
+                        }
+                        if (turn.isCompleted()) {
+                            turn.completed();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    if (stage == 4) {
+                        if (time.time() > AutonomousUtils.WAITTIME) {
+                            turn = null;
+                            stage++;
+                            time.reset();
+                        }
+                    }
+
+                    if (stage == 5) {
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1600, 0.5);
+                            drive.run();
+                            if (shoot > 0) {
+                                flyWheel.currentPower = flyWheel.defaultStartingPower;
+                                flyWheel.currentlyRunning = true;
+                            }
+                        }
+                        if (drive.isCompleted()) {
+                            driveTrain.stopRobot();
+                            time.reset();
+                            stage++;
+                        }
+                    }
+
+                    flyWheel.powerMotor(); // Update flywheel values
+
+                    if (stage == 6) {
+                        if (shoot == 1) {
+                            intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                        }
+                        if (shoot == 2) {
+                            intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                        }
+                        if (time.time() > 2.5 || shoot <= 0) {
+                            stage++;
+                            time.reset();
+                            intake.stopIntake(Intake.IntakeSpec.BOTH);
+                            intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
+                            flyWheel.currentlyRunning = false;
+                        }
+                    }
+
+                    if (stage == 7) {
+                        if (drive == null) {
+                            drive = new EncoderDrive(driveTrain, 1400, 0.5);
+                            drive.run();
+                        }
+                        if (drive.isCompleted()) {
+                            drive.completed();
+                            time.reset();
+                            stage++;
+                        }
+                    }
+
+                    if (stage == 8) {
+                        if (time.time() > 2) {
+                            intake.stopIntake(Intake.IntakeSpec.A);
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
+        telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
+        telemetry.addData("Beacon", colorUtils.beaconColor().toString());
         telemetry.addData("Stage", String.valueOf(stage));
-        telemetry.addData("Gyro", String.valueOf(bigAl.gyroUtils.gyro.getHeading()));
         telemetry.addData("Time", String.valueOf(time.time()));
-        telemetry.addData("Beacon Color: ", String.valueOf(bigAl.colorUtils.beaconColor()));
 
     }
 }
