@@ -539,7 +539,7 @@ public class Autonomous extends OpMode {
                     if (time.time() > 2.5 || shoot <= 0) {
                         stage++;
                         time.reset();
-                        intake.stopIntake(Intake.IntakeSpec.BOTH);
+                        //intake.stopIntake(Intake.IntakeSpec.BOTH);
                         flyWheel.currentlyRunning = false;
                     }
                 }
