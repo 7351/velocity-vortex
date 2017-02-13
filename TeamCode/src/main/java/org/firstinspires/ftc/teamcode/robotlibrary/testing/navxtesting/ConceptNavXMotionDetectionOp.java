@@ -48,7 +48,6 @@ import java.text.DecimalFormat;
  */
 @TeleOp(name = "Concept: navX Motion Detection", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
-@Disabled
 public class ConceptNavXMotionDetectionOp extends OpMode {
 
   /* This is the port on the Core Device Interace Module */
@@ -62,9 +61,7 @@ public class ConceptNavXMotionDetectionOp extends OpMode {
 
   @Override
   public void init() {
-    navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
-            NAVX_DIM_I2C_PORT,
-            AHRS.DeviceDataType.kProcessedData);
+      navx_device = AHRS.getInstance(hardwareMap);
   }
 
   @Override

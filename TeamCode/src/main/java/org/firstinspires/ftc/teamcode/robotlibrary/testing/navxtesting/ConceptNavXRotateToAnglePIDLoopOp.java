@@ -41,6 +41,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+
 import java.text.DecimalFormat;
 
 /*
@@ -56,20 +58,12 @@ import java.text.DecimalFormat;
  */
 @TeleOp(name = "Concept: navX Rotate to Angle PID - Loop", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
-@Disabled
 public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
-    DcMotor leftMotor;
-    DcMotor rightMotor;
 
-    /* This is the port on the Core Device Interface Module        */
-    /* in which the navX-Model Device is connected.  Modify this  */
-    /* depending upon which I2C port you are using.               */
-    private final int NAVX_DIM_I2C_PORT = 0;
+    DriveTrain driveTrain;
+
     private AHRS navx_device;
     private navXPIDController yawPIDController;
-    private ElapsedTime runtime = new ElapsedTime();
-
-    private final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
 
     private final double TARGET_ANGLE_DEGREES = 90.0;
     private final double TOLERANCE_DEGREES = 2.0;
@@ -79,6 +73,8 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
     private final double YAW_PID_I = 0.0;
     private final double YAW_PID_D = 0.0;
 
+    int stage = 0;
+
     private boolean calibration_complete = false;
 
     navXPIDController.PIDResult yawPIDResult;
@@ -86,15 +82,10 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     @Override
     public void init() {
-        leftMotor = hardwareMap.dcMotor.get("left motor");
-        rightMotor = hardwareMap.dcMotor.get("right motor");
 
-        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
-                NAVX_DIM_I2C_PORT,
-                AHRS.DeviceDataType.kProcessedData,
-                NAVX_DEVICE_UPDATE_RATE_HZ);
+        driveTrain = new DriveTrain(hardwareMap);
 
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        navx_device = AHRS.getInstance(hardwareMap);
 
         /* If possible, use encoders when driving, as it results in more */
         /* predictable drive system response.                           */
@@ -124,38 +115,34 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     @Override
     public void loop() {
-        if ( !calibration_complete ) {
-            /* navX-Micro Calibration completes automatically ~15 seconds after it is
-            powered on, as long as the device is still.  To handle the case where the
-            navX-Micro has not been able to calibrate successfully, hold off using
-            the navX-Micro Yaw value until calibration is complete.
-             */
-            calibration_complete = !navx_device.isCalibrating();
-            if ( calibration_complete ) {
+        if (stage == 0) {
+            if (!navx_device.isCalibrating()) {
+                stage++;
                 navx_device.zeroYaw();
             } else {
                 telemetry.addData("navX-Micro", "Startup Calibration in Progress");
             }
-        } else {
+        }
+        if (stage == 1) {
             /* Wait for new Yaw PID output values, then update the motors
                with the new PID value with each new output value.
              */
             if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
                 if (yawPIDResult.isOnTarget()) {
-                    leftMotor.setPowerFloat();
-                    rightMotor.setPowerFloat();
-                    telemetry.addData("Motor Output", df.format(0.00));
+                    driveTrain.stopRobot();
                 } else {
                     double output = yawPIDResult.getOutput();
-                    leftMotor.setPower(output);
-                    rightMotor.setPower(-output);
+                    driveTrain.powerLeft(output);
+                    driveTrain.powerRight(-output);
                     telemetry.addData("Motor Output", df.format(output) + ", " +
                             df.format(-output));
                 }
+                telemetry.addData("Target", yawPIDResult.isOnTarget());
             } else {
             /* No sensor update has been received since the last time  */
             /* the loop() function was invoked.  Therefore, there's no */
             /* need to update the motors at this time.                 */
+                telemetry.addData("Update", "None");
             }
             telemetry.addData("Yaw", df.format(navx_device.getYaw()));
         }

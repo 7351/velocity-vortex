@@ -83,8 +83,7 @@ public class ConceptNavXPerformanceTuningOp extends OpMode {
   @Override
   public void init() {
     AHRS.setLogging(true);
-    navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
-            NAVX_DIM_I2C_PORT,
+      navx_device = AHRS.getInstance(hardwareMap,
             AHRS.DeviceDataType.kProcessedData,
             sensor_update_rate_hz);
     navx_perfmon = new navXPerformanceMonitor(navx_device);

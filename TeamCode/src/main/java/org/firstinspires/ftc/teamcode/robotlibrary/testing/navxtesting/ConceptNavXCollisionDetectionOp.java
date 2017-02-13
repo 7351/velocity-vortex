@@ -70,10 +70,7 @@ import java.text.DecimalFormat;
 @Disabled
 public class ConceptNavXCollisionDetectionOp extends OpMode implements IDataArrivalSubscriber {
 
-  /* This is the port on the Core Device Interace Module */
-  /* in which the navX-Micro is connected.  Modify this  */
-  /* depending upon which I2C port you are using.        */
-  private final int NAVX_DIM_I2C_PORT = 0;
+
 
   /* Tune this threshold to adjust the sensitivy of the */
   /* Collision detection.                               */
@@ -96,9 +93,7 @@ public class ConceptNavXCollisionDetectionOp extends OpMode implements IDataArri
 
   @Override
   public void init() {
-    navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
-            NAVX_DIM_I2C_PORT,
-            AHRS.DeviceDataType.kProcessedData);
+    navx_device = AHRS.getInstance(hardwareMap);
     last_world_linear_accel_x = 0.0;
     last_world_linear_accel_y = 0.0;
     setCollisionState(false);

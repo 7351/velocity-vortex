@@ -75,8 +75,7 @@ public class SensorNavXRawOp extends OpMode {
   private AHRS navx_device;
   @Override
   public void init() {
-      navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("dim"),
-              NAVX_DIM_I2C_PORT,
+      navx_device = AHRS.getInstance(hardwareMap,
               AHRS.DeviceDataType.kQuatAndRawData);  }
 
   @Override

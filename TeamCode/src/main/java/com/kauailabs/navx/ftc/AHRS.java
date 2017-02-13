@@ -32,6 +32,7 @@ import com.kauailabs.navx.IMUProtocol;
 import com.kauailabs.navx.IMURegisters;
 
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cController;
 import com.qualcomm.robotcore.hardware.I2cDevice;
@@ -289,6 +290,34 @@ public class AHRS {
                                    DeviceDataType data_type, byte update_rate_hz) {
         if (instance == null) {
             instance = new AHRS(dim, dim_i2c_port, data_type, update_rate_hz);
+        }
+        return instance;
+    }
+
+    /*
+    These three constructors were created to make it to be easier to get the sensor
+     */
+    public static AHRS getInstance(HardwareMap hardwareMap, DeviceDataType data_type, byte update_rate_hz) {
+        if (instance == null) {
+            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0, data_type,
+                    update_rate_hz);
+        }
+        return instance;
+    }
+
+    public static AHRS getInstance(HardwareMap hardwareMap, DeviceDataType data_type) {
+        if (instance == null) {
+            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0, data_type,
+            NAVX_DEFAULT_UPDATE_RATE_HZ);
+        }
+        return instance;
+    }
+
+    public static AHRS getInstance(HardwareMap hardwareMap) {
+        if (instance == null) {
+            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0,
+                    DeviceDataType.kProcessedData,
+                    NAVX_DEFAULT_UPDATE_RATE_HZ);
         }
         return instance;
     }
