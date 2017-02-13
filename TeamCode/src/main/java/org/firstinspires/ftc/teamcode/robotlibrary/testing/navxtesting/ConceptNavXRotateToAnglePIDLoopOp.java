@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -42,6 +43,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 
 import java.text.DecimalFormat;
 
@@ -61,56 +63,24 @@ import java.text.DecimalFormat;
 public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     DriveTrain driveTrain;
-
-    private AHRS navx_device;
-    private navXPIDController yawPIDController;
-
-    private final double TARGET_ANGLE_DEGREES = 90.0;
-    private final double TOLERANCE_DEGREES = 2.0;
-    private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
-    private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
-    private final double YAW_PID_P = 0.005;
-    private final double YAW_PID_I = 0.0;
-    private final double YAW_PID_D = 0.0;
+    AHRS navx_device;
 
     int stage = 0;
 
-    private boolean calibration_complete = false;
+    GyroTurn gyroTurn;
 
-    navXPIDController.PIDResult yawPIDResult;
-    DecimalFormat df;
+    DecimalFormat df = new DecimalFormat("#.##");
 
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-
         navx_device = AHRS.getInstance(hardwareMap);
-
-        /* If possible, use encoders when driving, as it results in more */
-        /* predictable drive system response.                           */
-        //leftMotor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        //rightMotor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-
-        /* Create a PID Controller which uses the Yaw Angle as input. */
-        yawPIDController = new navXPIDController( navx_device,
-                navXPIDController.navXTimestampedDataSource.YAW);
-
-        /* Configure the PID controller */
-        yawPIDController.setSetpoint(TARGET_ANGLE_DEGREES);
-        yawPIDController.setContinuous(true);
-        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
-        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
-        yawPIDController.enable(true);
-
-        df = new DecimalFormat("#.##");
     }
 
     @Override
     public void start() {
         navx_device.zeroYaw();
-        yawPIDResult = new navXPIDController.PIDResult();
     }
 
     @Override
@@ -119,33 +89,23 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
             if (!navx_device.isCalibrating()) {
                 stage++;
                 navx_device.zeroYaw();
-            } else {
-                telemetry.addData("navX-Micro", "Startup Calibration in Progress");
             }
         }
         if (stage == 1) {
-            /* Wait for new Yaw PID output values, then update the motors
-               with the new PID value with each new output value.
-             */
-            if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
-                if (yawPIDResult.isOnTarget()) {
-                    driveTrain.stopRobot();
-                } else {
-                    double output = yawPIDResult.getOutput();
-                    driveTrain.powerLeft(output);
-                    driveTrain.powerRight(-output);
-                    telemetry.addData("Motor Output", df.format(output) + ", " +
-                            df.format(-output));
-                }
-                telemetry.addData("Target", yawPIDResult.isOnTarget());
-            } else {
-            /* No sensor update has been received since the last time  */
-            /* the loop() function was invoked.  Therefore, there's no */
-            /* need to update the motors at this time.                 */
-                telemetry.addData("Update", "None");
+            if (gyroTurn == null) {
+                gyroTurn = new GyroTurn(navx_device, driveTrain, 90);
             }
-            telemetry.addData("Yaw", df.format(navx_device.getYaw()));
+            gyroTurn.run();
+            if (gyroTurn.isCompleted()) {
+                gyroTurn.completed();
+                stage++;
+            }
         }
+
+        telemetry.addData("Stage", String.valueOf(stage));
+        telemetry.addData("L", driveTrain.LeftFrontMotor.getPower());
+        telemetry.addData("R", driveTrain.RightFrontMotor.getPower());
+        telemetry.addData("Heading", df.format(navx_device.getYaw()));
     }
 
     @Override

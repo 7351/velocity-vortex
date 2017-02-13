@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.RobotLog;
-
-import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.CLOCKWISE;
-import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.COUNTERCLOCKWISE;
+import com.kauailabs.navx.ftc.AHRS;
+import com.kauailabs.navx.ftc.navXPIDController;
+import com.qualcomm.ftccommon.DbgLog;
 
 /**
  * Created by Dynamic Signals on 1/16/2017.
@@ -13,71 +10,70 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direct
 
 public class GyroTurn extends RoutineImpl {
 
-    GyroUtils gyroUtils;
+    AHRS navx;
     DriveTrain driveTrain;
 
     int targetDegree = 0;
     int degreesOff = 0;
-    int lastDegreesOff = 0;
-    int stuckCoutner = 0;
-    int tolerance = 1;
 
-    double turnPower;
+    private navXPIDController yawPIDController;
 
-    GyroSensor gyro;
+    private final double TOLERANCE_DEGREES = 2.0;
+    private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
+    private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
+    private final double YAW_PID_P = 0.005;
+    private final double YAW_PID_I = 0.0;
+    private final double YAW_PID_D = 0.0;
 
-    public GyroTurn(GyroUtils gyroUtils, DriveTrain driveTrain, int targetDegree) {
-        this.gyroUtils = gyroUtils;
+    int completedCounter = 0;
+
+    private navXPIDController.PIDResult yawPIDResult;
+
+    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree) {
+        this.navx = navx;
         this.driveTrain = driveTrain;
-        this.gyro = gyroUtils.gyro;
         this.targetDegree = targetDegree;
+
+                /* Create a PID Controller which uses the Yaw Angle as input. */
+        yawPIDController = new navXPIDController(navx,
+                navXPIDController.navXTimestampedDataSource.YAW);
+
+        /* Configure the PID controller */
+        yawPIDController.setSetpoint(targetDegree);
+        yawPIDController.setContinuous(true);
+        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
+        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
+        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
+        yawPIDController.enable(true);
+
+        yawPIDResult = new navXPIDController.PIDResult();
     }
 
     @Override
     public void run() {
-        int currentSpoofedDegree = gyroUtils.spoofedZero(targetDegree); //An expected 39 gyro value from fake zero
-        RobotLog.d("Spoofed: " + currentSpoofedDegree);
-        GyroUtils.Direction turnDirection = CLOCKWISE;
-        if (currentSpoofedDegree > 0 && currentSpoofedDegree <= 90) { // We need to turn counterclockwise
-            degreesOff = Math.abs(-currentSpoofedDegree);
-            turnDirection = COUNTERCLOCKWISE;
-        }
-        if (currentSpoofedDegree >= 270 && currentSpoofedDegree < 360) { // We need to turn clockwise
-            degreesOff = Math.abs(90 - (currentSpoofedDegree - 270));
-            turnDirection = CLOCKWISE;
+
+        if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
+            if (yawPIDResult.isOnTarget()) {
+                driveTrain.stopRobot();
+            } else {
+                double output = yawPIDResult.getOutput();
+                driveTrain.powerLeft(output);
+                driveTrain.powerRight(-output);
+            }
         }
 
-        if (degreesOff == lastDegreesOff) {
-            stuckCoutner++;
-        } else {
-            stuckCoutner = 0;
-        }
-
-        if (stuckCoutner > 1000) {
-            RobotLog.d("Stuck!!" + stuckCoutner);
-            turnPower = 0.25;
-        } else {
-            turnPower = 0.15;
-        }
-
-        switch (turnDirection) {
-            case CLOCKWISE:
-                driveTrain.powerLeft(turnPower);
-                driveTrain.powerRight(-turnPower);
-                break;
-            case COUNTERCLOCKWISE:
-                driveTrain.powerLeft(-turnPower);
-                driveTrain.powerRight(turnPower);
-                break;
-        }
-
-        lastDegreesOff = degreesOff;
 
     }
 
     @Override
     public boolean isCompleted() {
-        return degreesOff < 3;
+        boolean onTarget = yawPIDResult.isOnTarget();
+        if (onTarget) {
+            completedCounter++;
+        } else {
+            completedCounter = 0;
+        }
+        return (completedCounter > 25);
     }
 
     @Override
