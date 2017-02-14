@@ -27,8 +27,9 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
 
 @Autonomous(name = "BeaconRed", group = "Encoder Autonomous")
 public class BeaconRed extends OpMode {
+    ColorUtils.Color actedColor;
 
-    int stage = 0;
+    int stage = 12;//testing
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
     GyroUtils gyroUtils;
@@ -226,7 +227,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 14) { // Act on beacon with color sensor
             if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
-                beaconUtils.actOnBeaconWithColorSensor();
+                actedColor=beaconUtils.actOnBeaconWithColorSensor();
                 stage++;
                 time.reset();
             } else {
@@ -237,19 +238,10 @@ public class BeaconRed extends OpMode {
 
         }
 
-        if (stage == 15) { // Wait regular plus 0.5 sec
-            if (time.time() > AutonomousUtils.WAITTIME + .5 ) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
-            }
-        }
-
-        if (stage == 16) { // Drive forward till we're at the wall
+        if (stage == 15) { // Drive forward till we're at the wall
             if (drive == null) {
-                int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts
-                drive = new EncoderDrive(driveTrain, counts + 100, 0.225); // Just a little umph to hit the button
+                int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
+                drive = new EncoderDrive(driveTrain, counts, 0.225); // Just a little umph to hit the button
                 drive.run();
             }
             if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
@@ -259,13 +251,33 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        if (stage == 17) { // Wait plus a little extra
-            if (time.time() > AutonomousUtils.WAITTIME + 0.5) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if (stage == 16) { // Wait plus a little extra
+            if (actedColor.equals(ColorUtils.Color.BLUE)) {
+                if (turn == null) {
+                    turn = new EncoderTurn(driveTrain, 4, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    turn.run();
+                }
+                if (turn.isCompleted()) {
+                    driveTrain.stopRobot();
+                    stage = 994;
+                    time.reset();
+                }
+
+
+            }
+            if (actedColor.equals(ColorUtils.Color.RED)) {
+                if (turn == null) {
+                    turn = new EncoderTurn(driveTrain, 4, GyroUtils.Direction.CLOCKWISE);
+                    turn.run();
+                }
+                if (turn.isCompleted()) {
+                    driveTrain.stopRobot();
+                    stage = 993;
+                    time.reset();
+                }
+
+
             }
         }
 

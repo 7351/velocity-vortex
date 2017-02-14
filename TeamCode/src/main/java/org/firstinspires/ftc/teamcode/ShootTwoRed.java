@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallFarRed", group = "Encoder Autonomous")
-public class CapBallFarRed extends OpMode {
+@Autonomous(name = "ShootTwoRed", group = "Encoder Autonomous")
+public class ShootTwoRed extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -116,12 +116,8 @@ public class CapBallFarRed extends OpMode {
 
         if (stage == 5) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1800, 0.5);
+                drive = new EncoderDrive(driveTrain, 1850, 0.5);
                 drive.run();
-                if (shoot > 0) {
-                    flyWheel.currentPower = flyWheel.defaultStartingPower;
-                    flyWheel.currentlyRunning = true;
-                }
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
@@ -131,9 +127,21 @@ public class CapBallFarRed extends OpMode {
             }
         }
 
+        if (stage == 6){
+            if (shoot > 0) {
+                flyWheel.currentPower = flyWheel.defaultStartingPower;
+                flyWheel.currentlyRunning = true;
+            }
+            if (time.time() > 1)
+            {
+                stage++;
+                time.reset();
+            }
+        }
+
         flyWheel.powerMotor(); // Update flywheel values
 
-        if (stage == 6) {
+        if (stage == 7) {
             if (shoot == 1) {
                 intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
             }
@@ -150,9 +158,9 @@ public class CapBallFarRed extends OpMode {
         }
 
 
-        if (stage == 7) {
+        if (stage == 8) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1500, 0.5);
+                drive = new EncoderDrive(driveTrain, -900, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -162,7 +170,7 @@ public class CapBallFarRed extends OpMode {
             }
         }
 
-        if (stage == 8) {
+        if (stage == 9) {
             if (time.time() > 2) {
                 intake.stopIntake(Intake.IntakeSpec.A);
                 stage++;

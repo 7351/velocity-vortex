@@ -58,7 +58,7 @@ public class BeaconUtils {
         }
     }
 
-    public void actOnBeaconWithColorSensor() {
+    public ColorUtils.Color actOnBeaconWithColorSensor() {
         ColorUtils.Color beaconColor = colorUtils.beaconColor();
         if (alliance.equals("Red")) {
             switch (beaconColor) {
@@ -86,6 +86,7 @@ public class BeaconUtils {
                     break;
             }
         }
+        return beaconColor;
     }
 
 }

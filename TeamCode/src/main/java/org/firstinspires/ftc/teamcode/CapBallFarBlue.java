@@ -125,6 +125,7 @@ public class CapBallFarBlue extends OpMode {
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
+                drive = null;
                 time.reset();
                 stage++;
             }
