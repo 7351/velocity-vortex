@@ -19,6 +19,7 @@
         <Motor name="RightBackMotor" port="2" />
     </MotorController>
     <DeviceInterfaceModule name="Device Interface Module" serialNumber="AL00VDA6">
+        <I2cDevice name="navx" port="0" />
         <ModernRoboticsI2cRangeSensor name="beaconRange" port="2" />
         <ColorSensor name="lineColorSensor" port="3" />
         <ColorSensor name="beaconColorSensor" port="4" />

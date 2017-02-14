@@ -67,7 +67,6 @@ import java.text.DecimalFormat;
  */
 @TeleOp(name = "Concept: navX Collision Detection", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
-@Disabled
 public class ConceptNavXCollisionDetectionOp extends OpMode implements IDataArrivalSubscriber {
 
 
@@ -93,8 +92,8 @@ public class ConceptNavXCollisionDetectionOp extends OpMode implements IDataArri
 
   @Override
   public void init() {
-    navx_device = AHRS.getInstance(hardwareMap);
-    last_world_linear_accel_x = 0.0;
+      navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module"), 0, AHRS.DeviceDataType.kProcessedData);
+      last_world_linear_accel_x = 0.0;
     last_world_linear_accel_y = 0.0;
     setCollisionState(false);
   }
