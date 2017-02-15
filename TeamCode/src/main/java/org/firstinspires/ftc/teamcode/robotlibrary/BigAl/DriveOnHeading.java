@@ -2,18 +2,18 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
-import com.qualcomm.ftccommon.DbgLog;
 
 /**
- * Created by Dynamic Signals on 1/16/2017.
+ * Created by Dynamic Signals on 2/14/2017.
  */
 
-public class GyroTurn extends RoutineImpl {
+public class DriveOnHeading extends RoutineImpl {
 
     AHRS navx;
     DriveTrain driveTrain;
 
-    int targetDegree = 0;
+    int targetDegree;
+    double speed;
 
     private navXPIDController yawPIDController;
 
@@ -28,15 +28,17 @@ public class GyroTurn extends RoutineImpl {
 
     private navXPIDController.PIDResult yawPIDResult;
 
-    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree) {
+    public DriveOnHeading(AHRS navx, DriveTrain driveTrain, int targetDegree, double speed) {
         this.navx = navx;
         this.driveTrain = driveTrain;
         this.targetDegree = targetDegree;
+        this.speed = speed;
 
                 /* Create a PID Controller which uses the Yaw Angle as input. */
         yawPIDController = new navXPIDController(navx,
                 navXPIDController.navXTimestampedDataSource.YAW);
 
+        /* Configure the PID controller */
         /* Configure the PID controller */
         yawPIDController.setSetpoint(targetDegree);
         yawPIDController.setContinuous(true);
@@ -44,6 +46,7 @@ public class GyroTurn extends RoutineImpl {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
         yawPIDController.enable(true);
+
 
         yawPIDResult = new navXPIDController.PIDResult();
     }
@@ -53,11 +56,12 @@ public class GyroTurn extends RoutineImpl {
 
         if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
             if (yawPIDResult.isOnTarget()) {
-                driveTrain.stopRobot();
+                driveTrain.powerLeft(speed);
+                driveTrain.powerRight(speed);
             } else {
                 double output = yawPIDResult.getOutput();
-                driveTrain.powerLeft(output);
-                driveTrain.powerRight(-output);
+                driveTrain.powerLeft(speed + output);
+                driveTrain.powerRight(speed - output);
             }
         }
 

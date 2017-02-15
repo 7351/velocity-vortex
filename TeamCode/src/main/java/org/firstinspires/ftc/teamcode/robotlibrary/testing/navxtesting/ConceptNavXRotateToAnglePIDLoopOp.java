@@ -75,7 +75,7 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        navx_device = AHRS.getInstance(hardwareMap);
+        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module"), 0, AHRS.DeviceDataType.kProcessedData);
     }
 
     @Override

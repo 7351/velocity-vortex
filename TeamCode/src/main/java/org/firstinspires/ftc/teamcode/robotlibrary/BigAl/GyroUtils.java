@@ -22,6 +22,7 @@ public class GyroUtils {
     private DriveTrain driveTrain;
     private int gyroDistance = 0;
 
+    @Deprecated
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.driveTrain = driveTrain;
