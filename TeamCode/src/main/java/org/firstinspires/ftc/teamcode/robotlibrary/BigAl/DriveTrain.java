@@ -67,7 +67,7 @@ public class DriveTrain {
 
     }
 
-    public void powerRight(double power) {
+    public void powerRight(double power) {//dont forget to turn encoders off
         double clippedPower = Range.clip(power, -1, 1);
         RightFrontMotor.setPower(clippedPower);
         RightBackMotor.setPower(clippedPower);
