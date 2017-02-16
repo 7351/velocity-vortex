@@ -86,6 +86,13 @@ public class DriveTrain {
         RightBackMotor.setMode(mode);
     }
 
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
+        LeftFrontMotor.setZeroPowerBehavior(behavior);
+        LeftBackMotor.setZeroPowerBehavior(behavior);
+        RightFrontMotor.setZeroPowerBehavior(behavior);
+        RightBackMotor.setZeroPowerBehavior(behavior);
+    }
+
     /*
     public double getVoltage() {
         double averageVoltage = 0;

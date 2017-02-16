@@ -20,7 +20,9 @@ public class DriveOnHeading extends RoutineImpl {
     private final double TOLERANCE_DEGREES = 2.0;
     private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
-    private final double YAW_PID_P = 0.005;
+
+    //TODO: Find calibration numbers
+    private final double YAW_PID_P = 0.001;
     private final double YAW_PID_I = 0.0;
     private final double YAW_PID_D = 0.0;
 
@@ -68,15 +70,13 @@ public class DriveOnHeading extends RoutineImpl {
 
     }
 
+    /**
+     * This method will never be true, you will have to have a governor for the robot. Like EncoderDrive or prox.
+     */
     @Override
+    @Deprecated
     public boolean isCompleted() {
-        boolean onTarget = yawPIDResult.isOnTarget();
-        if (onTarget) {
-            completedCounter++;
-        } else {
-            completedCounter = 0;
-        }
-        return (completedCounter > 25);
+        return false;
     }
 
     @Override
