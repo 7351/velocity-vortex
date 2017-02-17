@@ -99,6 +99,7 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+    mavenCentral()
 }
 
 apply from: 'build.release.gradle'
