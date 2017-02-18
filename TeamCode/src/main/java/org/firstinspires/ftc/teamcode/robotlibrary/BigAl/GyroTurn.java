@@ -24,8 +24,8 @@ public class GyroTurn extends RoutineImpl {
 
     //TODO: Find calibration numbers
     private final double YAW_PID_P = 0.005;
-    private final double YAW_PID_I = 0.0;
-    private final double YAW_PID_D = 0.0;
+    private final double YAW_PID_I = 0.001;
+    private final double YAW_PID_D = 0.001;
 
     int completedCounter = 0;
 
@@ -60,8 +60,8 @@ public class GyroTurn extends RoutineImpl {
                 driveTrain.stopRobot();
             } else {
                 double output = yawPIDResult.getOutput();
-                driveTrain.powerLeft(output);
-                driveTrain.powerRight(-output);
+                //driveTrain.powerLeft(output);
+                //driveTrain.powerRight(-output);
             }
         }
 
@@ -76,11 +76,13 @@ public class GyroTurn extends RoutineImpl {
         } else {
             completedCounter = 0;
         }
+        if (completedCounter > 25) completed();
         return (completedCounter > 25);
     }
 
     @Override
     public void completed() {
         driveTrain.stopRobot();
+        yawPIDController.enable(false);
     }
 }

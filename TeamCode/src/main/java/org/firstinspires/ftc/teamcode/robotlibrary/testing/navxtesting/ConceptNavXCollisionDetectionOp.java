@@ -146,6 +146,7 @@ public class ConceptNavXCollisionDetectionOp extends OpMode implements IDataArri
       telemetry.addData("5 Timing", Long.toString(sensor_timestamp_delta) + ", " +
                                     Long.toString(system_timestamp_delta) );
       telemetry.addData("6 Events", Double.toString(navx_device.getUpdateCount()));
+      telemetry.addData("7 Yaw", navx_device.getYaw());
   }
 
   private String getCollisionString() {

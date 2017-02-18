@@ -80,7 +80,7 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     @Override
     public void start() {
-        navx_device.zeroYaw();
+        //navx_device.zeroYaw();
     }
 
     @Override
