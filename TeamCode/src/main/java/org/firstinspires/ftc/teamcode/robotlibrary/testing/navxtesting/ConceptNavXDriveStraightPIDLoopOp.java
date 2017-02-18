@@ -43,6 +43,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveOnHeading;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 
 import java.text.DecimalFormat;
@@ -72,6 +73,7 @@ public class ConceptNavXDriveStraightPIDLoopOp extends OpMode {
     int stage = 0;
 
     DriveOnHeading driveOnHeading;
+    EncoderDrive drive;
 
     DecimalFormat df = new DecimalFormat("#.##");
 
@@ -79,7 +81,7 @@ public class ConceptNavXDriveStraightPIDLoopOp extends OpMode {
     public void init() {
         driveTrain = new DriveTrain(hardwareMap);
 
-        navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module"), 0, AHRS.DeviceDataType.kProcessedData);
+        navx_device = AHRS.getInstance(hardwareMap);
     }
 
     @Override
@@ -96,12 +98,13 @@ public class ConceptNavXDriveStraightPIDLoopOp extends OpMode {
             }
         }
         if (stage == 1) {
-            if (driveOnHeading == null) {
-                driveOnHeading = new DriveOnHeading(navx_device, driveTrain, 25, 0.75);
+            if (driveOnHeading == null && drive == null) {
+                driveOnHeading = new DriveOnHeading(navx_device, driveTrain, 0, 0.75);
+                drive = new EncoderDrive(driveTrain, 4000);
             }
             driveOnHeading.run();
-            if (driveOnHeading.isCompleted()) {
-                driveOnHeading.completed();
+            if (drive.isCompleted()) {
+                drive.completed();
                 stage++;
             }
         }

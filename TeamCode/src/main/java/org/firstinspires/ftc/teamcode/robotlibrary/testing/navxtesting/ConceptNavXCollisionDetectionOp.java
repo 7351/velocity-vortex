@@ -92,7 +92,7 @@ public class ConceptNavXCollisionDetectionOp extends OpMode implements IDataArri
 
   @Override
   public void init() {
-      navx_device = AHRS.getInstance(hardwareMap.deviceInterfaceModule.get("Device Interface Module"), 0, AHRS.DeviceDataType.kProcessedData);
+      navx_device = AHRS.getInstance(hardwareMap);
       last_world_linear_accel_x = 0.0;
     last_world_linear_accel_y = 0.0;
     setCollisionState(false);

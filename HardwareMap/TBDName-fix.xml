@@ -19,10 +19,12 @@
         <Motor name="RightBackMotor" port="2" />
     </MotorController>
     <DeviceInterfaceModule name="Device Interface Module" serialNumber="AL00VDA6">
-        <I2cDevice name="navx" port="0" />
         <ModernRoboticsI2cRangeSensor name="beaconRange" port="2" />
         <ColorSensor name="lineColorSensor" port="3" />
         <ColorSensor name="beaconColorSensor" port="4" />
+    </DeviceInterfaceModule>
+    <DeviceInterfaceModule name="navX mxp Device Interface Module" serialNumber="AI041S6Y">
+        <I2cDevice name="navx" port="0" />
     </DeviceInterfaceModule>
     <MotorController name="Left Drive Train" serialNumber="AL00YCFA">
         <Motor name="LeftFrontMotor" port="1" />

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
 import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * Created by Dynamic Signals on 1/16/2017.
@@ -17,9 +18,11 @@ public class GyroTurn extends RoutineImpl {
 
     private navXPIDController yawPIDController;
 
-    private final double TOLERANCE_DEGREES = 2.0;
+    private final double TOLERANCE_DEGREES = 1.25;
     private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
+
+    //TODO: Find calibration numbers
     private final double YAW_PID_P = 0.005;
     private final double YAW_PID_I = 0.0;
     private final double YAW_PID_D = 0.0;
@@ -53,6 +56,7 @@ public class GyroTurn extends RoutineImpl {
 
         if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
             if (yawPIDResult.isOnTarget()) {
+                driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 driveTrain.stopRobot();
             } else {
                 double output = yawPIDResult.getOutput();
