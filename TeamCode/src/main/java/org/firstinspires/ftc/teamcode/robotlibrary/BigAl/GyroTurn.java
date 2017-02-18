@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
-import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
@@ -11,27 +10,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class GyroTurn extends RoutineImpl {
 
-    AHRS navx;
-    DriveTrain driveTrain;
-
-    int targetDegree = 0;
-
-    private navXPIDController yawPIDController;
-
     private final double TOLERANCE_DEGREES = 1.25;
     private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
-
-    //TODO: Find calibration numbers
-    private final double YAW_PID_P = 0.005;
-    private final double YAW_PID_I = 0.001;
-    private final double YAW_PID_D = 0.001;
-
+    AHRS navx;
+    DriveTrain driveTrain;
+    int targetDegree = 0;
     int completedCounter = 0;
-
+    private navXPIDController yawPIDController;
     private navXPIDController.PIDResult yawPIDResult;
 
-    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree) {
+    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree, PID pid) {
         this.navx = navx;
         this.driveTrain = driveTrain;
         this.targetDegree = targetDegree;
@@ -45,10 +34,14 @@ public class GyroTurn extends RoutineImpl {
         yawPIDController.setContinuous(true);
         yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
+        yawPIDController.setPID(pid.p, pid.i, pid.d);
         yawPIDController.enable(true);
 
         yawPIDResult = new navXPIDController.PIDResult();
+    }
+
+    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree) {
+        this(navx, driveTrain, targetDegree, new PID());
     }
 
     @Override

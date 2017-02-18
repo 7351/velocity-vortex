@@ -30,20 +30,13 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.teamcode.robotlibrary.testing.navxtesting;
 
-import android.util.Log;
-
 import com.kauailabs.navx.ftc.AHRS;
-import com.kauailabs.navx.ftc.navXPIDController;
-import com.qualcomm.ftccommon.DbgLog;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
 
 import java.text.DecimalFormat;
 
@@ -71,6 +64,12 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     DecimalFormat df = new DecimalFormat("#.##");
 
+    // TWEAK THESE VARIABLES FOR TESTING
+    PID pid = new PID(
+            0.005,
+            0.0,
+            0.0);
+
     @Override
     public void init() {
 
@@ -93,11 +92,10 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
         }
         if (stage == 1) {
             if (gyroTurn == null) {
-                gyroTurn = new GyroTurn(navx_device, driveTrain, 90);
+                gyroTurn = new GyroTurn(navx_device, driveTrain, 90, pid); // You don't have to provide a pid argument
             }
-            gyroTurn.run();
-            if (gyroTurn.isCompleted()) {
-                gyroTurn.completed();
+            gyroTurn.run(); // You must place this outside of the null statement, this is different from encoder routines
+            if (gyroTurn.isCompleted()) { // isCompleted will automatically stop robot
                 stage++;
             }
         }
