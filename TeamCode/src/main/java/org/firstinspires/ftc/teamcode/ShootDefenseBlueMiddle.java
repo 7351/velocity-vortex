@@ -19,21 +19,21 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "ShootDefenseRed", group = "Encoder Autonomous")
-public class ShootDefenseRed extends OpMode {
+@Autonomous(name = "ShootDefenseBlueMiddle", group = "Encoder Autonomous")
+public class ShootDefenseBlueMiddle extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
-    GyroUtils gyroUtils;
+    //GyroUtils gyroUtils;
     ColorUtils colorUtils;
-    GyroSensor gyro;
+    //GyroSensor gyro;
     Intake intake;
     FlyWheel flyWheel;
     EncoderDrive drive;
     BeaconUtils beaconUtils;
     EncoderTurn turn;
-    private String alliance = "Red";
+    private String alliance = "Blue";
     private int shoot = 2;
 
 
@@ -41,7 +41,7 @@ public class ShootDefenseRed extends OpMode {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
+        //gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
@@ -50,22 +50,22 @@ public class ShootDefenseRed extends OpMode {
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        gyro = gyroUtils.gyro;
-        gyro.calibrate();
+        //gyro = gyroUtils.gyro;
+        //gyro.calibrate();
         beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
 
     }
 
     @Override
     public void start() {
-        gyro.calibrate();
+        //gyro.calibrate();
         colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
     public void loop() {
 
-        if (stage == 0) {//calibrates to 0
+        /*if (stage == 0) {//calibrates to 0
             if (!gyro.isCalibrating()) {
                 stage++;
                 time.reset();
@@ -73,11 +73,15 @@ public class ShootDefenseRed extends OpMode {
                 driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
+        }*/
+
+        if (stage == 0){
+            stage++;
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 300, .75);
+                drive = new EncoderDrive(driveTrain, 350, .75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -97,7 +101,7 @@ public class ShootDefenseRed extends OpMode {
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 33, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -116,7 +120,7 @@ public class ShootDefenseRed extends OpMode {
 
         if (stage == 5) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1850, 0.5);
+                drive = new EncoderDrive(driveTrain, 1600, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -182,7 +186,7 @@ public class ShootDefenseRed extends OpMode {
 
         if (stage == 10){
             if (turn == null){
-                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
@@ -223,7 +227,7 @@ public class ShootDefenseRed extends OpMode {
 
         if (stage == 14){
             if (turn == null){
-                turn = new EncoderTurn(driveTrain, 36, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 36, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
