@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
@@ -19,8 +18,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "ShootDefenseRedMiddle", group = "Encoder Autonomous")
-public class ShootDefenseRedMiddle extends OpMode {
+@Autonomous(name = "ShootDefenseBlueShootBlock", group = "Encoder Autonomous")
+public class ShootDefenseBlueShootBlock extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -33,7 +32,7 @@ public class ShootDefenseRedMiddle extends OpMode {
     EncoderDrive drive;
     BeaconUtils beaconUtils;
     EncoderTurn turn;
-    private String alliance = "Red";
+    private String alliance = "Blue";
     private int shoot = 2;
 
 
@@ -65,7 +64,7 @@ public class ShootDefenseRedMiddle extends OpMode {
     @Override
     public void loop() {
 
-       /* if (stage == 0) {//calibrates to 0
+        /*if (stage == 0) {//calibrates to 0
             if (!gyro.isCalibrating()) {
                 stage++;
                 time.reset();
@@ -74,6 +73,7 @@ public class ShootDefenseRedMiddle extends OpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
         }*/
+
         if (stage == 0){
             stage++;
         }
@@ -100,7 +100,7 @@ public class ShootDefenseRedMiddle extends OpMode {
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 32, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -119,7 +119,7 @@ public class ShootDefenseRedMiddle extends OpMode {
 
         if (stage == 5) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1850, 0.5);
+                drive = new EncoderDrive(driveTrain, 1600, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -161,9 +161,10 @@ public class ShootDefenseRedMiddle extends OpMode {
             }
         }
 
+
         if (stage == 8) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -1700, 0.5);
+                drive = new EncoderDrive(driveTrain, -1600, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -184,7 +185,7 @@ public class ShootDefenseRedMiddle extends OpMode {
 
         if (stage == 10){
             if (turn == null){
-                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 30, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
@@ -204,7 +205,7 @@ public class ShootDefenseRedMiddle extends OpMode {
 
         if (stage == 12){
             if (drive == null){
-                drive = new EncoderDrive(driveTrain, 3500, 0.75);
+                drive = new EncoderDrive(driveTrain, 4000, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -215,38 +216,21 @@ public class ShootDefenseRedMiddle extends OpMode {
         }
 
         if (stage == 13){
-            if (time.time() > .25)
-            {
-                drive = null;
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 14){
             if (turn == null){
-                turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
                 turn.completed();
                 time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 15){
-            if (time.time() > .25){
                 drive = null;
-                turn = null;
-                time.time();
                 stage++;
             }
         }
 
-        if(stage == 16){
+        if (stage == 14){
             if (drive == null){
-                drive = new EncoderDrive(driveTrain, 3000, 0.75);
+                drive = new EncoderDrive(driveTrain, 300, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -255,18 +239,6 @@ public class ShootDefenseRedMiddle extends OpMode {
                 stage++;
             }
         }
-        if (stage == 17){
-            if (turn == null){
-                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()){
-                turn.completed();
-                time.reset();
-                stage++;
-            }
-        }
-
 
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
