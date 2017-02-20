@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
  */
 
 public class PID {
-    double p, i, d;
+    public double p, i, d;
 
     public PID(double p, double i, double d) {
         this.p = p;

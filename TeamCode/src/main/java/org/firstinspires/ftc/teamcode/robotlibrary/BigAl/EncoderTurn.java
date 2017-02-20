@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class EncoderTurn extends RoutineImpl {
 
-    private double turnPerDegree = ((((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5);
+    private double turnPerDegree = (((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5;
+    private double turnPerDegreeFixed = ((((((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5)) * 90) / 112;
 
     private DriveTrain driveTrain;
     private final double power = 0.45;
@@ -17,13 +18,17 @@ public class EncoderTurn extends RoutineImpl {
     private int startingPositionRight;
     public GyroUtils.Direction turnDirection;
 
+    public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection) {
+        this(driveTrain, degreesToTurn, turnDirection, false); // Assume old function
+    }
+
     /**
      * Constructor for the EncoderTurn object
      *
-     * @param driveTrain - The drive train object that should be initialized
+     * @param driveTrain    - The drive train object that should be initialized
      * @param degreesToTurn
      */
-    public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection) {
+    public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection, boolean newMethod) {
         this.driveTrain = driveTrain;
         this.turnDirection = turnDirection;
 
@@ -33,8 +38,12 @@ public class EncoderTurn extends RoutineImpl {
         startingPositionLeft = driveTrain.LeftFrontMotor.getCurrentPosition();
         startingPositionRight = driveTrain.RightFrontMotor.getCurrentPosition();
 
-        //int currentPos = gyroSensor.getHeading();
-        encoderCounts =(int) (degreesToTurn * turnPerDegree);
+        if (newMethod) {
+            encoderCounts = (int) (degreesToTurn * turnPerDegreeFixed);
+        } else {
+            encoderCounts = (int) (degreesToTurn * turnPerDegree);
+        }
+
 
         switch (turnDirection) {
             case CLOCKWISE:

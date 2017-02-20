@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Created by Leo on 10/11/2016.
  */
 
+@Deprecated
 public class GyroUtils {
 
     public GyroSensor gyro;
@@ -22,7 +23,6 @@ public class GyroUtils {
     private DriveTrain driveTrain;
     private int gyroDistance = 0;
 
-    @Deprecated
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.driveTrain = driveTrain;

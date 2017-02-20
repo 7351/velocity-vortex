@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.testing;
 
+import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 public class EncoderTurnTest extends OpMode {
 
     DriveTrain driveTrain;
+    AHRS navx;
 
     EncoderTurn turn;
 
@@ -25,6 +28,7 @@ public class EncoderTurnTest extends OpMode {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
+        navx = AHRS.getInstance(hardwareMap);
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
@@ -40,6 +44,8 @@ public class EncoderTurnTest extends OpMode {
     @Override
     public void start() {
 
+        navx.zeroYaw();
+
     }
 
     @Override
@@ -47,15 +53,15 @@ public class EncoderTurnTest extends OpMode {
 
         telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
+        telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
         telemetry.addData("Stage", stage);
 
         if (stage == 0) {
-            if(turn == null)
-            {
-                turn = new EncoderTurn(driveTrain, 90, GyroUtils.Direction.CLOCKWISE);
+            if (turn == null) {
+                turn = new EncoderTurn(driveTrain, 90, GyroUtils.Direction.CLOCKWISE ,true);
                 turn.run();
             }
-            if (turn.isCompleted()){
+            if (turn.isCompleted()) {
                 turn.completed();
                 stage++;
             }

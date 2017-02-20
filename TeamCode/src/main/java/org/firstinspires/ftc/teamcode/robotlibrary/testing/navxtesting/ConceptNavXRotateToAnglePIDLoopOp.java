@@ -64,17 +64,12 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     DecimalFormat df = new DecimalFormat("#.##");
 
-    // TWEAK THESE VARIABLES FOR TESTING
-    PID pid = new PID(
-            0.005,
-            0.0,
-            0.0);
-
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
         navx_device = AHRS.getInstance(hardwareMap);
+
     }
 
     @Override
@@ -92,6 +87,11 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
         }
         if (stage == 1) {
             if (gyroTurn == null) {
+                // TWEAK THESE VARIABLES FOR TESTING
+                PID pid = new PID(
+                        0.00625,
+                        0.0,
+                        0.0);
                 gyroTurn = new GyroTurn(navx_device, driveTrain, 90, pid); // You don't have to provide a pid argument
             }
             gyroTurn.run(); // You must place this outside of the null statement, this is different from encoder routines

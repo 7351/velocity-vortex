@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.R;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by Dynamic Signals on 11/6/2016.
  */
@@ -17,6 +19,7 @@ public class AutonomousUtils {
     public static final double WAITTIME = 0.15;
     public static final int DEADBEEF = 666;
     public static final int COMPLETED = 555;
+    public static final DecimalFormat df = new DecimalFormat("#.##");
 
     private ElapsedTime time;
 
