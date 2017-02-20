@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
@@ -23,15 +24,20 @@ public class TeleOp extends OpMode {
     private boolean DPadDown = false;
     private boolean DPadRight = false;
     private boolean DPadLeft = false;
+    private boolean DPadRight2 = false;
+    private boolean DPadLeft2 = false;
     private boolean DPadUp2 = false;
     private boolean DPadDown2 = false;
-    private DriveTrain driveTrain;
-    private FlyWheel flyWheel;
-    private Intake intake;
-    private Lift lift;
-    private TeleOpUtils teleOpUtils;
-    private BeaconUtils beaconUtils;
-    private ColorUtils colorUtils;
+
+    DriveTrain driveTrain;
+    FlyWheel flyWheel;
+    Intake intake;
+    Lift lift;
+    TeleOpUtils teleOpUtils;
+    BeaconUtils beaconUtils;
+    ColorUtils colorUtils;
+
+    private ElapsedTime capBallServoTime = new ElapsedTime();
 
     @Override
     public void init() {
@@ -225,45 +231,70 @@ public class TeleOp extends OpMode {
          * Lift controls
          * Right joystick Y Up - Lift positive power
          * Right joystick Y Down - Lift negative power
-         * D-pad up (without the top bumper) - Put the lift servo up
-         * D-pad down (without the top bumper) - Put the lift servo down
+         * D-pad left (without the top bumper) - Open the cap ball
+         * D-pad down (without the top bumper) - Close the cap ball
          * D-pad up (with top bumper) - Increment the servo up
          * D-pad down (with top bumper) - Increment the servo down
          */
 
         double right_joystick_y = gamepad2.right_stick_y;
-        boolean liftManualMode = gamepad2.left_bumper;
+        boolean liftManualModeLeft = gamepad2.left_bumper;
+        boolean liftManualModeRight = gamepad2.right_bumper;
 
         lift.setLiftPower(teleOpUtils.scaleInput(right_joystick_y));
 
-        if (!liftManualMode) { // If it's automatic
-            if (gamepad2.dpad_up) {
-                lift.currentServoPosition = lift.maximum;
-            } if (gamepad2.dpad_down) {
-                lift.currentServoPosition = lift.minimum;
-            } if (gamepad2.dpad_left) {
-                lift.currentServoPosition = lift.ideal;
-            }
-        } else {
-            if (gamepad2.dpad_up) {
-                if (!DPadUp2) {
-                    lift.incrementServo();
-                    DPadUp2 = true;
+        if (!liftManualModeLeft && !liftManualModeRight) {
+            if (gamepad2.dpad_left) {
+                if (!DPadLeft2 && !DPadRight2) {
+                    capBallServoTime.reset();
+                    DPadLeft2 = true;
                 }
-            } else {
-                DPadUp2 = false;
             }
-            if (gamepad2.dpad_down) {
-                if (!DPadDown2) {
-                    lift.decrementServo();
-                    DPadDown2 = true;
+            if (gamepad2.dpad_right) {
+                if (!DPadRight2 && !DPadLeft2) {
+                    capBallServoTime.reset();
+                    DPadRight2 = true;
                 }
-            } else {
-                DPadDown2 = false;
             }
         }
-        lift.currentServoPosition = Range.clip(lift.currentServoPosition, -1, 1);
-        lift.LiftServo.setPosition(lift.currentServoPosition);
+        if (liftManualModeLeft && !liftManualModeRight) { // Manual left
+            if (gamepad2.dpad_left) {
+                DPadLeft2 = false;
+                DPadRight2 = false;
+            }
+            if (gamepad2.dpad_right) {
+                DPadLeft2 = false;
+                DPadRight2 = false;
+            }
+        }
+        if (liftManualModeRight && !liftManualModeLeft) { // Manual right
+            if (gamepad2.dpad_left) {
+                DPadLeft2 = false;
+                DPadRight2 = false;
+            }
+            if (gamepad2.dpad_right) {
+                DPadLeft2 = false;
+                DPadRight2 = false;
+            }
+        }
+
+        if (DPadLeft2) { // Open
+            if (capBallServoTime.time() < 0.1) {
+                lift.setServo(Lift.CapBallServo.LEFT, Lift.CapBallStatus.OPEN);
+            } else {
+                lift.setServo(Lift.CapBallServo.RIGHT, Lift.CapBallStatus.OPEN);
+                DPadLeft2 = false; // Completed with routine
+            }
+        }
+
+        if (DPadRight2) { // Close
+            if (capBallServoTime.time() < 0.3) {
+                lift.setServo(Lift.CapBallServo.RIGHT, Lift.CapBallStatus.CLOSED);
+            } else {
+                lift.setServo(Lift.CapBallServo.LEFT, Lift.CapBallStatus.CLOSED);
+                DPadRight2 = false; // Completed with routine
+            }
+        }
 
         /*
          * Beacon sunglasses control
@@ -282,9 +313,6 @@ public class TeleOp extends OpMode {
         }
 
         telemetry.addData("Beacon Servo", beaconUtils.BeaconServo.getPosition());
-
-        telemetry.addData("Lift Servo", String.valueOf(lift.currentServoPosition));
-
 
     }
 }
