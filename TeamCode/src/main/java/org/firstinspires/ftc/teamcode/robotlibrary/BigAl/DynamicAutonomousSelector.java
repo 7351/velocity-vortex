@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import android.os.Build;
 import android.os.Environment;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.qualcomm.ftccommon.Device;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import java.io.BufferedReader;
@@ -30,37 +32,63 @@ public class DynamicAutonomousSelector {
     private ArrayList<Node> allNodes;
 
     public DynamicAutonomousSelector() {
-        allNodes = new ArrayList<>();
-        readAddresses();
-        RobotLog.d("IP Addresses: " + allNodes.toString());
-        HashMap<String, String> serverHashMap = new HashMap<>();
-        HashMap<String, String> fileHashMap = new HashMap<>();
-        try {
-            String JsonFromServer = getJsonFromServer("http://" + allNodes.get(0).ip + ":8080/");
-            RobotLog.d("Json: " + JsonFromServer);
-            serverHashMap = new Gson().fromJson(JsonFromServer, mapType);
-        } catch (Exception e) {
-            RobotLog.d("Driver station doesn't have the selections :(");
-        }
-        try {
-            File OptionsFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                    + "/FIRST/",
-                    "options.json");
-            String JsonFromFile = getJsonFromFile(OptionsFile);
-            fileHashMap = new Gson().fromJson(JsonFromFile, mapType);
-            OptionsFile.delete();
-        } catch (Exception e) {
-            RobotLog.d("Robot controller doesn't have the selections :(");
-        }
+        this(false);
+    }
 
-        if (serverHashMap.size() == 0) {
-            selectorChoices = fileHashMap;
+    public DynamicAutonomousSelector(boolean network) {
+        if (Build.MODEL.equals(Device.MODEL_ZTE_SPEED)) { // ZTE can't decide what network interface to use
+            network = false;
+        }
+        if (network) {
+            allNodes = new ArrayList<>();
+            readAddresses();
+            RobotLog.d("IP Addresses: " + allNodes.toString());
+            HashMap<String, String> serverHashMap = new HashMap<>();
+            HashMap<String, String> fileHashMap = new HashMap<>();
+            try {
+                String JsonFromServer = getJsonFromServer("http://" + allNodes.get(0).ip + ":8080/");
+                RobotLog.d("Json: " + JsonFromServer);
+                serverHashMap = new Gson().fromJson(JsonFromServer, mapType);
+            } catch (Exception e) {
+                RobotLog.d("Driver station doesn't have the selections :(");
+            }
+            try {
+                File OptionsFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                        + "/FIRST/",
+                        "options.json");
+                String JsonFromFile = getJsonFromFile(OptionsFile);
+                fileHashMap = new Gson().fromJson(JsonFromFile, mapType);
+                OptionsFile.delete();
+            } catch (Exception e) {
+                RobotLog.d("Robot controller doesn't have the selections :(");
+            }
+
+            if (serverHashMap.size() == 0) {
+                selectorChoices = fileHashMap;
+            } else {
+                selectorChoices = serverHashMap;
+            }
+
+            RobotLog.d("File: " + fileHashMap.toString());
+            RobotLog.d("Server: " + serverHashMap.toString());
         } else {
-            selectorChoices = serverHashMap;
+            HashMap<String, String> fileHashMap = new HashMap<>();
+            try {
+                File OptionsFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                        + "/FIRST/",
+                        "options.json");
+                String JsonFromFile = getJsonFromFile(OptionsFile);
+                fileHashMap = new Gson().fromJson(JsonFromFile, mapType);
+                OptionsFile.delete();
+            } catch (Exception e) {
+                RobotLog.d("Robot controller doesn't have the selections :(");
+            }
+
+            selectorChoices = fileHashMap;
+
+            RobotLog.d("File: " + fileHashMap.toString());
         }
 
-        RobotLog.d("File: " + fileHashMap.toString());
-        RobotLog.d("Server: " + serverHashMap.toString());
 
         if (selectorChoices == null) {
             selectorChoices = new HashMap<>();
