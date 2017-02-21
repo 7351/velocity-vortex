@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Created by Leo on 10/11/2016.
  */
 
-@Deprecated
 public class GyroUtils {
 
     public GyroSensor gyro;
@@ -23,6 +23,7 @@ public class GyroUtils {
     private DriveTrain driveTrain;
     private int gyroDistance = 0;
 
+    @Deprecated
     public GyroUtils(HardwareMap hardwareMap, DriveTrain driveTrain, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.driveTrain = driveTrain;
@@ -72,6 +73,19 @@ public class GyroUtils {
     public int spoofedZero(int zeroDegree) {
         int ActualDegree = gyro.getHeading();
         int degree = ActualDegree - zeroDegree;
+        if (degree > 360) {
+            degree = degree - 360;
+        }
+        if (degree < 0) {
+            degree = degree + 360;
+        }
+        return degree;
+    }
+
+    public static double temporaryZero(AHRS navx, double zeroDegree) {
+        double formattedDegree = navx.getYaw();
+        if (Math.signum(formattedDegree) == -1) formattedDegree += 360;
+        double degree = formattedDegree - zeroDegree;
         if (degree > 360) {
             degree = degree - 360;
         }

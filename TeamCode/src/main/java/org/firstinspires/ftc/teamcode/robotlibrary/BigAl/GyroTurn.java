@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
  * Created by Dynamic Signals on 1/16/2017.
  */
 
-public class GyroTurn extends RoutineImpl {
+public class GyroTurn implements Routine {
 
     private final double TOLERANCE_DEGREES = 5;
     private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;

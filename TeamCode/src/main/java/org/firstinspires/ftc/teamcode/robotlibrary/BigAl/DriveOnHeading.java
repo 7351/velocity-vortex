@@ -7,7 +7,7 @@ import com.kauailabs.navx.ftc.navXPIDController;
  * Created by Dynamic Signals on 2/14/2017.
  */
 
-public class DriveOnHeading extends RoutineImpl {
+public class DriveOnHeading implements Routine {
 
     AHRS navx;
     DriveTrain driveTrain;

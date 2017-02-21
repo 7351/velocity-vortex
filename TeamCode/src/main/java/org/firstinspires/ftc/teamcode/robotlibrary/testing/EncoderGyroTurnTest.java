@@ -42,7 +42,7 @@ public class EncoderGyroTurnTest extends OpMode {
 
         if (stage == 1) {
             if (encoderGyroTurn == null) {
-                encoderGyroTurn = new EncoderGyroTurn(navx, driveTrain, 90);
+                encoderGyroTurn = new EncoderGyroTurn(navx, driveTrain, 0);
                 encoderGyroTurn.run();
             }
             if (encoderGyroTurn.isCompleted()) {
