@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.COUNTERCLOCKWISE;
@@ -37,7 +38,7 @@ public class EncoderGyroTurn implements Routine {
         this.targetDegree = targetDegree;
         this.navx = navx;
 
-        double movedZero = GyroUtils.temporaryZero(navx, targetDegree); // This is basically spoofedZero, it is used to cross over -180 & 180
+        double movedZero = GyroUtils.temporaryZero(navx, Range.clip(targetDegree, -180, 180)); // This is basically spoofedZero, it is used to cross over -180 & 180
 
         if (movedZero > 0 && movedZero < 180) { // We need to turn counterclockwise
             degreesOff = movedZero; // Its just the straight degrees

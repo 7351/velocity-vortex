@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 
 public class AutonomousUtils {
 
-    public static final double WAITTIME = 0.15;
+    public static final double WAITTIME = 0.05;
     public static final int DEADBEEF = 666;
     public static final int COMPLETED = 555;
     public static final DecimalFormat df = new DecimalFormat("#.##");

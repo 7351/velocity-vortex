@@ -218,7 +218,7 @@ public class BeaconRedAlt extends OpMode {
         }
 
         if (stage == 13) { // Wait
-            if (time.time() > 1) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -246,7 +246,7 @@ public class BeaconRedAlt extends OpMode {
                 drive = new EncoderDrive(driveTrain, counts, 0.225); // Just a little umph to hit the button
                 drive.run();
             }
-            if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
+            if (drive.isCompleted() || time.time() > 1.5) { // Time failsafe just in case we need to bail
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
@@ -302,17 +302,19 @@ public class BeaconRedAlt extends OpMode {
                 driveTrain.stopRobot();
                 beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
                 if (beaconAmount.equals("1")) stage = COMPLETED;
-                if (beaconAmount.equals("2")) stage++;
+                if (beaconAmount.equals("2")) {
+                    stage++;
+                    gyroTurn = null;
+                }
             }
         }
 
         if (stage == 18) { // Turn towards the white line of the second beacon
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 65, GyroUtils.Direction.COUNTERCLOCKWISE);
-                turn.run();
+            if (gyroTurn == null) {
+                gyroTurn = new EncoderGyroTurn(navx, driveTrain, -180);
+                gyroTurn.run();
             }
-            if (turn.isCompleted()) {
-                driveTrain.stopRobot();
+            if (gyroTurn.isCompleted()) {
                 stage++;
                 time.reset();
             }
@@ -372,16 +374,16 @@ public class BeaconRedAlt extends OpMode {
                 time.reset();
                 drive = null;
                 turn = null;
+                gyroTurn = null;
             }
         }
 
         if (stage == 24) { // Turn stage to face the beacon
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 71, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
+            if (gyroTurn == null) {
+                gyroTurn = new EncoderGyroTurn(navx, driveTrain, -90);
+                gyroTurn.run();
             }
-            if (turn.isCompleted()) {
-                driveTrain.stopRobot();
+            if (gyroTurn.isCompleted()) {
                 stage++;
                 time.reset();
             }
@@ -389,29 +391,7 @@ public class BeaconRedAlt extends OpMode {
 
         if (stage == 25) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage = 27;
-                time.reset();
-                drive = null;
-                turn = null;
-            }
-        }
-
-        /*if (stage == 26) { // We just need a little distance to help identify color
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 100, 0.25);
-                drive.run();
-            }
-            if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-        }*/
-
-        if (stage == 27) { // Wait
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
+                stage = 28;
                 time.reset();
                 drive = null;
                 turn = null;
@@ -529,7 +509,7 @@ public class BeaconRedAlt extends OpMode {
             }
         }
 
-        if (stage == 35) {
+        if (stage == 35) { // I don't know this angle
             if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 123, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
@@ -543,7 +523,7 @@ public class BeaconRedAlt extends OpMode {
         }
 
         if (stage == 36) {
-            if (capBallGet == true) {
+            if (capBallGet) {
                 if (drive == null) {
                     drive = new EncoderDrive(driveTrain, 2500, 1);
                     drive.run();
