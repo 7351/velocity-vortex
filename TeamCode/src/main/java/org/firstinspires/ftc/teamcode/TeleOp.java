@@ -234,10 +234,14 @@ public class TeleOp extends OpMode {
          * Lift controls
          * Right joystick Y Up - Lift positive power
          * Right joystick Y Down - Lift negative power
-         * D-pad left (without the top bumper) - Open the cap ball
-         * D-pad down (without the top bumper) - Close the cap ball
-         * D-pad up (with top bumper) - Increment the servo up
-         * D-pad down (with top bumper) - Increment the servo down
+         * D-pad left (without a top bumper) - Open the cap ball
+         * D-pad right (without a top bumper) - Close the cap ball
+         * D-pad down (without a top bumper) - Grab the ball
+         *
+         * D-pad left (with a top bumper) - Move servo left (based on which bumper is pressed)
+         * D-pad right (with a top bumper) - Move servo right (based on which bumper is pressed)
+         * D-pad down (with a top bumper) - Step both servos out at the same time
+         * D-pad up (with a top bumper) - Step both servos in at the same time
          */
 
         double right_joystick_y = gamepad2.right_stick_y;
