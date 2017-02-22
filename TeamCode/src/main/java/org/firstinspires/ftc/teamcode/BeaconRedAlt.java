@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLETED;
@@ -51,7 +52,7 @@ public class BeaconRedAlt extends OpMode {
     /* Selector variables */
     private String alliance = "Red";
     private String beaconAmount = "2";
-    private int shoot = 2;
+    private int shoot = 0;
 
     @Override
     public void init() {
@@ -63,7 +64,7 @@ public class BeaconRedAlt extends OpMode {
         intake = new Intake(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         rangeUtils = new RangeUtils(hardwareMap);
-
+        new Lift(hardwareMap);
     }
 
     @Override
@@ -547,5 +548,6 @@ public class BeaconRedAlt extends OpMode {
         telemetry.addData("Beacon", colorUtils.beaconColor().toString());
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Time", String.valueOf(time.time()));
+        telemetry.addData("Yaw", navx.getYaw());
     }
 }

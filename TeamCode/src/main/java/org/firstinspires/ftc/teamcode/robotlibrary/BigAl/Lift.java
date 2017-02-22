@@ -18,21 +18,13 @@ public class Lift {
     public Servo CapBallServoRight;
                                         // L     R
     public final static double[] closed = {0.75, 0.18};
-    public final static double[] open = {0, 1};
+    public final static double[] open = {0, 0.85};
+    public final static double[] grab = {0.18, 0.68};
 
-    public double servoIncrement = 0.025;
+    public double leftPosition;
+    public double rightPosition;
 
-    public enum CapBallStatus {
-        OPEN,
-        CLOSED
-    }
-
-    public enum CapBallServo {
-        LEFT,
-        RIGHT
-    }
-
-    private CapBallStatus currentCapBallStatus;
+    public static double servoIncrement = 0.025;
 
     public Lift(HardwareMap hardwareMap) {
         LiftMotor1 = hardwareMap.dcMotor.get("LiftMotor");
@@ -41,20 +33,23 @@ public class Lift {
         CapBallServoLeft = hardwareMap.servo.get("CapBallServoLeft");
         CapBallServoRight = hardwareMap.servo.get("CapBallServoRight");
 
-        currentCapBallStatus = CapBallStatus.CLOSED; // Initialized closed
+        leftPosition = closed[0];
+        rightPosition = closed[1];
+
+        updateServo();
     }
 
-    public void setServo(CapBallServo servo, CapBallStatus status) {
-        Servo selectedServo = (servo.equals(CapBallServo.LEFT)) ? CapBallServoLeft : CapBallServoRight;
-        int index = (servo.equals(CapBallServo.LEFT)) ? 0 : 1;
-        switch (status) {
-            case OPEN:
-                selectedServo.setPosition(open[index]);
-                break;
-            case CLOSED:
-                selectedServo.setPosition(closed[index]);
-                break;
-        }
+    public void updateServo() {
+        leftPosition = Range.clip(leftPosition, 0, 1);
+        rightPosition = Range.clip(rightPosition, 0, 1);
+
+        CapBallServoLeft.setPosition(leftPosition);
+        CapBallServoRight.setPosition(rightPosition);
+    }
+
+    public void grabPositions() {
+        leftPosition = CapBallServoLeft.getPosition();
+        rightPosition = CapBallServoRight.getPosition();
     }
 
     public void setLiftPower(double power) {

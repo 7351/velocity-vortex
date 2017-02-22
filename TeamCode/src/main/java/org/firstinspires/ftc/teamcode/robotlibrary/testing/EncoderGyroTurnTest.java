@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.testing;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -40,7 +41,7 @@ public class EncoderGyroTurnTest extends OpMode {
             }
         }
 
-        if (stage == 1) {
+        if (stage == 1 && time > 2) {
             if (encoderGyroTurn == null) {
                 encoderGyroTurn = new EncoderGyroTurn(navx, driveTrain, 90);
                 encoderGyroTurn.run();

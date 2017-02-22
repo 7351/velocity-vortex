@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -84,6 +85,7 @@ public class GyroUtils {
 
     public static double temporaryZero(AHRS navx, double zeroDegree) {
         double formattedDegree = navx.getYaw();
+        DbgLog.msg("Degree: " + String.valueOf(formattedDegree));
         if (Math.signum(formattedDegree) == -1) formattedDegree += 360;
         double degree = formattedDegree - zeroDegree;
         if (degree > 360) {

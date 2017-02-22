@@ -6,7 +6,9 @@
     </MotorController>
     <ServoController name="Servo Controller" serialNumber="AL026DRM">
         <Servo name="LiftServo" port="1" />
+        <Servo name="CapBallServoLeft" port="2" />
         <Servo name="BeaconServo" port="3" />
+        <Servo name="CapBallServoRight" port="4" />
         <ContinuousRotationServo name="IntakeServoB1" port="5" />
         <ContinuousRotationServo name="IntakeServoB2" port="6" />
     </ServoController>

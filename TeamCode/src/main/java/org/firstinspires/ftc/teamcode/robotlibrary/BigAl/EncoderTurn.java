@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class EncoderTurn implements Routine {
 
     private double turnPerDegree = (((GearRatio * SprocketRatio) * 28) / 360) * 180 / 121.5;
-    private double turnPerDegreeFixed = (turnPerDegree * 90) / 112;
+    private double turnPerDegreeFixed = (turnPerDegree * 90) / 114; // Farther - decrease, shorter - increase
 
     private DriveTrain driveTrain;
     private final double power = 0.45;

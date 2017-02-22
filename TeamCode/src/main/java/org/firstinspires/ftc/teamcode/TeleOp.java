@@ -20,15 +20,6 @@ import org.firstinspires.ftc.teamcode.robotlibrary.TeleOpUtils;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 public class TeleOp extends OpMode {
 
-    private boolean DPadUp = false;
-    private boolean DPadDown = false;
-    private boolean DPadRight = false;
-    private boolean DPadLeft = false;
-    private boolean DPadRight2 = false;
-    private boolean DPadLeft2 = false;
-    private boolean DPadUp2 = false;
-    private boolean DPadDown2 = false;
-
     DriveTrain driveTrain;
     FlyWheel flyWheel;
     Intake intake;
@@ -36,7 +27,19 @@ public class TeleOp extends OpMode {
     TeleOpUtils teleOpUtils;
     BeaconUtils beaconUtils;
     ColorUtils colorUtils;
-
+    private boolean DPadUp = false;
+    private boolean DPadDown = false;
+    private boolean DPadRight = false;
+    private boolean DPadLeft = false;
+    private boolean DPadRight2NoStep = false;
+    private boolean DPadLeft2NoStep = false;
+    private boolean DPadDown2NoStep = false;
+    private boolean DPadLeft2StepL = false;
+    private boolean DPadLeft2StepR = false;
+    private boolean DPadRight2StepL = false;
+    private boolean DPadRight2StepR = false;
+    private boolean DPadDown2Step = false;
+    private boolean DPadUp2Step = false;
     private ElapsedTime capBallServoTime = new ElapsedTime();
 
     @Override
@@ -245,56 +248,126 @@ public class TeleOp extends OpMode {
 
         if (!liftManualModeLeft && !liftManualModeRight) {
             if (gamepad2.dpad_left) {
-                if (!DPadLeft2 && !DPadRight2) {
+                if (!DPadLeft2NoStep && !DPadRight2NoStep) {
                     capBallServoTime.reset();
-                    DPadLeft2 = true;
+                    DPadLeft2NoStep = true;
                 }
             }
             if (gamepad2.dpad_right) {
-                if (!DPadRight2 && !DPadLeft2) {
+                if (!DPadRight2NoStep && !DPadLeft2NoStep) {
                     capBallServoTime.reset();
-                    DPadRight2 = true;
+                    DPadRight2NoStep = true;
+                }
+            }
+            if (gamepad2.dpad_down) {
+                if (!DPadDown2NoStep) {
+                    lift.leftPosition = Lift.grab[0];
+                    lift.rightPosition = Lift.grab[1];
+                    DPadDown2NoStep = true;
+                } else {
+                    DPadDown2NoStep = false;
                 }
             }
         }
         if (liftManualModeLeft && !liftManualModeRight) { // Manual left
             if (gamepad2.dpad_left) {
-                DPadLeft2 = false;
-                DPadRight2 = false;
+                DPadLeft2NoStep = false;
+                DPadRight2NoStep = false;
+                DPadDown2NoStep = false;
+                if (!DPadLeft2StepL) {
+                    lift.leftPosition -= Lift.servoIncrement;
+                    DPadLeft2StepL = true;
+                }
+            } else {
+                DPadLeft2StepL = false;
             }
             if (gamepad2.dpad_right) {
-                DPadLeft2 = false;
-                DPadRight2 = false;
+                DPadLeft2NoStep = false;
+                DPadRight2NoStep = false;
+                DPadDown2NoStep = false;
+                if (!DPadRight2StepL) {
+                    lift.leftPosition += Lift.servoIncrement;
+                    DPadRight2StepL = true;
+                }
+            } else {
+                DPadRight2StepL = false;
             }
         }
         if (liftManualModeRight && !liftManualModeLeft) { // Manual right
             if (gamepad2.dpad_left) {
-                DPadLeft2 = false;
-                DPadRight2 = false;
+                DPadLeft2NoStep = false;
+                DPadRight2NoStep = false;
+                DPadDown2NoStep = false;
+                if (!DPadLeft2StepR) {
+                    lift.rightPosition -= Lift.servoIncrement;
+                    DPadLeft2StepR = true;
+                }
+            } else {
+                DPadLeft2StepR = false;
             }
             if (gamepad2.dpad_right) {
-                DPadLeft2 = false;
-                DPadRight2 = false;
-            }
-        }
-
-        if (DPadLeft2) { // Open
-            if (capBallServoTime.time() < 0.1) {
-                lift.setServo(Lift.CapBallServo.LEFT, Lift.CapBallStatus.OPEN);
+                DPadLeft2NoStep = false;
+                DPadRight2NoStep = false;
+                DPadDown2NoStep = false;
+                if (!DPadRight2StepR) {
+                    lift.rightPosition += Lift.servoIncrement;
+                    DPadRight2StepR = true;
+                }
             } else {
-                lift.setServo(Lift.CapBallServo.RIGHT, Lift.CapBallStatus.OPEN);
-                DPadLeft2 = false; // Completed with routine
+                DPadRight2StepR = false;
             }
         }
 
-        if (DPadRight2) { // Close
+        if (liftManualModeLeft || liftManualModeRight) {
+            if (gamepad2.dpad_up) { // Step in
+                DPadLeft2NoStep = false;
+                DPadRight2NoStep = false;
+                DPadDown2NoStep = false;
+                if (!DPadUp2Step) {
+                    lift.leftPosition += Lift.servoIncrement;
+                    lift.rightPosition -= Lift.servoIncrement;
+                    DPadUp2Step = true;
+                }
+            } else {
+                DPadUp2Step = false;
+            }
+            if (gamepad2.dpad_down) { // Step out
+                DPadLeft2NoStep = false;
+                DPadRight2NoStep = false;
+                DPadDown2NoStep = false;
+                if (!DPadDown2Step) {
+                    lift.leftPosition -= Lift.servoIncrement;
+                    lift.rightPosition += Lift.servoIncrement;
+                    DPadDown2Step = true;
+                }
+            } else {
+                DPadDown2Step = false;
+            }
+        }
+
+        if (DPadLeft2NoStep) { // Open
+            if (capBallServoTime.time() < 0.2) {
+                lift.leftPosition = Lift.open[0];
+            } else {
+                lift.rightPosition = Lift.open[1];
+                DPadLeft2NoStep = false; // Completed with routine
+            }
+        }
+
+        if (DPadRight2NoStep) { // Close
             if (capBallServoTime.time() < 0.3) {
-                lift.setServo(Lift.CapBallServo.RIGHT, Lift.CapBallStatus.CLOSED);
+                lift.rightPosition = Lift.closed[1];
             } else {
-                lift.setServo(Lift.CapBallServo.LEFT, Lift.CapBallStatus.CLOSED);
-                DPadRight2 = false; // Completed with routine
+                lift.leftPosition = Lift.closed[0];
+                DPadRight2NoStep = false; // Completed with routine
             }
         }
+
+        lift.updateServo();
+
+        telemetry.addData("Cap Ball",
+                "L: " + TeleOpUtils.df.format(lift.leftPosition) +
+                        " R: " + TeleOpUtils.df.format(lift.rightPosition));
 
         /*
          * Beacon sunglasses control

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robotlibrary;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by Dynamic Signals on 10/31/2016.
  */
@@ -10,6 +12,7 @@ public class TeleOpUtils {
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
+    public static final DecimalFormat df = new DecimalFormat("#.##");
 
     public TeleOpUtils(Gamepad gamepad1, Gamepad gamepad2) {
         this.gamepad1 = gamepad1;
