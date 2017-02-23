@@ -97,7 +97,7 @@ public class ShootDefenseRedShootBlock extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 3) {
+        if (stage == 3) { //turn to shoot
             if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
