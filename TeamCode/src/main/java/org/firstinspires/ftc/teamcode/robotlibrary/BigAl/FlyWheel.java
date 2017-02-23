@@ -20,7 +20,7 @@ public class FlyWheel {
         FlyWheelMotor = hardwareMap.dcMotor.get("FlyWheelMotor");
         FlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         FlyWheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // We now are going to start using PID for our launches to make them more consistent
     }
 
