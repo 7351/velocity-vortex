@@ -67,6 +67,7 @@ import java.text.DecimalFormat;
  */
 @TeleOp(name = "Concept: navX Collision Detection", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
+@Disabled
 public class ConceptNavXCollisionDetectionOp extends OpMode implements IDataArrivalSubscriber {
 
 

@@ -65,6 +65,7 @@ import java.text.DecimalFormat;
 
 @TeleOp(name = "Concept: navX Drive Straight PID - Loop", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
+@Disabled
 public class ConceptNavXDriveStraightPIDLoopOp extends OpMode {
 
     DriveTrain driveTrain;

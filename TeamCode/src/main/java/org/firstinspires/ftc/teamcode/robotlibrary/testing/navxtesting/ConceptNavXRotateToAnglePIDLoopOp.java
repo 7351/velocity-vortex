@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.teamcode.robotlibrary.testing.navxtesting;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -53,6 +54,7 @@ import java.text.DecimalFormat;
  */
 @TeleOp(name = "Concept: navX Rotate to Angle PID - Loop", group = "Concept")
 // @Disabled Comment this in to remove this from the Driver Station OpMode List
+@Disabled
 public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     DriveTrain driveTrain;

@@ -16,6 +16,12 @@ public class BeaconUtils {
     private String alliance = "NS";
     private double leftPosition = 0.1, center = 0.37, rightPosition = 0.65;
 
+    private ServoPosition currentPosition;
+
+    public ServoPosition getCurrentPosition() {
+        return currentPosition;
+    }
+
     public BeaconUtils(HardwareMap hardwareMap, ColorUtils colorUtils, @NonNull String alliance) {
         BeaconServo = hardwareMap.servo.get("BeaconServo");
         this.colorUtils = colorUtils;
@@ -45,6 +51,7 @@ public class BeaconUtils {
     }
 
     public void rotateServo(ServoPosition position) {
+        currentPosition = position;
         switch (position) {
             case TRIGGER_LEFT:
                 BeaconServo.setPosition(leftPosition);
