@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
-
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 /**
  * Created by Leo on 10/16/2016.
  */
@@ -56,7 +56,7 @@ public class BeaconBlue extends OpMode {
         intake = new Intake(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         rangeUtils = new RangeUtils(hardwareMap);
-
+        new Lift(hardwareMap);
         //gyro = gyroUtils.gyro;
         //gyro.calibrate();
 
@@ -77,7 +77,7 @@ public class BeaconBlue extends OpMode {
 
         if (stage == 1) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1235, 0.5);
+                drive = new EncoderDrive(driveTrain, 825, 0.5);
                 drive.run();
                 if (shoot > 0) {
                     flyWheel.currentPower = flyWheel.defaultStartingPower;
@@ -119,7 +119,7 @@ public class BeaconBlue extends OpMode {
 
         if (stage == 4) { // Drive backwards a wee bit
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -1025, 0.2);
+                drive = new EncoderDrive(driveTrain, -625, 0.2);
                 drive.run();
             }
             if (drive.isCompleted()) {

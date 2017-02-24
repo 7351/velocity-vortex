@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 
 /**
  * Created by Leo on 10/16/2016.
@@ -28,7 +29,7 @@ public class CapBallFarBlue extends OpMode {
     DriveTrain driveTrain;
     GyroUtils gyroUtils;
     ColorUtils colorUtils;
-    GyroSensor gyro;
+    //GyroSensor gyro;
     Intake intake;
     BeaconUtils beaconUtils;
     FlyWheel flyWheel;
@@ -42,23 +43,23 @@ public class CapBallFarBlue extends OpMode {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
+        //yroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
-
+        new Lift(hardwareMap);
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        gyro = gyroUtils.gyro;
-        gyro.calibrate();
+       // gyro = gyroUtils.gyro;
+        //.calibrate();
         beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
     }
 
     @Override
     public void start() {
-        gyro.calibrate();
+        //gyro.calibrate();
         colorUtils.lineColorSensor.enableLed(true);
     }
 
@@ -66,18 +67,18 @@ public class CapBallFarBlue extends OpMode {
     public void loop() {
 
         if (stage == 0) {//calibrates to 0
-            if (!gyro.isCalibrating()) {
+            //if (!gyro.isCalibrating()) {
                 stage++;
                 time.reset();
                 driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
-            telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
-        }
+
+           // telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
+        }//
 
         if (stage == 1) { //drives forward 0.25 seconds
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 400, .75);
+                drive = new EncoderDrive(driveTrain, 350, .75);//400
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -134,18 +135,20 @@ public class CapBallFarBlue extends OpMode {
         flyWheel.powerMotor(); // Update flywheel values
 
         if (stage == 6) {
-            if (shoot == 1) {
-                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
-            }
-            if (shoot == 2) {
-                intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
-            }
-            if (time.time() > 2.5 || shoot <= 0) {
-                stage++;
-                time.reset();
-                intake.stopIntake(Intake.IntakeSpec.BOTH);
-                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
-                flyWheel.currentlyRunning = false;
+            if (time.time() > 1) {
+                if (shoot == 1) {
+                    intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                }
+                if (shoot == 2) {
+                    intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                }
+                if (time.time() > 2.5 || shoot <= 0) {
+                    stage++;
+                    time.reset();
+                    intake.stopIntake(Intake.IntakeSpec.BOTH);
+                    intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
+                    flyWheel.currentlyRunning = false;
+                }
             }
         }
 

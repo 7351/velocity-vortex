@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
-
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 /**
  * Created by Leo on 10/16/2016.
  */
@@ -48,7 +48,7 @@ public class ShootDefenseRedShootBlock extends OpMode {
         flyWheel.FlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        new Lift(hardwareMap);
         //gyro = gyroUtils.gyro;
         //gyro.calibrate();
         beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);

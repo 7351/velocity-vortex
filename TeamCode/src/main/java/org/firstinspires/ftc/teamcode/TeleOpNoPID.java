@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by Dynamic Signals on 2/20/2017.
  */
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOpPID")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp PID")
 public class TeleOpNoPID extends TeleOp {
 
     public void init() {

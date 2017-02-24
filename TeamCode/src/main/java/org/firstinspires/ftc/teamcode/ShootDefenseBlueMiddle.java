@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 
 /**
  * Created by Leo on 10/16/2016.
@@ -46,7 +47,7 @@ public class ShootDefenseBlueMiddle extends OpMode {
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
-
+        new Lift(hardwareMap);
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -120,7 +121,7 @@ public class ShootDefenseBlueMiddle extends OpMode {
 
         if (stage == 5) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1600, 0.5);
+                drive = new EncoderDrive(driveTrain, 1400, .5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -147,25 +148,27 @@ public class ShootDefenseBlueMiddle extends OpMode {
         flyWheel.powerMotor(); // Update flywheel values
 
         if (stage == 7) {
-            if (shoot == 1) {
-                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
-            }
-            if (shoot == 2) {
-                intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
-            }
-            if (time.time() > 2.5 || shoot <= 0) {
-                stage++;
-                time.reset();
-                intake.stopIntake(Intake.IntakeSpec.BOTH);
-                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
-                flyWheel.currentlyRunning = false;
+            if (time.time() > 2) {
+                if (shoot == 1) {
+                    intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                }
+                if (shoot == 2) {
+                    intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                }
+                if (time.time() >4|| shoot <= 0) {
+                    stage++;
+                    time.reset();
+                    intake.stopIntake(Intake.IntakeSpec.BOTH);
+                    intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
+                    flyWheel.currentlyRunning = false;
+                }
             }
         }
 
 
         if (stage == 8) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -1600, 0.5);
+                drive = new EncoderDrive(driveTrain, -1400,1);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -206,7 +209,7 @@ public class ShootDefenseBlueMiddle extends OpMode {
 
         if (stage == 12){
             if (drive == null){
-                drive = new EncoderDrive(driveTrain, 3800, 0.75);
+                drive = new EncoderDrive(driveTrain, 3400, 1);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -227,7 +230,7 @@ public class ShootDefenseBlueMiddle extends OpMode {
 
         if (stage == 14){
             if (turn == null){
-                turn = new EncoderTurn(driveTrain, 34, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 45, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()){
@@ -248,7 +251,7 @@ public class ShootDefenseBlueMiddle extends OpMode {
 
         if(stage == 16){
             if (drive == null){
-                drive = new EncoderDrive(driveTrain, 3000, 0.75);
+                drive = new EncoderDrive(driveTrain, 3750, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()){
@@ -265,11 +268,22 @@ public class ShootDefenseBlueMiddle extends OpMode {
             if (turn.isCompleted()){
                 turn.completed();
                 time.reset();
+                drive = null;
                 stage++;
             }
         }
 
-
+        if(stage == 18){
+            if (drive == null){
+                drive = new EncoderDrive(driveTrain,250, 1);
+                drive.run();
+            }
+            if (drive.isCompleted()){
+                drive.completed();
+                time.reset();
+                stage++;
+            }
+        }
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());

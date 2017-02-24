@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
-
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 /**
  * Created by Leo on 10/16/2016.
  */
@@ -49,6 +49,7 @@ public class ShootDefenseRedMiddle extends OpMode {
         flyWheel.FlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        new Lift(hardwareMap);
 
         //gyro = gyroUtils.gyro;
         //gyro.calibrate();
@@ -167,7 +168,7 @@ public class ShootDefenseRedMiddle extends OpMode {
         }
 
         if (stage == 8) {
-            if (time.time() > 1) {
+            if (time.time() > 4) {
                 intake.stopIntake(Intake.IntakeSpec.A);
                 stage++;
                 drive = null;
@@ -197,7 +198,7 @@ public class ShootDefenseRedMiddle extends OpMode {
 
         if (stage == 11){
             if (drive == null){
-                drive = new EncoderDrive(driveTrain, 4300, 0.75);
+                drive = new EncoderDrive(driveTrain, 4000, 0.75);
                 drive.run();
             }
             if (drive.isCompleted()){

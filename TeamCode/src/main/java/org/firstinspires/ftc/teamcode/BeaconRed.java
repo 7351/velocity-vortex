@@ -49,6 +49,7 @@ public class BeaconRed extends OpMode {
     private String beaconAmount = "2";
     private int shoot = 2;
 
+
     @Override
     public void init() {
 
@@ -62,6 +63,7 @@ public class BeaconRed extends OpMode {
         new Lift(hardwareMap);
         //gyro = gyroUtils.gyro;
         //gyro.calibrate();
+        flyWheel.FlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -80,7 +82,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 1) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 700, 0.5);
+                drive = new EncoderDrive(driveTrain, 725, 0.5);
                 drive.run();
                 if (shoot > 0) {
                     flyWheel.currentPower = flyWheel.defaultStartingPower;
@@ -122,7 +124,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 4) { // Drive backwards a wee bit
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -200, 0.2);
+                drive = new EncoderDrive(driveTrain, -225, 0.2);
                 drive.run();
             }
             if (drive.isCompleted()) {
