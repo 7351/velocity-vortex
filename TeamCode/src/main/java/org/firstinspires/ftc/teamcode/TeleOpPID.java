@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOpPID")
-public class TeleOpNoPID extends TeleOp {
+public class TeleOpPID extends TeleOp {
 
     public void init() {
         super.init();
