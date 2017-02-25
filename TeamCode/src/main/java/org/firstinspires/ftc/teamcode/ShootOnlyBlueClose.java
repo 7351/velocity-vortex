@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -17,14 +16,15 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
+
 /**
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconBlue", group = "Encoder Autonomous")
-public class BeaconBlue extends OpMode {
+@Autonomous(name = "ShootOnlyBlueClose", group = "Encoder Autonomous")
+public class ShootOnlyBlueClose extends OpMode {
 
     ColorUtils.Color actedColor;
 
@@ -105,14 +105,13 @@ public class BeaconBlue extends OpMode {
                 stage++;
                 time.reset();
                 intake.stopIntake(Intake.IntakeSpec.BOTH);
-                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
                 flyWheel.currentlyRunning = false;
             }
         }
 
         if (stage == 3) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
+                stage = AutonomousUtils.COMPLETED;
                 drive = null;
                 turn = null;
                 time.reset();

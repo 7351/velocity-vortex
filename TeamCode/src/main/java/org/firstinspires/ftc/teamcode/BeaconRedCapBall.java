@@ -25,8 +25,8 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRed", group = "Encoder Autonomous")
-public class BeaconRed extends OpMode {
+@Autonomous(name = "BeaconRedCapBall", group = "Encoder Autonomous")
+public class BeaconRedCapBall extends OpMode {
     ColorUtils.Color actedColor;
 
     int stage = 0;//testing
@@ -46,7 +46,7 @@ public class BeaconRed extends OpMode {
     private String alliance = "Red";
     private String beaconAmount = "2";
     private int shoot = 2;
-    boolean capBallGet = false;
+    boolean capBallGet = true;
 
 
     @Override
@@ -495,7 +495,6 @@ public class BeaconRed extends OpMode {
                 beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
                 if (capBallGet) stage++;
                 if (!capBallGet) stage = AutonomousUtils.COMPLETED;
-                time.reset();
             }
         }
 
@@ -513,7 +512,7 @@ public class BeaconRed extends OpMode {
         }
 
         if (stage == 36) {
-            if (capBallGet == true) {
+            if (capBallGet) {
                 if (drive == null) {
                     drive = new EncoderDrive(driveTrain, 2700, 1);
                     drive.run();

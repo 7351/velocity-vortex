@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -17,14 +16,15 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
+
 /**
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconBlue", group = "Encoder Autonomous")
-public class BeaconBlue extends OpMode {
+@Autonomous(name = "BeaconBlueCapBall", group = "Encoder Autonomous")
+public class BeaconBlueCapBall extends OpMode {
 
     ColorUtils.Color actedColor;
 
@@ -45,7 +45,7 @@ public class BeaconBlue extends OpMode {
     private String alliance = "Blue";
     private String beaconAmount = "2";
     private int shoot = 2;
-    boolean capBallGet = false;
+    boolean capBallGet = true;
 
     @Override
     public void init() {
@@ -311,112 +311,112 @@ public class BeaconBlue extends OpMode {
         }
 
 
-            if (stage == 17) { //Back up 15cm with prox
-                if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 13) {
-                    driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    driveTrain.powerLeft(-0.55);
-                    driveTrain.powerRight(-0.55);
+        if (stage == 17) { //Back up 15cm with prox
+            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 13) {
+                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                driveTrain.powerLeft(-0.55);
+                driveTrain.powerRight(-0.55);
 
-                } else {
-                    driveTrain.stopRobot();
-                    // stage ++;
-                    beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
-                    if (beaconAmount.equals("1")) stage = AutonomousUtils.COMPLETED;
-                    if (beaconAmount.equals("2"))
-                        stage++;
-                }
-            }
-
-
-            if (stage == 18) { // Turn towards the white line of the second beacon
-                if (turn == null) {
-                    turn = new EncoderTurn(driveTrain, 73, GyroUtils.Direction.COUNTERCLOCKWISE);//must add if you are not using encoders
-                    turn.run();
-                }
-                if (turn.isCompleted()) {
-                    driveTrain.stopRobot();
+            } else {
+                driveTrain.stopRobot();
+                // stage ++;
+                beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+                if (beaconAmount.equals("1")) stage = AutonomousUtils.COMPLETED;
+                if (beaconAmount.equals("2"))
                     stage++;
-                    time.reset();
-                }
             }
+        }
 
-            if (stage == 19) { // Wait plus a little extra
-                if (time.time() > AutonomousUtils.WAITTIME) {
-                    stage++;
-                    time.reset();
-                    drive = null;
-                    turn = null;
-                    driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                }
-            }
 
-            if (stage == 20) { // Drive to the white line of the second beacon
-                if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 3100, 0.45);
-                }
-                drive.runWithDecrementPower(0.000325); // slows down gradually to hit white line
-                if (colorUtils.aboveWhiteLine() && Math.abs(driveTrain.RightFrontMotor.getCurrentPosition()) > 1000) {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
-                }
-                if (drive.isCompleted()) { //fail safe if we miss white line
-                    stage = AutonomousUtils.DEADBEEF;
-                    driveTrain.stopRobot();
-                    AutonomousUtils.failSafeError(hardwareMap);
-                }
+        if (stage == 18) { // Turn towards the white line of the second beacon
+            if (turn == null) {
+                turn = new EncoderTurn(driveTrain, 73, GyroUtils.Direction.COUNTERCLOCKWISE);//must add if you are not using encoders
+                turn.run();
             }
+            if (turn.isCompleted()) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
 
-            if (stage == 21) { // Wait plus a little extra
-                if (time.time() > AutonomousUtils.WAITTIME) {
-                    stage = 23;
-                    time.reset();
-                    drive = null;
-                    turn = null;
-                }
+        if (stage == 19) { // Wait plus a little extra
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+                drive = null;
+                turn = null;
+                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
+        }
 
-            if (stage == 22) { // Back up
-                if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 75, 0.3);
-                    drive.run();
-                }
-                if (drive.isCompleted()) {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
-                }
+        if (stage == 20) { // Drive to the white line of the second beacon
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 3100, 0.45);
             }
+            drive.runWithDecrementPower(0.000325); // slows down gradually to hit white line
+            if (colorUtils.aboveWhiteLine() && Math.abs(driveTrain.RightFrontMotor.getCurrentPosition()) > 1000) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+            if (drive.isCompleted()) { //fail safe if we miss white line
+                stage = AutonomousUtils.DEADBEEF;
+                driveTrain.stopRobot();
+                AutonomousUtils.failSafeError(hardwareMap);
+            }
+        }
 
-            if (stage == 23) { // Wait plus a little extra
-                if (time.time() > AutonomousUtils.WAITTIME) {
-                    stage++;
-                    time.reset();
-                    drive = null;
-                    turn = null;
-                }
+        if (stage == 21) { // Wait plus a little extra
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage = 23;
+                time.reset();
+                drive = null;
+                turn = null;
             }
+        }
 
-            if (stage == 24) { // Turn stage to face the beacon
-                if (turn == null) {
-                    turn = new EncoderTurn(driveTrain, 71.5, GyroUtils.Direction.CLOCKWISE);
-                    turn.run();
-                }
-                if (turn.isCompleted()) {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
-                }
+        if (stage == 22) { // Back up
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 75, 0.3);
+                drive.run();
             }
+            if (drive.isCompleted()) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
 
-            if (stage == 25) { // Wait
-                if (time.time() > AutonomousUtils.WAITTIME + .5) {
-                    stage++;
-                    time.reset();
-                    drive = null;
-                    turn = null;
-                }
+        if (stage == 23) { // Wait plus a little extra
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+                drive = null;
+                turn = null;
             }
+        }
+
+        if (stage == 24) { // Turn stage to face the beacon
+            if (turn == null) {
+                turn = new EncoderTurn(driveTrain, 71.5, GyroUtils.Direction.CLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 25) { // Wait
+            if (time.time() > AutonomousUtils.WAITTIME + .5) {
+                stage++;
+                time.reset();
+                drive = null;
+                turn = null;
+            }
+        }
         if (stage == 26) { // Drive until we see a color
             if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 20) {
                 driveTrain.powerLeft(0.25);
@@ -429,135 +429,136 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-            if (stage == 27) { // Act on beacon with color sensor
-                if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
-                    beaconUtils.actOnBeaconWithColorSensor();
-                    actedColor = beaconUtils.actOnBeaconWithColorSensor();
+        if (stage == 27) { // Act on beacon with color sensor
+            if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
+                beaconUtils.actOnBeaconWithColorSensor();
+                actedColor = beaconUtils.actOnBeaconWithColorSensor();
+                stage++;
+                time.reset();
+            } else {
+                stage = 626;
+                AutonomousUtils.failSafeError(hardwareMap);
+                time.reset();
+            }
+
+        }
+
+        if (stage == 28) { // Drive forward till we're at the wall
+            if (drive == null) {
+                int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
+                drive = new EncoderDrive(driveTrain, counts + 25, 0.225); // Just a little umph to hit the button
+                drive.run();
+            }
+            if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+
+
+        if (stage == 29) { // Wiggle for beacon 2
+            if (actedColor.equals(ColorUtils.Color.BLUE)) {
+                if (turn == null) {
+                    turn = new EncoderTurn(driveTrain, 5, GyroUtils.Direction.CLOCKWISE);
+                    turn.run();
+                }
+                if (turn.isCompleted() || time.time() > .5) {
+                    driveTrain.stopRobot();
                     stage++;
                     time.reset();
-                } else {
-                    stage = 626;
-                    AutonomousUtils.failSafeError(hardwareMap);
+                    turn = null;
+                }
+
+
+            }
+            if (actedColor.equals(ColorUtils.Color.RED)) {
+                if (turn == null) {
+                    turn = new EncoderTurn(driveTrain, 5, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    turn.run();
+                }
+                if (turn.isCompleted() || time.time() > .5) {
+                    driveTrain.stopRobot();
+                    stage++;
                     time.reset();
+                    turn = null;
+                }
+
+
+            }
+            if (actedColor.equals(ColorUtils.Color.NONE)) {
+                if (turn == null) {
+                    turn = new EncoderTurn(driveTrain, 5, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    turn.run();
+                }
+                if (turn.isCompleted() || time.time() > .5) {
+                    driveTrain.stopRobot();
+                    stage++;
+                    time.reset();
+                    turn = null;
                 }
 
             }
+        }
 
-            if (stage == 28) { // Drive forward till we're at the wall
+        if (stage == 30) { // Wait plus a little extra
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                stage++;
+                time.reset();
+                drive = null;
+                turn = null;
+                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+        }
+
+        if (stage == 31) { //Back up 15cm with prox
+            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
+                driveTrain.powerLeft(-0.55);
+                driveTrain.powerRight(-0.55);
+            } else {
+                driveTrain.stopRobot();
+                beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
+                if (capBallGet) stage++;
+                if (!capBallGet) stage = AutonomousUtils.COMPLETED;
+            }
+        }
+        if (stage == 32) {
+            if (turn == null) {
+                turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+        }
+        if (stage == 33) {
+            if (capBallGet) {
                 if (drive == null) {
-                    int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
-                    drive = new EncoderDrive(driveTrain, counts + 25, 0.225); // Just a little umph to hit the button
+                    drive = new EncoderDrive(driveTrain, -3100, 1);
                     drive.run();
                 }
-                if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
+                if (drive.isCompleted()) {
                     driveTrain.stopRobot();
                     stage++;
                     time.reset();
                 }
+            } else {
+                stage++;
+                time.reset();
             }
 
-
-            if (stage == 29) { // Wiggle for beacon 2
-                if (actedColor.equals(ColorUtils.Color.BLUE)) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 5, GyroUtils.Direction.CLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted() || time.time() > .5) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                        turn = null;
-                    }
-
-
-                }
-                if (actedColor.equals(ColorUtils.Color.RED)) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 5, GyroUtils.Direction.COUNTERCLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted() || time.time() > .5) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                        turn = null;
-                    }
-
-
-                }
-                if (actedColor.equals(ColorUtils.Color.NONE)) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 5, GyroUtils.Direction.COUNTERCLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted() || time.time() > .5) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                        turn = null;
-                    }
-
-                }
-            }
-
-                if (stage == 30) { // Wait plus a little extra
-                    if (time.time() > AutonomousUtils.WAITTIME) {
-                        stage++;
-                        time.reset();
-                        drive = null;
-                        turn = null;
-                        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    }
-                }
-
-                if (stage == 31) { //Back up 15cm with prox
-                    if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
-                        driveTrain.powerLeft(-0.55);
-                        driveTrain.powerRight(-0.55);
-                    } else {
-                        driveTrain.stopRobot();
-                        beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
-                        if (capBallGet) stage++;
-                        if (!capBallGet) stage = AutonomousUtils.COMPLETED;
-                    }
-                }
-                if (stage == 32) {
-                    if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.COUNTERCLOCKWISE);
-                        turn.run();
-                    }
-                    if (turn.isCompleted()) {
-                        driveTrain.stopRobot();
-                        stage++;
-                        time.reset();
-                    }
-                }
-                if (stage == 33) {
-                    if (capBallGet) {
-                        if (drive == null) {
-                            drive = new EncoderDrive(driveTrain, -3100, 1);
-                            drive.run();
-                        }
-                        if (drive.isCompleted()) {
-                            driveTrain.stopRobot();
-                            stage++;
-                            time.reset();
-                        }
-                    } else {
-                        stage++;
-                        time.reset();
-                    }
-                }
-                telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
-                telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
-                telemetry.addData("Range", rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
-                telemetry.addData("Beacon", colorUtils.beaconColor().toString());
-                telemetry.addData("Stage", String.valueOf(stage));
-                telemetry.addData("Time", String.valueOf(time.time()));
-                telemetry.addData("thinggg", rangeUtils.getDistance(DistanceUnit.CM, -1));
-
-            }
         }
+        telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
+        telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
+        telemetry.addData("Range", rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("Beacon", colorUtils.beaconColor().toString());
+        telemetry.addData("Stage", String.valueOf(stage));
+        telemetry.addData("Time", String.valueOf(time.time()));
+        telemetry.addData("thinggg", rangeUtils.getDistance(DistanceUnit.CM, -1));
+
+    }
+}
 
 
