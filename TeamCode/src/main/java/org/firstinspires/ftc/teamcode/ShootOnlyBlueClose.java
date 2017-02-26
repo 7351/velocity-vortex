@@ -105,6 +105,7 @@ public class ShootOnlyBlueClose extends OpMode {
                 stage++;
                 time.reset();
                 intake.stopIntake(Intake.IntakeSpec.BOTH);
+                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
                 flyWheel.currentlyRunning = false;
             }
         }

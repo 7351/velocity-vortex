@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
@@ -20,8 +19,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "ShootDefenseBlueMiddle", group = "Encoder Autonomous")
-public class ShootDefenseBlueMiddle extends OpMode {
+@Autonomous(name = "ShootBackUpBlue", group = "Encoder Autonomous")
+public class ShootBackUpBlue extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -61,6 +60,7 @@ public class ShootDefenseBlueMiddle extends OpMode {
     public void start() {
         //gyro.calibrate();
         colorUtils.lineColorSensor.enableLed(true);
+        time.reset();
     }
 
     @Override
@@ -77,7 +77,8 @@ public class ShootDefenseBlueMiddle extends OpMode {
         }*/
 
         if (stage == 0){
-            stage++;
+            if (time.time() > 5)
+                stage++;
         }
 
         if (stage == 1) { //drives forward 0.25 seconds
@@ -155,7 +156,7 @@ public class ShootDefenseBlueMiddle extends OpMode {
                 if (shoot == 2) {
                     intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
                 }
-                if (time.time() >4|| shoot <= 0) {
+                if (time.time() > 4|| shoot <= 0) {
                     stage++;
                     time.reset();
                     intake.stopIntake(Intake.IntakeSpec.BOTH);
@@ -166,121 +167,13 @@ public class ShootDefenseBlueMiddle extends OpMode {
         }
 
 
-        if (stage == 8) {
+        if (stage == 8) {// drive back
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, -1400,1);
                 drive.run();
             }
             if (drive.isCompleted()) {
                 drive.completed();
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 9) {
-            if (time.time() > 1) {
-
-                stage++;
-                drive = null;
-                time.reset();
-            }
-        }
-
-        if (stage == 10){
-            if (turn == null){
-                turn = new EncoderTurn(driveTrain, 30, GyroUtils.Direction.COUNTERCLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()){
-                turn.completed();
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 11){
-            if (time.time() > .25){
-                turn = null;
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 12){
-            if (drive == null){
-                drive = new EncoderDrive(driveTrain, 3400, 1);
-                drive.run();
-            }
-            if (drive.isCompleted()){
-                drive.completed();
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 13){
-            if (time.time() > .25)
-            {
-                drive = null;
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 14){
-            if (turn == null){
-                turn = new EncoderTurn(driveTrain, 45, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()){
-                turn.completed();
-                time.reset();
-                stage++;
-            }
-        }
-
-        if (stage == 15){
-            if (time.time() > .25){
-                drive = null;
-                turn = null;
-                time.time();
-                stage++;
-            }
-        }
-
-        if(stage == 16){
-            if (drive == null){
-                drive = new EncoderDrive(driveTrain, 3750, 0.75);
-                drive.run();
-            }
-            if (drive.isCompleted()){
-                drive.completed();
-                time.reset();
-                stage++;
-            }
-        }
-        if (stage == 17){
-            if (turn == null){
-                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()){
-                turn.completed();
-                time.reset();
-                drive = null;
-                stage++;
-            }
-        }
-
-        if(stage == 18){
-            if (drive == null){
-                drive = new EncoderDrive(driveTrain,250, 1);
-                drive.run();
-            }
-            if (drive.isCompleted()){
-                drive.completed();
-
                 time.reset();
                 stage++;
             }

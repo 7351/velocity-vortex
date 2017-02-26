@@ -301,7 +301,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 19) { // Turn towards the white line of the second beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 72, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 74, GyroUtils.Direction.COUNTERCLOCKWISE); // Was 72 before change at state
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -349,7 +349,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 23) { // Back up
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 145, 0.3);
+                drive = new EncoderDrive(driveTrain, 165, 0.3);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -370,7 +370,7 @@ public class BeaconRed extends OpMode {
 
         if (stage == 25) { // Turn stage to face the beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 75, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 72.7, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -389,25 +389,16 @@ public class BeaconRed extends OpMode {
             }
         }
 
-        /*if (stage == 26) { // We just need a little distance to help identify color
+        if (stage == 27) { // We just need a little distance to help identify color
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 100, 0.25);
                 drive.run();
             }
-            if (drive.isCompleted()) {
+            if (drive.isCompleted() || !colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-        }*/
-
-        if (stage == 27) { // Wait
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
             }
         }
 
