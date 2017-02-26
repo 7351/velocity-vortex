@@ -16,12 +16,7 @@ public class EncoderGyroTurn implements Routine {
     private DriveTrain driveTrain;
     private AHRS navx;
 
-    private double targetDegree = 0;
-    private double degreesOff = 0;
-
     private boolean isTurnNeeded = true;
-
-    private GyroUtils.Direction turnDirection;
 
     private EncoderTurn encoderTurn;
 
@@ -35,26 +30,15 @@ public class EncoderGyroTurn implements Routine {
 
     public EncoderGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree) {
         this.driveTrain = driveTrain;
-        this.targetDegree = targetDegree;
         this.navx = navx;
 
-        double movedZero = GyroUtils.temporaryZero(navx, Range.clip(targetDegree, -180, 180)); // This is basically spoofedZero, it is used to cross over -180 & 180
+        GyroUtils.GyroDetail detail = new GyroUtils.GyroDetail(navx, targetDegree);
 
-        if (movedZero > 0 && movedZero < 180) { // We need to turn counterclockwise
-            degreesOff = movedZero; // Its just the straight degrees
-            turnDirection = COUNTERCLOCKWISE;
-        }
-
-        if (movedZero >= 180 && movedZero < 360) { // We need to turn clockwise
-            degreesOff = Math.abs(90 - (movedZero - 270)); // We need to find abs of 90 - (degree - 270) to get the degrees off
-            turnDirection = CLOCKWISE;
-        }
-
-        encoderTurn = new EncoderTurn(driveTrain, degreesOff, turnDirection, true); // Create the EncoderTurn object
+        encoderTurn = new EncoderTurn(driveTrain, detail.degreesOff, detail.turnDirection, true); // Create the EncoderTurn object
 
         if (encoderTurn.encoderCounts < 5) isTurnNeeded = false; // If the encoder counts is less than 5, we don't need to turn
 
-        DbgLog.msg("Curr: " + movedZero + " Left: " + degreesOff + " Direction: " + turnDirection.toString().toLowerCase() + " Counts: " + encoderTurn.encoderCounts);
+        DbgLog.msg("Curr: " + detail.movedZero + " Left: " + detail.degreesOff + " Direction: " + detail.turnDirection.toString().toLowerCase() + " Counts: " + encoderTurn.encoderCounts);
     }
 
     @Override

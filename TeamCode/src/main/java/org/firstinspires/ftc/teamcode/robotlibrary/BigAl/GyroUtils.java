@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.CLOCKWISE;
+import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.COUNTERCLOCKWISE;
+
 /**
  * Created by Leo on 10/11/2016.
  */
@@ -95,6 +98,48 @@ public class GyroUtils {
             degree = degree + 360;
         }
         return degree;
+    }
+
+    public static class GyroDetail {
+
+        public double degreesOff;
+        public Direction turnDirection;
+        public double movedZero;
+        public double targetDegree = 0;
+
+        private AHRS navx;
+        /**
+         * Constructor for GyroDetail
+         * @param navx navX device
+         * @param degree the degree you want to get data about (0-360)
+         */
+        public GyroDetail(AHRS navx, double degree) {
+            this.targetDegree = degree;
+            this.navx = navx;
+        }
+
+        public GyroDetail(AHRS navx) {
+            this.navx = navx;
+        }
+
+        public void updateData() {
+            movedZero = GyroUtils.temporaryZero(navx, Range.clip(targetDegree, -180, 180)); // This is basically spoofedZero, it is used to cross over -180 & 180
+
+            if (movedZero > 0 && movedZero < 180) { // We need to turn counterclockwise
+                degreesOff = movedZero; // Its just the straight degrees
+                turnDirection = COUNTERCLOCKWISE;
+            }
+
+            if (movedZero >= 180 && movedZero < 360) { // We need to turn clockwise
+                degreesOff = Math.abs(90 - (movedZero - 270)); // We need to find abs of 90 - (degree - 270) to get the degrees off
+                turnDirection = CLOCKWISE;
+            }
+        }
+
+        public void setData(double degree) {
+            this.targetDegree = degree;
+            updateData();
+        }
     }
 
     public void rotateUsingSpoofed(int ZeroDegree, int TargetDegree, double DivisionNumber, Direction direction) {
