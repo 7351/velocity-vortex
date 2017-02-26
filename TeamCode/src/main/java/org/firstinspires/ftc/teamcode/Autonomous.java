@@ -46,7 +46,6 @@ public class Autonomous extends OpMode {
     private String beaconAmount;
 
     private DriveTrain driveTrain;
-    private GyroUtils gyroUtils;
     private ColorUtils colorUtils;
     private Intake intake;
     private FlyWheel flyWheel;
@@ -60,10 +59,9 @@ public class Autonomous extends OpMode {
     @Override
     public void init() {
 
-        bigAl = new BigAl(hardwareMap, telemetry, false);
+        bigAl = new BigAl(hardwareMap, false);
 
         driveTrain = bigAl.driveTrain;
-        gyroUtils = bigAl.gyroUtils;
         colorUtils = bigAl.colorUtils;
         intake = bigAl.intake;
         flyWheel = bigAl.flyWheel;
@@ -109,16 +107,18 @@ public class Autonomous extends OpMode {
 
         if (stage == -1) {
             if (delayTime.time() > delay) {
-                stage++;
+                stage = 1;
             }
         }
+
+        /*
         if (stage == 0) {
             if (!bigAl.gyroUtils.gyro.isCalibrating()) {
                 stage++;
                 time.reset();
             }
             telemetry.addData("Calibrating", String.valueOf(bigAl.gyroUtils.gyro.isCalibrating()));
-        }
+        }*/
 
         if (target.equals("2 Beacons") || target.equals("1 Beacon")) {
             if (alliance.equals("Red")) {
