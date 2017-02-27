@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BasicGyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 
 /**
  * Created by Dynamic Signals on 2/26/2017.
@@ -43,7 +42,7 @@ public class ConceptNavXLASABasicTurn extends OpMode {
 
         if (stage == 1) {
             if (gyroTurn == null) {
-                gyroTurn = new BasicGyroTurn(this, 90);
+                gyroTurn = new BasicGyroTurn(navx, driveTrain, 90);
             }
             gyroTurn.run();
             if (gyroTurn.isCompleted()) {
