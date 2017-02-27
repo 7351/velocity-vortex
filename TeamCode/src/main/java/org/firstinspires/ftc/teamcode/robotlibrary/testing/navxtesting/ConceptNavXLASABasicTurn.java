@@ -4,6 +4,7 @@ import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BasicGyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 
@@ -18,15 +19,15 @@ public class ConceptNavXLASABasicTurn extends OpMode {
     AHRS navx;
     int stage = 0;
 
-    GyroUtils.GyroDetail detail;
-    double drivePower = 0.3;
+    double drivePower = 0.05;
+
+    BasicGyroTurn gyroTurn;
 
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
         navx = AHRS.getInstance(hardwareMap);
-        detail = new GyroUtils.GyroDetail(navx);
 
     }
 
@@ -39,14 +40,21 @@ public class ConceptNavXLASABasicTurn extends OpMode {
                 stage++;
             }
         }
+
         if (stage == 1) {
-            detail.setData(90);
-            if (detail.degreesOff > 2) {
-                double leftPower = (detail.turnDirection.equals(GyroUtils.Direction.COUNTERCLOCKWISE)) ? -drivePower : drivePower;
-                driveTrain.powerLeft(leftPower);
-                driveTrain.powerRight(-leftPower);
+            if (gyroTurn == null) {
+                gyroTurn = new BasicGyroTurn(driveTrain, navx, 90);
             }
+            gyroTurn.run();
+            if (gyroTurn.isCompleted()) {
+                stage++;
+            }
+            telemetry.addData("Degrees left", gyroTurn.detail.degreesOff);
+            telemetry.addData("Direction", gyroTurn.detail.turnDirection.toString().toLowerCase());
+            telemetry.addData("Power", "L: " + driveTrain.LeftBackMotor.getPower() + " , R: " + driveTrain.RightBackMotor.getPower());
         }
+
+        telemetry.addData("Stage", stage);
 
     }
 }
