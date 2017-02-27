@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -10,13 +9,13 @@ import com.qualcomm.robotcore.util.Range;
 
 public class BasicGyroTurn implements Routine {
 
+    private final static double TOLERANCE = 2;
     public GyroUtils.GyroDetail detail;
-    private DriveTrain driveTrain;
-
     int stuckCounter = 0;
     double drivePower;
     double startingDrivePower = 0.25;
     double lastDegreesOffRounded = 0;
+    private DriveTrain driveTrain;
 
     public BasicGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree) {
         this.driveTrain = driveTrain;
@@ -50,7 +49,7 @@ public class BasicGyroTurn implements Routine {
 
     @Override
     public boolean isCompleted() {
-        boolean completed = (detail.degreesOff < 2);
+        boolean completed = (detail.degreesOff < TOLERANCE);
         if (completed) completed(); // We automatically stop the robot
         return completed;
     }
