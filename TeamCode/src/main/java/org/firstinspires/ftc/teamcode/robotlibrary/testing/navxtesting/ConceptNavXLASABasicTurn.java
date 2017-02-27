@@ -43,7 +43,7 @@ public class ConceptNavXLASABasicTurn extends OpMode {
 
         if (stage == 1) {
             if (gyroTurn == null) {
-                gyroTurn = new BasicGyroTurn(driveTrain, navx, 90);
+                gyroTurn = new BasicGyroTurn(this, 90);
             }
             gyroTurn.run();
             if (gyroTurn.isCompleted()) {

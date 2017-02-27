@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -17,7 +18,7 @@ public class BasicGyroTurn implements Routine {
     double startingDrivePower = 0.25;
     double lastDegreesOffRounded = 0;
 
-    public BasicGyroTurn(DriveTrain driveTrain, AHRS navx, double targetDegree) {
+    public BasicGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree) {
         this.driveTrain = driveTrain;
         detail = new GyroUtils.GyroDetail(navx, targetDegree);
 
@@ -29,17 +30,17 @@ public class BasicGyroTurn implements Routine {
         detail.updateData();
 
         if (Math.round(detail.degreesOff) == lastDegreesOffRounded) { // We think we are stuck
-            stuckCounter++;
+            stuckCounter++; // Lets increment it
         } else {
-            stuckCounter = 0;
-            drivePower = startingDrivePower;
+            stuckCounter = 0; // We are nowhere close to being stuck
+            drivePower = startingDrivePower; // Default power
         }
 
-        if (stuckCounter > 500) {
-            drivePower = Range.clip(drivePower + 0.0005, 0, 1);
+        if (stuckCounter > 750) { // We are definitely stuck
+            drivePower = Range.clip(drivePower + 0.0001, 0, 1); // Slowly speed up the turn
         }
 
-        lastDegreesOffRounded = Math.round(detail.degreesOff);
+        lastDegreesOffRounded = Math.round(detail.degreesOff); // Set the last degree
 
         double leftPower = (detail.turnDirection.equals(GyroUtils.Direction.COUNTERCLOCKWISE)) ? -drivePower : drivePower;
         driveTrain.powerLeft(leftPower);
@@ -50,7 +51,7 @@ public class BasicGyroTurn implements Routine {
     @Override
     public boolean isCompleted() {
         boolean completed = (detail.degreesOff < 2);
-        if (completed) completed();
+        if (completed) completed(); // We automatically stop the robot
         return completed;
     }
 
