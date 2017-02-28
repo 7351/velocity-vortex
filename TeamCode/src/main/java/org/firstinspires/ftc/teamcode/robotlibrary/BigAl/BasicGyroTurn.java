@@ -9,18 +9,36 @@ import com.qualcomm.robotcore.util.Range;
 
 public class BasicGyroTurn implements Routine {
 
-    private final static double TOLERANCE = 2;
+
+    private static final double tolerancePercent = 3;
+    private static double startingDrivePower = 0.25;
     public GyroUtils.GyroDetail detail;
-    int stuckCounter = 0;
-    double drivePower;
-    double startingDrivePower = 0.25;
-    double lastDegreesOffRounded = 0;
+    private int stuckCounter = 0;
+    private double drivePower;
+    private double lastDegreesOffRounded = 0;
+
+    private double tolerance;
     private DriveTrain driveTrain;
 
-    public BasicGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree) {
+    public BasicGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree, double power) {
         this.driveTrain = driveTrain;
+        this.startingDrivePower = power;
         detail = new GyroUtils.GyroDetail(navx, targetDegree);
 
+        tolerance = Range.clip(detail.degreesOff * tolerancePercent / 100, 1, 5);
+
+    }
+
+    public BasicGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree) {
+        this(navx, driveTrain, targetDegree, BasicGyroTurn.startingDrivePower);
+    }
+
+    public double getTolerance() {
+        return tolerance;
+    }
+
+    public void setPower(double power) {
+        this.startingDrivePower = power;
     }
 
     @Override
@@ -35,8 +53,8 @@ public class BasicGyroTurn implements Routine {
             drivePower = startingDrivePower; // Default power
         }
 
-        if (stuckCounter > 750) { // We are definitely stuck
-            drivePower = Range.clip(drivePower + 0.0001, 0, 1); // Slowly speed up the turn
+        if (stuckCounter > 750) { // We are definitely stuck (for about 5 seconds)
+            drivePower = Range.clip(drivePower + 0.000075, 0, 1); // Slowly speed up the turn
         }
 
         lastDegreesOffRounded = Math.round(detail.degreesOff); // Set the last degree
@@ -47,10 +65,19 @@ public class BasicGyroTurn implements Routine {
 
     }
 
+    /**
+     * Is the turn completed? If it isn't it will keep running, if it is, it will stop the robot
+     *
+     * @return if the turn is completed or not
+     */
     @Override
     public boolean isCompleted() {
-        boolean completed = (detail.degreesOff < TOLERANCE);
-        if (completed) completed(); // We automatically stop the robot
+        boolean completed = (detail.degreesOff < tolerance);
+        if (completed) {
+            completed(); // We automatically stop the robot
+        } else {
+            run();
+        }
         return completed;
     }
 
@@ -58,6 +85,10 @@ public class BasicGyroTurn implements Routine {
     public void completed() {
 
         driveTrain.stopRobot();
+
+    }
+
+    public void cleanup() {
 
     }
 }

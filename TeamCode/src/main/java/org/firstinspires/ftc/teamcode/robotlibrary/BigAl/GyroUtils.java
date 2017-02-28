@@ -116,6 +116,8 @@ public class GyroUtils {
         public GyroDetail(AHRS navx, double degree) {
             this.targetDegree = degree;
             this.navx = navx;
+
+            updateData();
         }
 
         public GyroDetail(AHRS navx) {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.testing.navxtesting;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -17,8 +18,6 @@ public class ConceptNavXLASABasicTurn extends OpMode {
     DriveTrain driveTrain;
     AHRS navx;
     int stage = 0;
-
-    double drivePower = 0.05;
 
     BasicGyroTurn gyroTurn;
 
@@ -42,14 +41,14 @@ public class ConceptNavXLASABasicTurn extends OpMode {
 
         if (stage == 1) {
             if (gyroTurn == null) {
-                gyroTurn = new BasicGyroTurn(navx, driveTrain, 90);
+                gyroTurn = new BasicGyroTurn(navx, driveTrain, -45);
             }
-            gyroTurn.run();
             if (gyroTurn.isCompleted()) {
                 stage++;
             }
             telemetry.addData("Degrees left", gyroTurn.detail.degreesOff);
             telemetry.addData("Direction", gyroTurn.detail.turnDirection.toString().toLowerCase());
+            telemetry.addData("Tolerance", gyroTurn.getTolerance());
             telemetry.addData("Power", "L: " + driveTrain.LeftBackMotor.getPower() + " , R: " + driveTrain.RightBackMotor.getPower());
         }
 
