@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -22,10 +23,12 @@ public class BasicGyroTurn implements Routine {
 
     public BasicGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree, double power) {
         this.driveTrain = driveTrain;
-        this.startingDrivePower = power;
+        startingDrivePower = power;
         detail = new GyroUtils.GyroDetail(navx, targetDegree);
 
         tolerance = Range.clip(detail.degreesOff * tolerancePercent / 100, 1, 5);
+
+        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -38,7 +41,7 @@ public class BasicGyroTurn implements Routine {
     }
 
     public void setPower(double power) {
-        this.startingDrivePower = power;
+        startingDrivePower = power;
     }
 
     @Override
