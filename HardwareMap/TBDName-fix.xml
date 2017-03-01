@@ -2,15 +2,13 @@
 <Robot type="FirstInspires-FTC">
     <MotorController name="Intake Motor Controller" serialNumber="AI049PCI">
         <Motor name="IntakeA" port="1" />
-        <Motor name="LiftMotor2" port="2" />
+        <Motor name="IntakeB" port="2" />
     </MotorController>
     <ServoController name="Servo Controller" serialNumber="AL026DRM">
         <Servo name="LiftServo" port="1" />
         <Servo name="CapBallServoLeft" port="2" />
         <Servo name="BeaconServo" port="3" />
         <Servo name="CapBallServoRight" port="4" />
-        <ContinuousRotationServo name="IntakeServoB1" port="5" />
-        <ContinuousRotationServo name="IntakeServoB2" port="6" />
     </ServoController>
     <MotorController name="Launch &amp; Lift Motor Controller" serialNumber="AL00VM5X">
         <Motor name="FlyWheelMotor" port="1" />

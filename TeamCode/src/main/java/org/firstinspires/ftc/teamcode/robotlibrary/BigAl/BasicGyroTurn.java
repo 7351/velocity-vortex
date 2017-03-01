@@ -10,15 +10,15 @@ import com.qualcomm.robotcore.util.Range;
 
 public class BasicGyroTurn implements Routine {
 
-
-    private static final double tolerancePercent = 3;
-    private static double startingDrivePower = 0.25;
+    private static double startingDrivePower = 0.095;
+    public double percentComplete;
     public GyroUtils.GyroDetail detail;
     private int stuckCounter = 0;
+    private double initalDegreesOff;
     private double drivePower;
     private double lastDegreesOffRounded = 0;
 
-    private double tolerance;
+    private double tolerance = 3;
     private DriveTrain driveTrain;
 
     public BasicGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree, double power) {
@@ -26,9 +26,9 @@ public class BasicGyroTurn implements Routine {
         startingDrivePower = power;
         detail = new GyroUtils.GyroDetail(navx, targetDegree);
 
-        tolerance = Range.clip(detail.degreesOff * tolerancePercent / 100, 1, 5);
+        initalDegreesOff = detail.degreesOff;
 
-        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
@@ -36,8 +36,8 @@ public class BasicGyroTurn implements Routine {
         this(navx, driveTrain, targetDegree, BasicGyroTurn.startingDrivePower);
     }
 
-    public double getTolerance() {
-        return tolerance;
+    public void setTolerance(double tolerance) {
+        this.tolerance = tolerance;
     }
 
     public void setPower(double power) {
@@ -48,6 +48,12 @@ public class BasicGyroTurn implements Routine {
     public void run() {
 
         detail.updateData();
+
+        percentComplete = Range.clip(100 - ((detail.degreesOff / initalDegreesOff) * 100), 0, 100);
+
+        if (percentComplete < 75) {
+            percentComplete *= 0.8;
+        }
 
         if (Math.round(detail.degreesOff) == lastDegreesOffRounded) { // We think we are stuck
             stuckCounter++; // Lets increment it
@@ -61,8 +67,9 @@ public class BasicGyroTurn implements Routine {
         }
 
         lastDegreesOffRounded = Math.round(detail.degreesOff); // Set the last degree
-
         double leftPower = (detail.turnDirection.equals(GyroUtils.Direction.COUNTERCLOCKWISE)) ? -drivePower : drivePower;
+
+
         driveTrain.powerLeft(leftPower);
         driveTrain.powerRight(-leftPower);
 
@@ -75,7 +82,7 @@ public class BasicGyroTurn implements Routine {
      */
     @Override
     public boolean isCompleted() {
-        boolean completed = (detail.degreesOff < tolerance);
+        boolean completed = (percentComplete > 95);
         if (completed) {
             completed(); // We automatically stop the robot
         } else {
@@ -88,10 +95,8 @@ public class BasicGyroTurn implements Routine {
     public void completed() {
 
         driveTrain.stopRobot();
+        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
-    public void cleanup() {
-
-    }
 }

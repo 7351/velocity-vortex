@@ -14,14 +14,14 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake.IntakeSpe
 public class Intake {
 
     public DcMotor IntakeA; // This is the blue roller, TOP
-    public CRServo IntakeBServo1; // This is the silver roller, BOTTOM
-    public CRServo IntakeBServo2; // Second servo on port 5
+    public DcMotor IntakeB; // This is the bottom roller
     // Kevin requested two servos for Intake B on 1/8/17
 
     public Intake(HardwareMap hardwareMap) {
         IntakeA = hardwareMap.dcMotor.get("IntakeA");
-        IntakeBServo1 = hardwareMap.crservo.get("IntakeServoB1");
-        IntakeBServo2 = hardwareMap.crservo.get("IntakeServoB2");
+        IntakeB = hardwareMap.dcMotor.get("IntakeB");
+        IntakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        IntakeA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         stopIntake(IntakeSpec.BOTH);
     }
 
@@ -31,8 +31,7 @@ public class Intake {
                 IntakeA.setPower(power);
                 break;
             case B:
-                IntakeBServo1.setPower(power);
-                IntakeBServo2.setPower(power);
+                IntakeB.setPower(power);
                 break;
         }
     }
@@ -61,7 +60,7 @@ public class Intake {
                 setIntakePower(A, 0);
                 break;
             case B:
-                setIntakePower(B, -0.05);
+                setIntakePower(B, 0);
                 break;
             case BOTH:
                 stopIntake(A);
