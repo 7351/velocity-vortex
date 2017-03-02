@@ -111,6 +111,10 @@ public class DriveTrain {
         return LeftFrontMotor.isBusy() || RightFrontMotor.isBusy();
     }
 
+    public DcMotor.ZeroPowerBehavior getZeroPowerBehavior() {
+        return LeftFrontMotor.getZeroPowerBehavior();
+    }
+
 }
 
 

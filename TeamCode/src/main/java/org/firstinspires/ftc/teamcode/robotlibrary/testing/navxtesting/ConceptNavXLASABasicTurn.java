@@ -12,11 +12,13 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
+
 /**
  * Created by Dynamic Signals on 2/26/2017.
  */
 
-@Autonomous(name = "ConceptNavXLASABasicTurn")
+@Autonomous(name = "ConceptNavXLASABasicTurn", group = "Concept")
 public class ConceptNavXLASABasicTurn extends OpMode {
 
     DriveTrain driveTrain;
@@ -24,6 +26,7 @@ public class ConceptNavXLASABasicTurn extends OpMode {
     int stage = 0;
 
     ElapsedTime time = new ElapsedTime();
+    double completedTime;
 
     BasicGyroTurn gyroTurn;
 
@@ -47,18 +50,21 @@ public class ConceptNavXLASABasicTurn extends OpMode {
         }
 
         if (stage == 1) {
-            if (time.time() > 1) {
-                stage++;
-            }
-        }
-
-        if (stage == 2) {
             if (gyroTurn == null) {
                 gyroTurn = new BasicGyroTurn(navx, driveTrain, 90);
             }
             if (gyroTurn.isCompleted()) {
                 stage++;
             }
+        }
+
+        if (stage == 2) {
+            completedTime = time.time();
+            stage++;
+        }
+
+        if (stage == 3) {
+            telemetry.addData("Completed", df.format(completedTime));
         }
 
         telemetry.addData("Yaw", navx.getYaw());

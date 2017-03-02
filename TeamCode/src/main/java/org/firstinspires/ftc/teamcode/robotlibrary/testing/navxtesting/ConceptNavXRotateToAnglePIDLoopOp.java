@@ -31,15 +31,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.teamcode.robotlibrary.testing.navxtesting;
 
 import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
 
 import java.text.DecimalFormat;
+
+import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
 
 /*
  * An example loop op mode where the robot will rotate
@@ -52,9 +56,7 @@ import java.text.DecimalFormat;
  * Note that for the best accuracy, a reasonably high update rate
  * for the navX-Model sensor should be used.
  */
-@TeleOp(name = "Concept: navX Rotate to Angle PID - Loop", group = "Concept")
-// @Disabled Comment this in to remove this from the Driver Station OpMode List
-@Disabled
+@Autonomous(name = "Concept: navX Rotate to Angle PID", group = "Concept")
 public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     DriveTrain driveTrain;
@@ -64,7 +66,8 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     GyroTurn gyroTurn;
 
-    DecimalFormat df = new DecimalFormat("#.##");
+    ElapsedTime time = new ElapsedTime();
+    double completedTime;
 
     @Override
     public void init() {
@@ -76,15 +79,16 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     @Override
     public void start() {
-        //navx_device.zeroYaw();
+
     }
 
     @Override
     public void loop() {
         if (stage == 0) {
             if (!navx_device.isCalibrating()) {
-                stage++;
                 navx_device.zeroYaw();
+                stage++;
+                time.reset();
             }
         }
         if (stage == 1) {
@@ -100,6 +104,15 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
             if (gyroTurn.isCompleted()) { // isCompleted will automatically stop robot
                 stage++;
             }
+        }
+
+        if (stage == 2) {
+            completedTime = time.time();
+            stage++;
+        }
+
+        if (stage == 3) {
+            telemetry.addData("Completed", df.format(completedTime));
         }
 
         telemetry.addData("Stage", String.valueOf(stage));

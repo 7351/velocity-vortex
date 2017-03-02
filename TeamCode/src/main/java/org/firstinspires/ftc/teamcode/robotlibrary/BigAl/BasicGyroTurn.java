@@ -82,7 +82,7 @@ public class BasicGyroTurn implements Routine {
      */
     @Override
     public boolean isCompleted() {
-        boolean completed = (percentComplete > 95);
+        boolean completed = (detail.degreesOff < 2);
         if (completed) {
             completed(); // We automatically stop the robot
         } else {
