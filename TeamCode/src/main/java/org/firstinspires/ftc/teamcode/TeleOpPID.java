@@ -9,9 +9,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOpPID")
 public class TeleOpPID extends TeleOp {
 
+    @Override
     public void init() {
         super.init();
         flyWheel.FlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    @Override
+    public void loop() {
+        super.loop();
+        telemetry.addData("Flywheel enc", flyWheel.FlyWheelMotor.getCurrentPosition());
     }
 
 

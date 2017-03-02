@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,23 +12,24 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public abstract class BigAlOpMode extends OpMode {
 
-    BigAl bigAl;
-    VuforiaSystem vuforiaSystem;
-    DriveTrain driveTrain;
-    BeaconUtils beaconUtils;
-    ColorUtils colorUtils;
-    FlyWheel flyWheel;
-    Intake intake;
-    RangeUtils rangeUtils;
-    DynamicAutonomousSelector das;
-    Lift lift;
+    public BigAl bigAl;
+    public VuforiaSystem vuforiaSystem;
+    public DriveTrain driveTrain;
+    public BeaconUtils beaconUtils;
+    public ColorUtils colorUtils;
+    public FlyWheel flyWheel;
+    public Intake intake;
+    public RangeUtils rangeUtils;
+    public DynamicAutonomousSelector das;
+    public Lift lift;
+    public AHRS navx;
 
-    EncoderTurn turn;
-    EncoderDrive drive;
-    GyroTurn gyroTurn;
+    public EncoderTurn turn;
+    public EncoderDrive drive;
+    public GyroTurn gyroTurn;
 
-    int stage = 0;
-    ElapsedTime time = new ElapsedTime();
+    public int stage = 0;
+    public ElapsedTime time = new ElapsedTime();
 
     @Override
     public void init() {
@@ -41,6 +43,7 @@ public abstract class BigAlOpMode extends OpMode {
         rangeUtils = bigAl.rangeUtils;
         das = bigAl.das;
         lift = bigAl.lift;
+        navx = AHRS.getInstance(hardwareMap);
     }
 
     @Override
@@ -51,12 +54,8 @@ public abstract class BigAlOpMode extends OpMode {
     }
 
     @Override
-    public void loop() { // We start off at stage 0
-
-    }
-
-    @Override
     public void stop() {
+        navx.close();
         super.stop();
     }
 }

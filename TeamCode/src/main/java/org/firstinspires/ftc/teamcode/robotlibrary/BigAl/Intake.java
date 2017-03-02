@@ -13,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake.IntakeSpe
 
 public class Intake {
 
-    public DcMotor IntakeA; // This is the blue roller, TOP
+    public DcMotor IntakeA; // This is the top roller
     public DcMotor IntakeB; // This is the bottom roller
     // Kevin requested two servos for Intake B on 1/8/17
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,9 +15,11 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLETED;
@@ -29,54 +32,54 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
 public class BeaconRed extends OpMode {
     ColorUtils.Color actedColor;
 
-    int stage = 0;//testing
+    int stage = 0;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
-    //GyroUtils gyroUtils;
     ColorUtils colorUtils;
     BeaconUtils beaconUtils;
-    //GyroSensor gyro;
     Intake intake;
     FlyWheel flyWheel;
+    RangeUtils rangeUtils;
+    AHRS navx;
+
     EncoderDrive drive;
     EncoderTurn turn;
-    RangeUtils rangeUtils;
+    GyroTurn gyroTurn;
 
+    boolean capBallGet = false;
     /* Selector variables */
     private String alliance = "Red";
     private String beaconAmount = "2";
     private int shoot = 2;
-    boolean capBallGet = false;
-
 
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        //gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         rangeUtils = new RangeUtils(hardwareMap);
         new Lift(hardwareMap);
-        //gyro = gyroUtils.gyro;
-        //gyro.calibrate();
-        flyWheel.FlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        navx = AHRS.getInstance(hardwareMap);
 
     }
 
     @Override
     public void start() {
 
-        //gyro.calibrate();
         colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
     public void loop() {
-        if (stage == 0) {//calibrates to 0
-            stage++;
+        if (stage == 0) { // Zeros yaw
+            if (!navx.isCalibrating()) {
+                navx.zeroYaw();
+                stage++;
+                time.reset();
+            }
         }
 
         if (stage == 1) {
@@ -300,12 +303,14 @@ public class BeaconRed extends OpMode {
         }
 
         if (stage == 19) { // Turn towards the white line of the second beacon
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 74, GyroUtils.Direction.COUNTERCLOCKWISE); // Was 72 before change at state
-                turn.run();
+            if (gyroTurn == null) {
+                gyroTurn = new GyroTurn(navx, driveTrain, -180, new PID(
+                        0.00625,
+                        0.0,
+                        0.0));
             }
-            if (turn.isCompleted()) {
-                driveTrain.stopRobot();
+            gyroTurn.run();
+            if (gyroTurn.isCompleted()) {
                 stage++;
                 time.reset();
             }
@@ -317,6 +322,7 @@ public class BeaconRed extends OpMode {
                 time.reset();
                 drive = null;
                 turn = null;
+                driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }
