@@ -2,15 +2,14 @@ package org.firstinspires.ftc.teamcode.robotlibrary.testing.navxtesting;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BasicGyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
 
@@ -19,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
  */
 
 @Autonomous(name = "ConceptNavXLASABasicTurn", group = "Concept")
+@Disabled
 public class ConceptNavXLASABasicTurn extends OpMode {
 
     DriveTrain driveTrain;

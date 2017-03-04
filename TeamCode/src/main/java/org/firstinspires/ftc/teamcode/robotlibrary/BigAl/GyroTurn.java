@@ -34,7 +34,7 @@ public class GyroTurn implements Routine {
         this.driveTrain = driveTrain;
         this.targetDegree = targetDegree;
 
-                /* Create a PID Controller which uses the Yaw Angle as input. */
+        /* Create a PID Controller which uses the Yaw Angle as input. */
         yawPIDController = new navXPIDController(navx,
                 navXPIDController.navXTimestampedDataSource.YAW);
 
@@ -46,9 +46,17 @@ public class GyroTurn implements Routine {
         yawPIDController.setPID(pid.p, pid.i, pid.d);
         yawPIDController.enable(true);
 
+        driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double degreesOff = yawPIDController.getError();
+
+        //pid.p = (degreesOff * 0.0000355) + 0.0030521;
+
+        //yawPIDController.setPID(pid.p, pid.i, pid.d);
+
         yawPIDResult = new navXPIDController.PIDResult();
 
-        driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree) {
@@ -92,7 +100,6 @@ public class GyroTurn implements Routine {
 
     @Override
     public void completed() {
-        DcMotor.ZeroPowerBehavior before = driveTrain.RightFrontMotor.getZeroPowerBehavior();
         driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         driveTrain.stopRobot();
         yawPIDController.enable(false);
