@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import android.support.annotation.Nullable;
+
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
@@ -21,6 +24,12 @@ public class GyroTurn implements Routine {
     int completedCounter = 0;
     private navXPIDController.PIDResult yawPIDResult;
 
+    int timesRan = 0;
+
+    PID pid;
+
+    boolean PCalculated = false;
+
     private double MinMotor = 0.0925, MaxMotor = 0.25;
 
     // 3/1/17 ---
@@ -29,10 +38,11 @@ public class GyroTurn implements Routine {
     45 - 0.2 max is adequate 2.90% error
      */
 
-    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree, PID pid) {
+    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree, @Nullable PID pid) {
         this.navx = navx;
         this.driveTrain = driveTrain;
         this.targetDegree = targetDegree;
+        this.pid = pid;
 
         /* Create a PID Controller which uses the Yaw Angle as input. */
         yawPIDController = new navXPIDController(navx,
@@ -43,24 +53,22 @@ public class GyroTurn implements Routine {
         yawPIDController.setContinuous(true);
         yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        yawPIDController.setPID(pid.p, pid.i, pid.d);
+        if (pid == null) {
+            yawPIDController.setPID(0.005, 0, 0);
+        } else {
+            yawPIDController.setPID(pid.p, pid.i, pid.d);
+        }
+
         yawPIDController.enable(true);
 
         driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double degreesOff = yawPIDController.getError();
-
-        //pid.p = (degreesOff * 0.0000355) + 0.0030521;
-
-        //yawPIDController.setPID(pid.p, pid.i, pid.d);
-
         yawPIDResult = new navXPIDController.PIDResult();
-
 
     }
 
     public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree) {
-        this(navx, driveTrain, targetDegree, new PID());
+        this(navx, driveTrain, targetDegree, null);
     }
 
     @Override
@@ -79,7 +87,28 @@ public class GyroTurn implements Routine {
             driveTrain.powerRight(-power);
         }
 
+        timesRan++;
 
+        if (timesRan > 25 && !PCalculated && pid != null) {
+            double degreesOff = Math.round(yawPIDController.getError());
+
+            pid.p = (degreesOff * 0.0000355) + 0.0030521;
+
+            yawPIDController.setPID(pid.p, pid.i, pid.d);
+
+            DbgLog.msg("Degrees off! : " + String.valueOf(degreesOff));
+
+            PCalculated = true;
+        }
+
+
+    }
+
+    public void setPBasedOnDegreesLeft() {
+        double degreesOff = Math.round(yawPIDController.getError());
+        pid.p = (degreesOff * 0.0000355) + 0.0030521;
+
+        yawPIDController.setPID(pid.p, pid.i, pid.d);
     }
 
     @Override

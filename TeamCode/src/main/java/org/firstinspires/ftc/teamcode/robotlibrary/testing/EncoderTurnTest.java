@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.testing;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
@@ -21,6 +22,9 @@ public class EncoderTurnTest extends OpMode {
     AHRS navx;
 
     EncoderTurn turn;
+
+    ElapsedTime time = new ElapsedTime();
+    double completedTime = 0;
 
     int stage = 0;
 
@@ -56,9 +60,17 @@ public class EncoderTurnTest extends OpMode {
         telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
         telemetry.addData("Stage", stage);
 
-        if (stage == 0) {
+        if (stage == 0) { // Zeros yaw
+            if (!navx.isCalibrating()) {
+                navx.zeroYaw();
+                stage++;
+                time.reset();
+            }
+        }
+
+        if (stage == 1) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 90, GyroUtils.Direction.CLOCKWISE ,true);
+                turn = new EncoderTurn(driveTrain, 72.7, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -66,8 +78,10 @@ public class EncoderTurnTest extends OpMode {
                 stage++;
             }
         }
-        if (stage == 1) {
-            turn = null; // We can reuse the same variable!!!
+
+        if (stage == 2) {
+            if (completedTime == 0) completedTime = time.time();
+            telemetry.addData("Completed", completedTime);
         }
     }
 }

@@ -95,10 +95,10 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
             if (gyroTurn == null) {
                 // TWEAK THESE VARIABLES FOR TESTING
                 PID pid = new PID(
-                        0.00475,
+                        0.00625,
                         0.0,
                         0.0);
-                gyroTurn = new GyroTurn(navx_device, driveTrain, 45, pid); // You don't have to provide a pid argument
+                gyroTurn = new GyroTurn(navx_device, driveTrain, 90, pid); // You don't have to provide a pid argument
             }
             gyroTurn.run(); // You must place this outside of the null statement, this is different from encoder routines
             if (gyroTurn.isCompleted()) { // isCompleted will automatically stop robot

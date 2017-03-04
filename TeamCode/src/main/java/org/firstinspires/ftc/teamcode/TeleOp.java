@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -391,5 +392,10 @@ public class TeleOp extends OpMode {
 
         telemetry.addData("Beacon Servo", beaconUtils.BeaconServo.getPosition());
 
+    }
+
+    @Override
+    public void stop() {
+        driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 }
