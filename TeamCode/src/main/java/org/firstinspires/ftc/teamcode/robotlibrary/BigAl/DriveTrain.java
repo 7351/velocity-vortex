@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 public class DriveTrain {
 
     public final double DIFFERENCE = 0;
     public DcMotor LeftFrontMotor, RightFrontMotor, LeftBackMotor, RightBackMotor;
+    public VoltageSensor voltageSensor;
 
     public DriveTrain(HardwareMap hardwareMap) {
         if (hardwareMap != null) {
@@ -20,6 +22,8 @@ public class DriveTrain {
 
             RightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             RightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            voltageSensor = hardwareMap.voltageSensor.get("Intake Motor Controller");
 
         }
 
