@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 
 /**
  * Created by Leo on 1/15/2017.
@@ -26,34 +28,85 @@ public class RangeTestNat extends OpMode {
     ColorUtils colorUtils;
     BeaconUtils beaconUtils;
     ElapsedTime time = new ElapsedTime();
-    public ModernRoboticsI2cRangeSensor rangeSensor;
     int stage = 0;
     double targetDistance = 7;
     double fixDistance = 4;
     double backUpDistance = 7;
     EncoderDrive drive = null;
     EncoderTurn turn = null;
+    RangeUtils rangeUtils;
     ColorUtils.Color actedColor;
+    String alliance = "Red";
 
-    double drivePower =  0.13;
+    double drivePower = 0.13;
+
+    int selectedDistance = 0;
+    double[] lookupTargetDistance = {5, 15, 20, 45, 90};
+
+    double distance;
+
+    String preferredMethod = "combined";
+
+    boolean A = false;
+    boolean Y = false;
 
     @Override
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "beaconRange");
+        rangeUtils = new RangeUtils(hardwareMap);
+        beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
 
+    }
+
+    @Override
+    public void init_loop() {
+        if (gamepad1.a) {
+            if (!A) {
+                selectedDistance = Range.clip(selectedDistance - 1, 0, lookupTargetDistance.length - 1);
+                A = true;
+            }
+        } else {
+            A = false;
+        }
+        if (gamepad1.y) {
+            if (!Y) {
+                selectedDistance = Range.clip(selectedDistance + 1, 0, lookupTargetDistance.length - 1);
+                Y = true;
+            }
+        } else {
+            Y = false;
+        }
+
+        telemetry.addData("Distance selected", lookupTargetDistance[selectedDistance]);
+
+        if (gamepad1.dpad_down) {
+            preferredMethod = "combined";
+        }
+        if (gamepad1.dpad_right) {
+            preferredMethod = "optical";
+        }
+        if (gamepad1.dpad_left) {
+            preferredMethod = "ultrasonic";
+        }
+
+        telemetry.addData("Method", preferredMethod);
     }
 
     @Override
     public void loop() {
 
-        double distance = rangeSensor.getDistance(DistanceUnit.INCH);
-        double distance2 = rangeSensor.getDistance(DistanceUnit.INCH);
+        double optical = rangeUtils.rangeSensor.cmOptical();
+        double ultrasonic = rangeUtils.rangeSensor.cmUltrasonic();
+        double combined = rangeUtils.rangeSensor.getDistance(DistanceUnit.CM);
+
+        if (preferredMethod.equals("combined")) distance = combined;
+        if (preferredMethod.equals("ultrasonic")) distance = ultrasonic;
+        if (preferredMethod.equals("optical")) distance = optical;
 
         if (stage == 0) {
 
-            if (distance > targetDistance) { // If the distance sensor is greater than 12 centimeters
+            if (distance > lookupTargetDistance[selectedDistance]) { // If the distance sensor is greater than 12 centimeters
                 driveTrain.powerLeft(0.13); // Drive 0.13
                 driveTrain.powerRight(0.13);
             } else {
@@ -62,21 +115,7 @@ public class RangeTestNat extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 1){
-            if (time.time() > 5)
-                stage++;
-        }
-        if (stage == 2){
-            if (distance2 < fixDistance){
-                driveTrain.powerLeft(-0.13);
-                driveTrain.powerRight(-0.13);
-            }
-            else {
-                stage++;
-                driveTrain.stopRobot();
-            }
-        }
-        if (stage == 3){
+        /*if (stage == 3){
             if (time.time() > 5)
                 stage++;
         }
@@ -142,10 +181,11 @@ public class RangeTestNat extends OpMode {
                 stage++;
                 driveTrain.stopRobot();
             }
-        }
+        }*/
 
-        telemetry.addData("DistanceINCH", rangeSensor.getDistance(DistanceUnit.INCH));
-        telemetry.addData("DistanceCM", rangeSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("optical", optical);
+        telemetry.addData("ultrasonic", ultrasonic);
+        telemetry.addData("combined", combined);
         telemetry.addData("Stage", stage);
 
     }
