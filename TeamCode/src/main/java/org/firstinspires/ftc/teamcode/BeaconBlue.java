@@ -230,7 +230,7 @@ public class BeaconBlue extends OpMode {
             }
 
         }
-        if (stage == 15) { // Get the range to the wall in cm + 25 ticks more, and drive to the wall
+        if (stage == 15) {// Get the range to the wall in cm + 50 ticks more, set encoders and drive to the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
                 counts+= 50;
@@ -245,7 +245,7 @@ public class BeaconBlue extends OpMode {
         }
 
 
-        if (stage == 16) { // // Make a 6 degree turn (wiggle) to make sure we hit the button for beacon 1
+        if (stage == 16) { // Make a 6 degree turn (wiggle) to make sure we hit the button for beacon 1
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
@@ -305,7 +305,7 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 20) { // Wait
+        if (stage == 20) { //wait and set RUN_WITHOUT_ENCODER for next stage
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
@@ -315,7 +315,7 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 21) { // Drive to the white line of the second beacon
+        if (stage == 21) { // Drive until the color sensor sees the white line of Beacon 2
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 3100, 0.45);
             }
@@ -341,7 +341,7 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 23) { // Back up X cm/75 Ticks since we ran past the while line
+        if (stage == 23) { // Back up x cm/75 Ticks since we ran past the while line
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, -75, 0.3);
                 drive.run();
