@@ -471,7 +471,7 @@ public class BeaconBlue extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 34) {
+        if (stage == 34) {//drive to X cm/Y ticks to hit cap ball and park
             if (capBallGet) {
                 if (drive == null) {
                     drive = new EncoderDrive(driveTrain, -3100, 1);
