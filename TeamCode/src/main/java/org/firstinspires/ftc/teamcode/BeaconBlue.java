@@ -57,15 +57,13 @@ public class BeaconBlue extends OpMode {
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         rangeUtils = new RangeUtils(hardwareMap);
         new Lift(hardwareMap);
-        //gyro = gyroUtils.gyro;
-        //gyro.calibrate();
 
     }
 
     @Override
     public void start() {
 
-        //gyro.calibrate();
+
         colorUtils.lineColorSensor.enableLed(true);
     }
 
@@ -227,6 +225,10 @@ public class BeaconBlue extends OpMode {
                 actedColor = beaconUtils.actOnBeaconWithColorSensor();
                 stage++;
                 time.reset();
+            } else {
+                stage = AutonomousUtils.DEADBEEF;
+                AutonomousUtils.failSafeError(hardwareMap);
+                time.reset();
             }
 
         }
@@ -284,18 +286,15 @@ public class BeaconBlue extends OpMode {
 
             } else {
                 driveTrain.stopRobot();
-                // stage ++;
                 beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
                 if (beaconAmount.equals("1")) stage = AutonomousUtils.COMPLETED;
-                if (beaconAmount.equals("2"))
-                    stage++;
+                if (beaconAmount.equals("2")) stage++;
             }
         }
 
-
         if (stage == 19) { // Turn 73 degrees to point at the white line for Beacon 2
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 73, GyroUtils.Direction.COUNTERCLOCKWISE);//must add if you are not using encoders
+                turn = new EncoderTurn(driveTrain, 73, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -361,7 +360,7 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 25) { // Turn stage to face the beacon
+        if (stage == 25) { // Turn 71.5 degrees to face beacon 2
             if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 71.5, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
@@ -374,7 +373,7 @@ public class BeaconBlue extends OpMode {
         }
 
         if (stage == 26) { // Wait
-            if (time.time() > AutonomousUtils.WAITTIME + .5) {
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -424,7 +423,7 @@ public class BeaconBlue extends OpMode {
         }
 
 
-        if (stage == 30) { // Wiggle for beacon 1
+        if (stage == 30) { // Make a 6 degree turn (wiggle) to make sure we hit the button for beacon 6
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
@@ -449,7 +448,7 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 32) { ///Back up X cm with prox to prepare for turn
+        if (stage == 32) { ///Back up 10 cm with prox to prepare for turn
             if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(-0.55);
@@ -459,9 +458,10 @@ public class BeaconBlue extends OpMode {
                 beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
                 if (capBallGet) stage++;
                 if (!capBallGet) stage = AutonomousUtils.COMPLETED;
+                time.reset();
             }
         }
-        if (stage == 33) {//Turn X degrees to point at cap ball
+        if (stage == 33) {//Turn 31 degrees to point at cap ball
             if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
@@ -472,7 +472,7 @@ public class BeaconBlue extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 34) {//drive to X cm/Y ticks to hit cap ball and park
+        if (stage == 34) {//drive to X cm/-3100 ticks to hit cap ball and park
             if (capBallGet) {
                 if (drive == null) {
                     drive = new EncoderDrive(driveTrain, -3100, 1);
