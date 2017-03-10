@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.testing;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,7 +15,6 @@ import java.util.Map;
  */
 
 @Autonomous(name = "SelectorTest", group = "concept")
-@Disabled
 public class DynamicAutonomousSelectorTest extends OpMode {
 
     DynamicAutonomousSelector das;
@@ -22,18 +22,13 @@ public class DynamicAutonomousSelectorTest extends OpMode {
     @Override
     public void init() {
 
-        das = new DynamicAutonomousSelector();
+        das = new DynamicAutonomousSelector(true);
     }
 
     @Override
     public void loop() {
 
-        Iterator it = das.getSelectorChoices().entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            telemetry.addData((String) pair.getKey(), pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+        das.displayTelemetry(this);
 
     }
 

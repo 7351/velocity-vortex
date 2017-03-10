@@ -6,6 +6,7 @@ import android.os.Environment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qualcomm.ftccommon.Device;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import java.io.BufferedReader;
@@ -19,6 +20,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Leo on 10/8/2016.
@@ -63,14 +66,14 @@ public class DynamicAutonomousSelector {
                 RobotLog.d("Robot controller doesn't have the selections :(");
             }
 
-            if (serverHashMap.size() == 0) {
+            if (serverHashMap == null || serverHashMap.size() == 0) {
                 selectorChoices = fileHashMap;
             } else {
                 selectorChoices = serverHashMap;
             }
 
-            RobotLog.d("File: " + fileHashMap.toString());
-            RobotLog.d("Server: " + serverHashMap.toString());
+            if (fileHashMap != null) RobotLog.d("File: " + fileHashMap.toString());
+            if (serverHashMap != null) RobotLog.d("Server: " + serverHashMap.toString());
         } else {
             HashMap<String, String> fileHashMap = new HashMap<>();
             try {
@@ -93,6 +96,7 @@ public class DynamicAutonomousSelector {
         if (selectorChoices == null) {
             selectorChoices = new HashMap<>();
         }
+
     }
 
     private static String getJsonFromServer(String url) throws Exception {
@@ -102,8 +106,8 @@ public class DynamicAutonomousSelector {
         URL jsonUrl = new URL(url);
         URLConnection dc = jsonUrl.openConnection();
 
-        dc.setConnectTimeout(5000);
-        dc.setReadTimeout(5000);
+        dc.setConnectTimeout(1000);
+        dc.setReadTimeout(1000);
 
         inputStream = new BufferedReader(new InputStreamReader(
                 dc.getInputStream()));
@@ -183,6 +187,17 @@ public class DynamicAutonomousSelector {
             returnValue = selectorChoices.get(key);
         }
         return returnValue;
+    }
+
+    public void displayTelemetry(OpMode opMode) {
+        if (selectorChoices != null) {
+            Iterator it = selectorChoices.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                opMode.telemetry.addData((String) pair.getKey(), pair.getValue());
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
     }
 
     // Class for each device on the wifi direct network
