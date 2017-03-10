@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
-//import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
 
 /**
  * Created by Dynamic Signals on 12/6/2016.
@@ -25,6 +24,8 @@ public class EncoderTurnTest extends OpMode {
 
     ElapsedTime time = new ElapsedTime();
     double completedTime = 0;
+
+    int ticksPer5Degrees = 50; // This is experimental
 
     int stage = 0;
 
@@ -70,7 +71,7 @@ public class EncoderTurnTest extends OpMode {
 
         if (stage == 1) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 72.7, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, ticksPer5Degrees, GyroUtils.Direction.CLOCKWISE, true);
                 turn.run();
             }
             if (turn.isCompleted()) {

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.CLOCKWISE;
@@ -15,10 +16,16 @@ public class EncoderGyroTurn implements Routine {
 
     private DriveTrain driveTrain;
     private AHRS navx;
+    public GyroUtils.GyroDetail detail;
 
-    private boolean isTurnNeeded = true;
+    private final static double TIMEOUT = 3; // Timeout time in secs
+    private final static double TOLERANCE = 2; // Tolerance in degrees, goes in both ways
 
-    private EncoderTurn encoderTurn;
+    private EncoderTurn encoderTurn; // Our encoderturn object
+
+    private ElapsedTime creationTime = new ElapsedTime();
+
+    int stage = 0;
 
     /**
      * Gyro Assisted and calculated encoder turn, it calculates how much counts to complete the turn
@@ -32,27 +39,57 @@ public class EncoderGyroTurn implements Routine {
         this.driveTrain = driveTrain;
         this.navx = navx;
 
-        GyroUtils.GyroDetail detail = new GyroUtils.GyroDetail(navx, targetDegree);
+        detail = new GyroUtils.GyroDetail(navx, targetDegree);
 
-        encoderTurn = new EncoderTurn(driveTrain, detail.degreesOff, detail.turnDirection, true); // Create the EncoderTurn object
-
-        if (encoderTurn.encoderCounts < 5) isTurnNeeded = false; // If the encoder counts is less than 5, we don't need to turn
+        creationTime.reset();
 
         DbgLog.msg("Curr: " + detail.movedZero + " Left: " + detail.degreesOff + " Direction: " + detail.turnDirection.toString().toLowerCase() + " Counts: " + encoderTurn.encoderCounts);
     }
 
     @Override
     public void run() {
+        detail.updateData();
 
-        encoderTurn.run(); // Simply run the encoderTurn
+        if (stage == 0) { // Do our action
+            if (encoderTurn == null) {
+                // Do the math here for the turn
+                double counts = 0;
+                encoderTurn = new EncoderTurn(driveTrain, counts, CLOCKWISE, true); // Entering raw counts
+                encoderTurn.run();
+            }
+            if (encoderTurn.isCompleted()) {
+                driveTrain.stopRobot();
+                stage++;
+                encoderTurn = null;
+            }
+
+        }
+        if (stage == 1) {
+            // Check ourselves and recalculate
+            if (detail.degreesOff > TOLERANCE) stage = 0; // Recalculate if we aren't in tolerance
+            if (detail.degreesOff < TOLERANCE)
+                stage++; // Finish through and let isCompleted do its job
+        }
 
     }
 
     @Override
     public boolean isCompleted() {
-        boolean done = encoderTurn.isCompleted();
-        if (!isTurnNeeded) done = true; // If it isn't worth turning
-        if (done) completed(); // Stop robot when it's done
+        boolean done = false;
+
+        if (stage == 2) {
+            done = true;
+        }
+
+        if (creationTime.time() > TIMEOUT) {
+            done = true;
+        }
+
+        if (done) {
+            completed(); // Stop robot when it's done
+        } else {
+            run();
+        }
         return done;
     }
 

@@ -19,7 +19,7 @@ public class EncoderTurn implements Routine {
     public GyroUtils.Direction turnDirection;
 
     public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection) {
-        this(driveTrain, degreesToTurn, turnDirection, false); // Assume old function
+        this(driveTrain, degreesToTurn, turnDirection, false); // Assume old function/legacy code
     }
 
     /**
@@ -28,7 +28,7 @@ public class EncoderTurn implements Routine {
      * @param driveTrain    - The drive train object that should be initialized
      * @param degreesToTurn
      */
-    public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection, boolean newMethod) {
+    public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection, boolean rawCounts) {
         this.driveTrain = driveTrain;
         this.turnDirection = turnDirection;
 
@@ -38,10 +38,10 @@ public class EncoderTurn implements Routine {
         startingPositionLeft = driveTrain.LeftFrontMotor.getCurrentPosition();
         startingPositionRight = driveTrain.RightFrontMotor.getCurrentPosition();
 
-        if (newMethod) {
+        if (!rawCounts) { // If we are using legacy code
             encoderCounts = (int) (degreesToTurn * turnPerDegreeFixed);
-        } else {
-            encoderCounts = (int) (degreesToTurn * turnPerDegree);
+        } else { // This is a raw degrees so that we can do the math elsewhere
+            encoderCounts = (int) degreesToTurn;
         }
 
 
