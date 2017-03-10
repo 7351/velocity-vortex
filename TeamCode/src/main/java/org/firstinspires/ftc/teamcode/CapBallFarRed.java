@@ -102,7 +102,7 @@ public class CapBallFarRed extends OpMode {
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 29, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
