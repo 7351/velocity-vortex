@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robotlibrary.testing;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.*;
@@ -21,7 +21,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
  * Created by Leo on 1/15/2017.
  */
 
-@Autonomous(name = "WORKGODDAMMIT")
+@Autonomous(name = "RangeTestNat")
+@Disabled
 public class RangeTestNat extends OpMode {
 
     DriveTrain driveTrain;
