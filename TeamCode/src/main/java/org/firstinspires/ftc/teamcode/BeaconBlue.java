@@ -198,11 +198,11 @@ public class BeaconBlue extends OpMode {
                 time.reset();
                 drive = null;
                 turn = null;
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }
         if (stage == 12) { // Drive until we see a beacon color
             if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 20) {
+                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(0.25);
                 driveTrain.powerRight(0.25);
             } else {
@@ -305,13 +305,12 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 20) { //wait and set RUN_WITHOUT_ENCODER for next stage
+        if (stage == 20) { //wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
                 drive = null;
                 turn = null;
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }
 
@@ -384,6 +383,7 @@ public class BeaconBlue extends OpMode {
         }
         if (stage == 27) { // Drive until we see a beacon color
             if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 20) {
+                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(0.25);
                 driveTrain.powerRight(0.25);
             } else {
@@ -439,18 +439,19 @@ public class BeaconBlue extends OpMode {
             }
         }
 
-        if (stage == 31) { //wait and set RUN_WITHOUT_ENCODER for next stage
+        if (stage == 31) { //wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
                 drive = null;
                 turn = null;
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             }
         }
 
         if (stage == 32) { ///Back up X cm with prox to prepare for turn
             if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
+                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(-0.55);
                 driveTrain.powerRight(-0.55);
             } else {

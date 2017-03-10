@@ -196,17 +196,18 @@ public class BeaconRed extends OpMode {
                 time.reset();
             }
         }
-        if (stage == 11) { //wait and set RUN_WITHOUT_ENCODER for next stage
+        if (stage == 11) { //wait
             if (time.time() > .5) {
                 stage++;
                 time.reset();
                 drive = null;
                 turn = null;
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             }
         }
         if (stage == 12) { // Drive until we see a beacon color
             if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 17) {
+                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(0.25);
                 driveTrain.powerRight(0.25);
             } else {
@@ -314,7 +315,7 @@ public class BeaconRed extends OpMode {
                 drive = null;
                 turn = null;
                 driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             }
         }
 
@@ -444,13 +445,12 @@ public class BeaconRed extends OpMode {
                 turn = null;
             }
         }
-        if (stage == 32) { //wait and set RUN_WITHOUT_ENCODER for next stage
+        if (stage == 32) { //wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 stage++;
                 time.reset();
                 drive = null;
                 turn = null;
-                driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         }
 
