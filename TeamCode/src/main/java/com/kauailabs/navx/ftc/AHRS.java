@@ -431,9 +431,11 @@ public class AHRS {
      */
 
     public boolean isCalibrating() {
-        return !((curr_data.cal_status &
+        boolean calibrating = !((curr_data.cal_status &
                 AHRSProtocol.NAVX_CAL_STATUS_IMU_CAL_STATE_MASK) ==
                 AHRSProtocol.NAVX_CAL_STATUS_IMU_CAL_COMPLETE);
+        if (!isConnected()) calibrating = false;
+        return calibrating;
     }
 
     /**
@@ -1017,19 +1019,22 @@ public class AHRS {
         }
 
         public void zeroYaw() {
-            synchronized(reset_yaw_critical_section) {
-                request_zero_yaw = true;
+            if (!isConnected()) {
+                synchronized(reset_yaw_critical_section) {
+                    request_zero_yaw = true;
                 /* Notify all data subscribers that the yaw
                    is about to be reset.
                  */
-                for ( int i = 0; i < callbacks.length; i++ ) {
-                    IDataArrivalSubscriber callback = callbacks[i];
-                    if (callback != null) {
-                        callback.yawReset();
+                    for ( int i = 0; i < callbacks.length; i++ ) {
+                        IDataArrivalSubscriber callback = callbacks[i];
+                        if (callback != null) {
+                            callback.yawReset();
+                        }
                     }
                 }
+                signalThread();
             }
-            signalThread();
+
         }
 
         public int getByteCount() {
