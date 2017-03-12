@@ -25,8 +25,6 @@ public class EncoderTurnTest extends OpMode {
     ElapsedTime time = new ElapsedTime();
     double completedTime = 0;
 
-    int ticksPer5Degrees = 50; // This is experimental
-
     int stage = 0;
 
     @Override
@@ -49,8 +47,6 @@ public class EncoderTurnTest extends OpMode {
     @Override
     public void start() {
 
-        navx.zeroYaw();
-
     }
 
     @Override
@@ -71,7 +67,8 @@ public class EncoderTurnTest extends OpMode {
 
         if (stage == 1) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, ticksPer5Degrees, GyroUtils.Direction.CLOCKWISE, true);
+                double counts = 100; // Change the counts here for testing
+                turn = new EncoderTurn(driveTrain, counts, GyroUtils.Direction.CLOCKWISE, true);
                 turn.run();
             }
             if (turn.isCompleted()) {
