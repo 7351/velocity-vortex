@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconBlue", group = "Encoder Autonomous")
+@Autonomous(name = "BeaconBlueOld", group = "Encoder Autonomous")
 public class BeaconBlueOld extends OpMode {
 
     ColorUtils.Color actedColor;
