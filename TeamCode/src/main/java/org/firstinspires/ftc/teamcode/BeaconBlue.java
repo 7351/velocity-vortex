@@ -167,6 +167,7 @@ public class BeaconBlue extends OpMode {
             }
             if (drive.isCompleted()) { //fail safe if we miss white line
                 stage = 908;
+                drive = null;
                 driveTrain.stopRobot();
                 //AutonomousUtils.failSafeError(hardwareMap);
             }
@@ -504,16 +505,16 @@ public class BeaconBlue extends OpMode {
 
         if (stage == 909){
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -3000, 0.45);
+                drive = new EncoderDrive(driveTrain, -3600, 0.45);
+                drive.run();
             }
-            drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
                 stage++;
                 time.reset();
             }
             if (drive.isCompleted()) { //fail safe if we miss white line
-                stage = AutonomousUtils.DEADBEEF;
+                stage = 9909;
                 drive = null;
                 turn = null;
                 driveTrain.stopRobot();
