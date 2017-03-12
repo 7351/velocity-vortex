@@ -168,7 +168,7 @@ public class BeaconBlue extends OpMode {
             if (drive.isCompleted()) { //fail safe if we miss white line
                 stage = 908;
                 driveTrain.stopRobot();
-                AutonomousUtils.failSafeError(hardwareMap);
+                //AutonomousUtils.failSafeError(hardwareMap);
             }
         }
         if (stage == 9) { // Wait
@@ -488,6 +488,39 @@ public class BeaconBlue extends OpMode {
                 time.reset();
             }
         }
+        if(stage == 908)
+        {
+            if (turn == null){
+                turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()){
+                turn.completed();
+                stage++;
+                turn = null;
+                time.reset();
+            }
+        }
+
+        if (stage == 909){
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, -3000, 0.45);
+            }
+            drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
+            if (colorUtils.aboveWhiteLine()) {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+            if (drive.isCompleted()) { //fail safe if we miss white line
+                stage = AutonomousUtils.DEADBEEF;
+                drive = null;
+                turn = null;
+                driveTrain.stopRobot();
+                AutonomousUtils.failSafeError(hardwareMap);
+            }
+        }
+
         telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
         telemetry.addData("Range", rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
