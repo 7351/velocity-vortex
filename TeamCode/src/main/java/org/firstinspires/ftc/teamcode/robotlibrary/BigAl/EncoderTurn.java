@@ -18,6 +18,11 @@ public class EncoderTurn implements Routine {
     private int startingPositionRight;
     public GyroUtils.Direction turnDirection;
 
+    private int lastLeftPosition = 0;
+    private int lastRIghtPosition = 0;
+
+    private int stuckCounter = 0;
+
     public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection) {
         this(driveTrain, degreesToTurn, turnDirection, false); // Assume old function/legacy code
     }
@@ -84,18 +89,31 @@ public class EncoderTurn implements Routine {
 
     @Override
     public boolean isCompleted() {
+
+        if (driveTrain.LeftFrontMotor.getCurrentPosition() == lastLeftPosition || driveTrain.RightFrontMotor.getCurrentPosition() == lastRIghtPosition) {
+            stuckCounter++;
+        } else {
+            stuckCounter = 0;
+        }
+
+        if (stuckCounter > 50) {
+            return true;
+        }
         switch (turnDirection) {
             case CLOCKWISE:
-                if (driveTrain.RightFrontMotor.getCurrentPosition() < -encoderCounts) {
+                if (driveTrain.RightFrontMotor.getCurrentPosition() < -encoderCounts && driveTrain.LeftFrontMotor.getCurrentPosition() > encoderCounts) {
                     return true;
                 }
                 break;
             case COUNTERCLOCKWISE:
-                if (driveTrain.RightFrontMotor.getCurrentPosition() > encoderCounts) {
+                if (driveTrain.RightFrontMotor.getCurrentPosition() > encoderCounts && driveTrain.LeftFrontMotor.getCurrentPosition() < -encoderCounts) {
                     return true;
                 }
                 break;
         }
+
+        lastLeftPosition = driveTrain.LeftFrontMotor.getCurrentPosition();
+        lastRIghtPosition = driveTrain.RightFrontMotor.getCurrentPosition();
 
         return false;
     }
