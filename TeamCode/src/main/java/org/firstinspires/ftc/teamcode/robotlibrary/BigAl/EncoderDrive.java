@@ -11,6 +11,10 @@ public class EncoderDrive implements Routine {
     private int startingPositionLeft;
     private int startingPositionRight;
 
+    private int stuckCounter = 0;
+    private int lastLeftPositon = 0;
+    private int lastRightPositon = 0;
+
     // We only want to use the FrontRightMotor encoder
 
     /**
@@ -62,15 +66,29 @@ public class EncoderDrive implements Routine {
 
     @Override
     public boolean isCompleted() {
+
+        if (driveTrain.LeftFrontMotor.getCurrentPosition() == lastLeftPositon) {
+            stuckCounter++;
+        } else {
+            stuckCounter = 0;
+        }
+
+        if (stuckCounter > 50) {
+            return true;
+        }
+
         if (Math.signum(targetPosition) == 1) { // If the target is positive
-            if (driveTrain.LeftFrontMotor.getCurrentPosition() > targetPosition + startingPositionLeft && driveTrain.RightFrontMotor.getCurrentPosition() > targetPosition + startingPositionRight) {
+            if (driveTrain.LeftFrontMotor.getCurrentPosition() >= targetPosition + startingPositionLeft) {
                 return true;
             }
         } else { // If it is negative
-            if (driveTrain.LeftFrontMotor.getCurrentPosition() < targetPosition + startingPositionLeft && driveTrain.RightFrontMotor.getCurrentPosition() < targetPosition + startingPositionRight) {
+            if (driveTrain.LeftFrontMotor.getCurrentPosition() <= targetPosition + startingPositionLeft) {
                 return true;
             }
         }
+
+        lastLeftPositon = driveTrain.LeftFrontMotor.getCurrentPosition();
+        lastRightPositon = driveTrain.RightFrontMotor.getCurrentPosition();
         return false;
     }
 
