@@ -28,7 +28,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRed", group = "Encoder Autonomous")
+@Autonomous(name = "BeaconRedOld", group = "Encoder Autonomous")
 public class BeaconRedOld extends OpMode {
     ColorUtils.Color actedColor;
 
