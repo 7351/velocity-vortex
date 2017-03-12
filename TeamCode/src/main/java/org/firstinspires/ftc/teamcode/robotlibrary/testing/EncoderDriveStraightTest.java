@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.testing;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
@@ -34,19 +35,26 @@ public class EncoderDriveStraightTest extends OpMode {
 
     @Override
     public void start() {
-        drive = new EncoderDrive(driveTrain, 1000, 0.75);
-        drive.run();
 
     }
 
     @Override
     public void loop() {
 
-        if (drive.isCompleted()) {
-            drive.completed();
+        if (stage == 0) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, 1000, 0.45);
+                driveTrain.LeftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                driveTrain.RightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                drive.run();
+            }
+            if (drive.isCompleted()) {
+                drive.completed();
+            }
         }
 
-        telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
+
+        telemetry.addData("Left Front Position: ", driveTrain.LeftFrontMotor.getCurrentPosition());
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
