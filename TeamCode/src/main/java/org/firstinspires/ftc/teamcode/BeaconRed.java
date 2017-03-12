@@ -172,9 +172,10 @@ public class BeaconRed extends OpMode {
                 time.reset();
             }
             if (drive.isCompleted()) { //fail safe if we miss white line
+                drive = null;
                 stage = 908;
                 driveTrain.stopRobot();
-                AutonomousUtils.failSafeError(hardwareMap);
+                //AutonomousUtils.failSafeError(hardwareMap);
             }
         }
         if (stage == 9) { // Wait
@@ -496,6 +497,40 @@ public class BeaconRed extends OpMode {
             } else {
                 stage++;
                 time.reset();
+            }
+        }
+
+        if(stage == 908)
+        {
+            if (turn == null){
+                turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.CLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()){
+                turn.completed();
+                stage++;
+                turn = null;
+                time.reset();
+            }
+        }
+
+        if (stage == 909){
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, -3600, 0.45);
+                drive.run();
+            }
+            if (colorUtils.aboveWhiteLine()) {
+                driveTrain.stopRobot();
+                intake.stopIntake(Intake.IntakeSpec.BOTH);
+                stage++;
+                time.reset();
+            }
+            if (drive.isCompleted()) { //fail safe if we miss white line
+                stage = 9909;
+                drive = null;
+                turn = null;
+                driveTrain.stopRobot();
+                AutonomousUtils.failSafeError(hardwareMap);
             }
         }
 
