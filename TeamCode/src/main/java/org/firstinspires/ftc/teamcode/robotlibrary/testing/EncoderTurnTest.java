@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Autonomous;
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
@@ -24,7 +25,11 @@ public class EncoderTurnTest extends OpMode {
 
     ElapsedTime time = new ElapsedTime();
     double completedTime = 0;
+    int completedCounts = 0;
+    double completedYaw = 0;
 
+
+    int timesRan = 0;
     int stage = 0;
 
     @Override
@@ -52,16 +57,20 @@ public class EncoderTurnTest extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
-        telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
-        telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
-        telemetry.addData("Stage", stage);
+        if (stage != 2) {
+            telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
+            telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
+            telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
+            telemetry.addData("Stage", stage);
+        }
 
-        if (stage == 0) { // Zeros yaw
+
+        if (stage == 0) {
             if (!navx.isCalibrating()) {
                 navx.zeroYaw();
                 stage++;
                 time.reset();
+                turn = null;
             }
         }
 
@@ -78,8 +87,27 @@ public class EncoderTurnTest extends OpMode {
         }
 
         if (stage == 2) {
-            if (completedTime == 0) completedTime = time.time();
-            telemetry.addData("Completed", completedTime);
+            if (completedTime == 0) {
+                completedTime = time.time();
+                time.reset();
+            }
+            if (completedCounts == 0) completedCounts = driveTrain.LeftFrontMotor.getCurrentPosition();
+            if (completedYaw == 0) completedYaw = navx.getYaw();
+            telemetry.addData("Counts", completedCounts);
+            telemetry.addData("Yaw", AutonomousUtils.df.format(completedYaw));
+            telemetry.addData("Time", AutonomousUtils.df.format(completedTime));
+            telemetry.addData("Times ran", timesRan);
+
+            if (time.time() > 12) {
+                if (timesRan < 20) {
+                    stage = 0;
+                    timesRan++;
+                    completedYaw = 0;
+                    completedCounts = 0;
+                    completedTime = 0;
+                }
+            }
+
         }
     }
 }

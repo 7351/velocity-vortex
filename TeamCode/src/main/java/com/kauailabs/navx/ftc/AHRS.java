@@ -1019,7 +1019,7 @@ public class AHRS {
         }
 
         public void zeroYaw() {
-            if (!isConnected()) {
+            if (isConnected()) {
                 synchronized(reset_yaw_critical_section) {
                     request_zero_yaw = true;
                 /* Notify all data subscribers that the yaw

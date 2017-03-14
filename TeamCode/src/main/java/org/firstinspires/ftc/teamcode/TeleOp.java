@@ -223,11 +223,12 @@ public class TeleOp extends OpMode {
 
             // Detecting which is moving
             boolean LeftStickMovement = gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0;
-            boolean RightStickMovement = gamepad1.right_stick_x != 0;
+            boolean RightStickMovement = gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0;
 
             // Scaling the joystick inputs
             double scaledY1 = teleOpUtils.scaleInput(-gamepad1.left_stick_y);
             double scaledX1 = teleOpUtils.scaleInput(gamepad1.left_stick_x);
+            double scaledY2 = teleOpUtils.scaleInput(-gamepad1.right_stick_y);
             double scaledX2 = teleOpUtils.scaleInput(gamepad1.right_stick_x);
 
             // Power temporary values

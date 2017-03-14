@@ -19,7 +19,7 @@ public class EncoderTurn implements Routine {
     public GyroUtils.Direction turnDirection;
 
     private int lastLeftPosition = 0;
-    private int lastRIghtPosition = 0;
+    private int lastRightPosition = 0;
 
     private int stuckCounter = 0;
 
@@ -90,7 +90,7 @@ public class EncoderTurn implements Routine {
     @Override
     public boolean isCompleted() {
 
-        if (driveTrain.LeftFrontMotor.getCurrentPosition() == lastLeftPosition || driveTrain.RightFrontMotor.getCurrentPosition() == lastRIghtPosition) {
+        if (driveTrain.LeftFrontMotor.getCurrentPosition() == lastLeftPosition || driveTrain.RightFrontMotor.getCurrentPosition() == lastRightPosition) {
             stuckCounter++;
         } else {
             stuckCounter = 0;
@@ -113,7 +113,7 @@ public class EncoderTurn implements Routine {
         }
 
         lastLeftPosition = driveTrain.LeftFrontMotor.getCurrentPosition();
-        lastRIghtPosition = driveTrain.RightFrontMotor.getCurrentPosition();
+        lastRightPosition = driveTrain.RightFrontMotor.getCurrentPosition();
 
         return false;
     }

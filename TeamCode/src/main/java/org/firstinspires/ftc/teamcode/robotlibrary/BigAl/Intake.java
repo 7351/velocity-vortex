@@ -15,13 +15,22 @@ public class Intake {
 
     private DcMotor IntakeA; // This is the top roller
     private CRServo IntakeB1, IntakeB2, IntakeB3; // This is the bottom roller
+    private DcMotor IntakeB;
     // Kevin requested three servos for Intake B on 3/13/17
+
+    private boolean NewBServos = false;
 
     public Intake(HardwareMap hardwareMap) {
         IntakeA = hardwareMap.dcMotor.get("IntakeA");
-        IntakeB1 = hardwareMap.crservo.get("IntakeB1");
-        IntakeB2 = hardwareMap.crservo.get("IntakeB2");
-        IntakeB3 = hardwareMap.crservo.get("IntakeB3");
+        if (NewBServos) {
+            IntakeB1 = hardwareMap.crservo.get("IntakeB1");
+            IntakeB2 = hardwareMap.crservo.get("IntakeB2");
+            IntakeB3 = hardwareMap.crservo.get("IntakeB3");
+        } else {
+            IntakeB = hardwareMap.dcMotor.get("IntakeB");
+            IntakeB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
         IntakeA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         stopIntake(IntakeSpec.BOTH);
     }
@@ -32,9 +41,13 @@ public class Intake {
                 IntakeA.setPower(power);
                 break;
             case B:
-                IntakeB1.setPower(power);
-                IntakeB2.setPower(power);
-                IntakeB3.setPower(power);
+                if (NewBServos) {
+                    IntakeB1.setPower(power);
+                    IntakeB2.setPower(power);
+                    IntakeB3.setPower(power);
+                } else {
+                    IntakeB.setPower(power);
+                }
                 break;
         }
     }
