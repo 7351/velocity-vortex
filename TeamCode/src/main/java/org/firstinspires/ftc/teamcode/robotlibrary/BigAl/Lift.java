@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.Range;
 public class Lift {
 
     public DcMotor LiftMotor;
+    public DcMotor LiftMotor2;
     public Servo CapBallServoLeft;
     public Servo CapBallServoRight;
                                         // L     R
@@ -27,6 +28,7 @@ public class Lift {
 
     public Lift(HardwareMap hardwareMap) {
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
+        LiftMotor2 = hardwareMap.dcMotor.get("LiftMotor2");
 
         CapBallServoLeft = hardwareMap.servo.get("CapBallServoLeft");
         CapBallServoRight = hardwareMap.servo.get("CapBallServoRight");
@@ -52,6 +54,7 @@ public class Lift {
 
     public void setLiftPower(double power) {
         LiftMotor.setPower(power);
+        LiftMotor2.setPower(power);
     }
 
 }

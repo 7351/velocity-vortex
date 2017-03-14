@@ -101,12 +101,12 @@ public class EncoderTurn implements Routine {
         }
         switch (turnDirection) {
             case CLOCKWISE:
-                if (driveTrain.RightFrontMotor.getCurrentPosition() < -encoderCounts && driveTrain.LeftFrontMotor.getCurrentPosition() > encoderCounts) {
+                if (driveTrain.RightFrontMotor.getCurrentPosition() < -encoderCounts) {
                     return true;
                 }
                 break;
             case COUNTERCLOCKWISE:
-                if (driveTrain.RightFrontMotor.getCurrentPosition() > encoderCounts && driveTrain.LeftFrontMotor.getCurrentPosition() < -encoderCounts) {
+                if (driveTrain.RightFrontMotor.getCurrentPosition() > encoderCounts) {
                     return true;
                 }
                 break;
