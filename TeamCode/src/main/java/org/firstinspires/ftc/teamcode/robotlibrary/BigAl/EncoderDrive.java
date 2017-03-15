@@ -78,11 +78,11 @@ public class EncoderDrive implements Routine {
         }
 
         if (Math.signum(targetPosition) == 1) { // If the target is positive
-            if (driveTrain.LeftFrontMotor.getCurrentPosition() >= targetPosition + startingPositionLeft) {
+            if (driveTrain.LeftFrontMotor.getCurrentPosition() >= targetPosition + startingPositionLeft || driveTrain.RightFrontMotor.getCurrentPosition() > targetPosition + startingPositionRight) {
                 return true;
             }
         } else { // If it is negative
-            if (driveTrain.LeftFrontMotor.getCurrentPosition() <= targetPosition + startingPositionLeft) {
+            if (driveTrain.LeftFrontMotor.getCurrentPosition() <= targetPosition + startingPositionLeft || driveTrain.RightFrontMotor.getCurrentPosition() < targetPosition + startingPositionRight) {
                 return true;
             }
         }

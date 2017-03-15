@@ -164,6 +164,7 @@ public class BeaconRed extends OpMode {
         if (stage == 8) { // // Drive until the color sensor sees the white line of Beacon 1
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 3600, 0.45);
+                drive.run();
             }
             drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {

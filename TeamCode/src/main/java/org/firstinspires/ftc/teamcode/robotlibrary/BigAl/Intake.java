@@ -18,7 +18,7 @@ public class Intake {
     private DcMotor IntakeB;
     // Kevin requested three servos for Intake B on 3/13/17
 
-    private boolean NewBServos = false;
+    public static boolean NewBServos = false;
 
     public Intake(HardwareMap hardwareMap) {
         IntakeA = hardwareMap.dcMotor.get("IntakeA");

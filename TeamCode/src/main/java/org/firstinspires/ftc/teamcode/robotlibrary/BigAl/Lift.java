@@ -28,7 +28,9 @@ public class Lift {
 
     public Lift(HardwareMap hardwareMap) {
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
-        LiftMotor2 = hardwareMap.dcMotor.get("LiftMotor2");
+        if (Intake.NewBServos) {
+            LiftMotor2 = hardwareMap.dcMotor.get("LiftMotor2");
+        }
 
         CapBallServoLeft = hardwareMap.servo.get("CapBallServoLeft");
         CapBallServoRight = hardwareMap.servo.get("CapBallServoRight");
@@ -54,7 +56,10 @@ public class Lift {
 
     public void setLiftPower(double power) {
         LiftMotor.setPower(power);
-        LiftMotor2.setPower(power);
+        if (Intake.NewBServos) {
+            LiftMotor2.setPower(power);
+        }
+
     }
 
 }

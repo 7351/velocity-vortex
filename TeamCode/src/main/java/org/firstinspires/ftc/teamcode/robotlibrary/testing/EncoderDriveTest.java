@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "EncoderDriveTest", group = "Testing")
-public class EncoderDriveStraightTest extends OpMode {
+public class EncoderDriveTest extends OpMode {
 
     DriveTrain driveTrain;
 
