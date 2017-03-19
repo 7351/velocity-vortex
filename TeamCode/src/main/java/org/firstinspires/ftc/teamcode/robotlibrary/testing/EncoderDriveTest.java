@@ -6,23 +6,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.NewEncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 /**
  * Created by Dynamic Signals on 12/6/2016.
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "EncoderDriveTest", group = "Testing")
-public class EncoderDriveTest extends OpMode {
+public class EncoderDriveTest extends StateMachineOpMode {
 
     DriveTrain driveTrain;
 
-    int stage = 0;
-
-    EncoderDrive drive;
-
     @Override
     public void init() {
-        driveTrain = new DriveTrain(hardwareMap);
+
+        driveTrain = new DriveTrain(this);
+
     }
 
     /* Encoder drive sequence
@@ -34,32 +34,19 @@ public class EncoderDriveTest extends OpMode {
      */
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void loop() {
 
+
         if (stage == 0) {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1000, 0.45);
-                driveTrain.LeftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                driveTrain.RightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                drive.run();
-            }
-            if (drive.isCompleted()) {
-                drive.completed();
-            }
+            NewEncoderDrive.createDrive(this, NewEncoderDrive.DriveMode.HOLONOMIC_Z, 500, 0.45);
         }
 
 
+        telemetry.addData("Stage", stage);
         telemetry.addData("Left Front Position: ", driveTrain.LeftFrontMotor.getCurrentPosition());
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
-
-        DbgLog.msg(String.valueOf(": " + driveTrain.LeftBackMotor.getCurrentPosition() + " - " + driveTrain.LeftBackMotor.getTargetPosition()));
 
     }
 }

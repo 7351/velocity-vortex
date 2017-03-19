@@ -1,33 +1,34 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot type="FirstInspires-FTC">
-    <MotorController name="Intake Motor Controller" serialNumber="AI049PCI">
-        <Motor name="IntakeA" port="1" />
-        <Motor name="IntakeB" port="2" />
-    </MotorController>
-    <ServoController name="Servo Controller" serialNumber="AL026DRM">
-        <Servo name="LiftServo" port="1" />
-        <Servo name="CapBallServoLeft" port="2" />
-        <Servo name="BeaconServo" port="3" />
-        <Servo name="CapBallServoRight" port="4" />
-    </ServoController>
+    <DeviceInterfaceModule name="Device Interface Module" serialNumber="AL00VDA6">
+        <ModernRoboticsI2cRangeSensor name="beaconRange" port="2" />
+        <ColorSensor name="lineColorSensor" port="3" />
+        <ColorSensor name="beaconColorSensor" port="4" />
+    </DeviceInterfaceModule>
     <MotorController name="Launch &amp; Lift Motor Controller" serialNumber="AL00VM5X">
         <Motor name="FlyWheelMotor" port="1" />
+        <Motor name="LiftMotor2" port="2" />
+    </MotorController>
+    <ServoController name="Servo Controller" serialNumber="AL026DRM">
+        <Servo name="CapBallServoRight" port="1" />
+        <Servo name="CapBallServoLeft" port="2" />
+        <Servo name="BeaconServo" port="3" />
+        <ContinuousRotationServo name="IntakeB1" port="4" />
+        <ContinuousRotationServo name="IntakeB2" port="5" />
+    </ServoController>
+    <MotorController name="Intake Motor Controller" serialNumber="AI049PCI">
+        <Motor name="IntakeA" port="1" />
         <Motor name="LiftMotor" port="2" />
     </MotorController>
     <MotorController name="Right Drive Train" serialNumber="AL00VM5S">
         <Motor name="RightFrontMotor" port="1" />
         <Motor name="RightBackMotor" port="2" />
     </MotorController>
-    <DeviceInterfaceModule name="Device Interface Module" serialNumber="AL00VDA6">
-        <ModernRoboticsI2cRangeSensor name="beaconRange" port="2" />
-        <ColorSensor name="lineColorSensor" port="3" />
-        <ColorSensor name="beaconColorSensor" port="4" />
-    </DeviceInterfaceModule>
-    <DeviceInterfaceModule name="navX mxp Device Interface Module" serialNumber="AI041S6Y">
-        <I2cDevice name="navx" port="0" />
-    </DeviceInterfaceModule>
     <MotorController name="Left Drive Train" serialNumber="AL00YCFA">
         <Motor name="LeftFrontMotor" port="1" />
         <Motor name="LeftBackMotor" port="2" />
     </MotorController>
+    <DeviceInterfaceModule name="navX mxp Device Interface Module" serialNumber="AI041S6Y">
+        <I2cDevice name="navx" port="0" />
+    </DeviceInterfaceModule>
 </Robot>

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.ColorUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
@@ -15,8 +16,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
-
-
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachine;
 
 
 /**
@@ -24,16 +24,15 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
  */
 
 @Autonomous(name = "CapBallFarRed", group = "Encoder Autonomous")
-public class CapBallFarRed extends OpMode {
+public class CapBallFarRed extends OpMode implements StateMachine {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
     GyroUtils gyroUtils;
     ColorUtils colorUtils;
-  //  GyroSensor gyro;
     Intake intake;
-    FlyWheel flyWheel;
+    FlyWheel flyWheel; //0.86
     EncoderDrive drive;
     BeaconUtils beaconUtils;
     EncoderTurn turn;
@@ -45,77 +44,56 @@ public class CapBallFarRed extends OpMode {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-       // gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
         new Lift(hardwareMap);
-        flyWheel.FlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//turn off pid!!!!
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        new Lift(hardwareMap);
-
-        beaconUtils.rotateServo(BeaconUtils.ServoPosition.CENTER);
 
     }
 
     @Override
     public void start() {
-        //gyro.calibrate();
         colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
     public void loop() {
 
-        if (stage == 0) {//calibrates to 0
-            //if (!gyro.isCalibrating()) {
-            stage++;
-            time.reset();
-            driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if (stage == 0) {
+            next(); // Save this for where the gyro should go
+        }
 
-        //telemetry.addData("Calibrating", String.valueOf(gyro.isCalibrating()));
-    }
-
-
-        if (stage == 1) { //drives forward 0.25 seconds
+        if (stage == 1) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 150, .75);
+                drive = new EncoderDrive(driveTrain, 410, .75);
                 drive.run();
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
-                time.reset();
-                stage++;
+                next();
             }
 
         }
 
         if (stage == 2) {
-            if (time.time() > 0.35) {
-                drive = null;
-                stage++;
-                time.reset();
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                next();
             }
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 28, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 86, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
                 turn.completed();
-                stage++;
-                time.reset();
+                next();
             }
         }
         if (stage == 4) {
-            if (time.time() > .15) {
-                turn = null;
-                stage++;
-                time.reset();
+            if (time.time() > AutonomousUtils.WAITTIME) {
+                next();
             }
         }
 
@@ -130,9 +108,7 @@ public class CapBallFarRed extends OpMode {
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
-                drive = null;
-                time.reset();
-                stage++;
+                next();
             }
         }
 
@@ -162,8 +138,7 @@ public class CapBallFarRed extends OpMode {
             }
             if (turn.isCompleted()) {
                 turn.completed();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
@@ -174,16 +149,14 @@ public class CapBallFarRed extends OpMode {
             }
             if (drive.isCompleted()) {
                 drive.completed();
-                time.reset();
-                stage++;
+                next();
             }
         }
 
         if (stage == 9) {
             if (time.time() > 2) {
                 intake.stopIntake(Intake.IntakeSpec.A);
-                stage++;
-                time.reset();
+                next();
             }
         }
 
@@ -191,11 +164,14 @@ public class CapBallFarRed extends OpMode {
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
-        /*telemetry.addData("Color: ", String.valueOf(colorUtils.lineColorSensor.red()));*/
         telemetry.addData("Stage", String.valueOf(stage));
-        /*telemetry.addData("Gyro", String.valueOf(gyro.getHeading()));
-        telemetry.addData("Time", String.valueOf(time.time()));
-        // telemetry.addData("Fly Wheel Power: ", String.valueOf())*/
+    }
 
+    @Override
+    public void next() {
+        time.reset();
+        stage++;
+        turn = null;
+        drive = null;
     }
 }

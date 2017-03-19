@@ -17,7 +17,7 @@ public class Lift {
     public Servo CapBallServoLeft;
     public Servo CapBallServoRight;
                                         // L     R
-    public final static double[] closed = {0.72, 0.18};
+    public final static double[] closed = {0.74, 0.26};
     public final static double[] open = {0, 0.85};
     public final static double[] grab = {0.18, 0.68};
 
