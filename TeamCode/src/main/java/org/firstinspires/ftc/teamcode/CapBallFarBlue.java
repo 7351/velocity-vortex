@@ -109,7 +109,7 @@ public class CapBallFarBlue extends OpMode implements StateMachine {
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
-                stage++;
+                next();
             }
         }
 
