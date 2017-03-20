@@ -66,7 +66,7 @@ public class CapBallFarRed extends OpMode implements StateMachine {
 
         if (stage == 1) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 410, .75);
+                drive = new EncoderDrive(driveTrain, 390, .75);//410, .75);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -132,19 +132,8 @@ public class CapBallFarRed extends OpMode implements StateMachine {
             }
         }
         if (stage == 7) {
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 3, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()) {
-                turn.completed();
-                next();
-            }
-        }
-
-        if (stage == 8) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2300, 0.5);
+                drive = new EncoderDrive(driveTrain, 2100, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -153,7 +142,7 @@ public class CapBallFarRed extends OpMode implements StateMachine {
             }
         }
 
-        if (stage == 9) {
+        if (stage == 8) {
             if (time.time() > 2) {
                 intake.stopIntake(Intake.IntakeSpec.A);
                 next();
@@ -164,6 +153,7 @@ public class CapBallFarRed extends OpMode implements StateMachine {
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
         telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
+        telemetry.addData("FlyWheel", String.valueOf(flyWheel.FlyWheelMotor.getPower()));
         telemetry.addData("Stage", String.valueOf(stage));
     }
 

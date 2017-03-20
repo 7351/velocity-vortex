@@ -100,7 +100,7 @@ public class CapBallFarBlue extends OpMode implements StateMachine {
 
         if (stage == 5) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1600, 0.5);
+                drive = new EncoderDrive(driveTrain, 1300, 0.5);
                 drive.run();
                 if (shoot > 0) {
                     flyWheel.currentPower = flyWheel.defaultStartingPower;
@@ -109,7 +109,7 @@ public class CapBallFarBlue extends OpMode implements StateMachine {
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
-                stage = 666;
+                stage++;
             }
         }
 

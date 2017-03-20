@@ -138,7 +138,7 @@ public class BeaconBlue extends OpMode {
         }
         if (stage == 6) {// Turn 27 degrees to point at the white line for Beacon 1
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 27, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 76, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -157,12 +157,12 @@ public class BeaconBlue extends OpMode {
         }
         if (stage == 8) { // Drive until the color sensor sees the white line of Beacon 1
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 3600, 0.45);
+                drive = new EncoderDrive(driveTrain, 3900, 0.45);
             }
             drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
-                stage++;
+                stage = 222;
                 time.reset();
             }
             if (drive.isCompleted()) { //fail safe if we miss white line
@@ -170,6 +170,18 @@ public class BeaconBlue extends OpMode {
                 drive = null;
                 driveTrain.stopRobot();
                 //AutonomousUtils.failSafeError(hardwareMap);
+            }
+        }
+        if(stage == 222)
+        {
+            if (drive == null){
+                drive = new EncoderDrive(driveTrain, -500, 0.4);
+                drive.run();
+            }
+            if(drive.isCompleted()) {
+                drive.completed();
+                drive = null;
+                stage = 9;
             }
         }
         if (stage == 9) { // Wait
@@ -182,7 +194,7 @@ public class BeaconBlue extends OpMode {
         }
         if (stage == 10) { // Turn 32 degrees to face beacon 1
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 32, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 69, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -519,6 +531,21 @@ public class BeaconBlue extends OpMode {
                 turn = null;
                 driveTrain.stopRobot();
                 AutonomousUtils.failSafeError(hardwareMap);
+            }
+        }
+        if (stage == 910)
+        {
+            if (turn == null)
+            {
+                turn = new EncoderTurn(driveTrain, 130, GyroUtils.Direction.CLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted())
+            {
+                turn.completed();
+                drive = null;
+                turn = null;
+                stage = 27;
             }
         }
 
