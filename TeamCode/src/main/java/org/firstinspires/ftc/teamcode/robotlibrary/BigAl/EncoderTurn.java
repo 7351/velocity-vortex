@@ -12,7 +12,7 @@ public class EncoderTurn implements Routine {
     private double turnPerDegreeFixed = (turnPerDegree * 90) / 114; // Farther - decrease, shorter - increase
 
     private DriveTrain driveTrain;
-    private final double power = 0.45;
+    private double power = 0.45;
     public int encoderCounts;
     private int startingPositionLeft;
     private int startingPositionRight;
@@ -25,6 +25,10 @@ public class EncoderTurn implements Routine {
 
     public EncoderTurn(DriveTrain driveTrain, double degreesToTurn, GyroUtils.Direction turnDirection) {
         this(driveTrain, degreesToTurn, turnDirection, false); // Assume old function/legacy code
+    }
+
+    public void setPower(double power) {
+        this.power = power;
     }
 
     /**

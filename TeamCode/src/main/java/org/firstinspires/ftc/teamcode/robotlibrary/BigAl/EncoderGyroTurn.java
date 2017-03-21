@@ -18,14 +18,26 @@ public class EncoderGyroTurn implements Routine {
     private AHRS navx;
     public GyroUtils.GyroDetail detail;
 
+    private static EncoderGyroTurn instance;
+
+    private StateMachine stateMachine;
     private final static double TIMEOUT = 3; // Timeout time in secs
     private final static double TOLERANCE = 2; // Tolerance in degrees, goes in both ways
+    private int completedCounter = 0;
 
     private EncoderTurn encoderTurn; // Our encoderturn object
 
     private ElapsedTime creationTime = new ElapsedTime();
 
     int stage = 0;
+
+    public static EncoderGyroTurn createTurn(StateMachine stateMachine, AHRS navx, DriveTrain driveTrain, double targetDegree) {
+        if (instance == null) {
+            instance = new EncoderGyroTurn(stateMachine, navx, driveTrain, targetDegree);
+        }
+        instance.isCompleted();
+        return instance;
+    }
 
     /**
      * Gyro Assisted and calculated encoder turn, it calculates how much counts to complete the turn
@@ -35,26 +47,31 @@ public class EncoderGyroTurn implements Routine {
      * @param targetDegree the degree you want to turn to
      */
 
-    public EncoderGyroTurn(AHRS navx, DriveTrain driveTrain, double targetDegree) {
+    private EncoderGyroTurn(StateMachine stateMachine, AHRS navx, DriveTrain driveTrain, double targetDegree) {
         this.driveTrain = driveTrain;
         this.navx = navx;
+        this.stateMachine = stateMachine;
 
-        detail = new GyroUtils.GyroDetail(navx, targetDegree);
+        detail = new GyroUtils.GyroDetail(navx, targetDegree); // FIXME: 3/20/17 
+
+        DbgLog.msg("Initial degrees off " + detail.degreesOff);
 
         creationTime.reset();
-
-        DbgLog.msg("Curr: " + detail.movedZero + " Left: " + detail.degreesOff + " Direction: " + detail.turnDirection.toString().toLowerCase() + " Counts: " + encoderTurn.encoderCounts);
     }
 
     @Override
     public void run() {
         detail.updateData();
+        
+        // TODO Get more data and make a better curve
 
         if (stage == 0) { // Do our action
             if (encoderTurn == null) {
-                // Do the math here for the turn
                 double counts = 0;
-                encoderTurn = new EncoderTurn(driveTrain, counts, CLOCKWISE, true); // Entering raw counts
+                double cpd = ((-0.0009780068)*detail.degreesOff) + (0.1097506219*detail.degreesOff) + 9.094355452;
+                counts = detail.degreesOff * cpd;
+                encoderTurn = new EncoderTurn(driveTrain, counts, detail.turnDirection, true); // Entering raw counts
+                encoderTurn.setPower(0.65);
                 encoderTurn.run();
             }
             if (encoderTurn.isCompleted()) {
@@ -66,9 +83,17 @@ public class EncoderGyroTurn implements Routine {
         }
         if (stage == 1) {
             // Check ourselves and recalculate
-            if (detail.degreesOff > TOLERANCE) stage = 0; // Recalculate if we aren't in tolerance
-            if (detail.degreesOff < TOLERANCE)
-                stage++; // Finish through and let isCompleted do its job
+            if (detail.degreesOff > TOLERANCE) {
+                stage = 0; // Recalculate if we aren't in tolerance
+                completedCounter = 0;
+            }
+            if (detail.degreesOff < TOLERANCE) {
+                completedCounter++;
+                if (completedCounter > 200) {
+                    stage++; // Finish through and let isCompleted do its job
+                }
+
+            }
         }
 
     }
@@ -96,5 +121,7 @@ public class EncoderGyroTurn implements Routine {
     @Override
     public void completed() {
         driveTrain.stopRobot();
+        stateMachine.next();
+        instance = null;
     }
 }

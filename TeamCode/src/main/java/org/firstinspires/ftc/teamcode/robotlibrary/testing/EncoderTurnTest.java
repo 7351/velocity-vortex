@@ -76,7 +76,7 @@ public class EncoderTurnTest extends OpMode {
 
         if (stage == 1) {
             if (turn == null) {
-                double counts = 600; // Change the counts here for testing
+                double counts = 1000; // Change the counts here for testing
                 turn = new EncoderTurn(driveTrain, counts, GyroUtils.Direction.CLOCKWISE, true);
                 turn.run();
             }
