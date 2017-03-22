@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLETED;
 
@@ -29,7 +30,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
  */
 
 @Autonomous(name = "BeaconRed", group = "Encoder Autonomous")
-public class BeaconRed extends OpMode {
+public class BeaconRed extends StateMachineOpMode {
     ColorUtils.Color actedColor;
 
     int stage = 0;
@@ -44,13 +45,20 @@ public class BeaconRed extends OpMode {
 
     EncoderDrive drive;
     EncoderTurn turn;
-    GyroTurn gyroTurn;
 
     boolean capBallGet = false;
     /* Selector variables */
     private String alliance = "Red";
     private String beaconAmount = "2";
     private int shoot = 2;
+
+    private Runnable waitRunnable = new Runnable() {
+        @Override
+        public void run() {
+            drive = null;
+            turn = null;
+        }
+    };
 
     @Override
     public void init() {
@@ -68,16 +76,16 @@ public class BeaconRed extends OpMode {
 
     @Override
     public void start() {
-
+        super.start();
         colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
     public void loop() {
+
         if (stage == 0) {//Hold for Gyro Calibration
             stage++;
         }
-
 
         if (stage == 1) {//drive forward X cm/725 ticks to shooting position&start flywheel
             if (drive == null) {

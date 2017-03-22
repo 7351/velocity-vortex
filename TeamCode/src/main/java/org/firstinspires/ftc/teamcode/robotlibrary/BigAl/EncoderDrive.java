@@ -41,29 +41,6 @@ public class EncoderDrive implements Routine {
 
     }
 
-    /**
-     * This constructor is to be used with DriveOnHeading so we can use this as the governor for the distance
-     * @param driveTrain object for drivetrain
-     * @param targetPosition the encoder counts that you want to drive for
-     */
-    public EncoderDrive(DriveTrain driveTrain, int targetPosition) {
-        this.driveTrain = driveTrain;
-        this.targetPosition = targetPosition;
-
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        startingPositionLeft = driveTrain.LeftFrontMotor.getCurrentPosition();
-        startingPositionRight = driveTrain.RightFrontMotor.getCurrentPosition();
-
-        driveTrain.LeftFrontMotor.setTargetPosition(targetPosition + startingPositionLeft);
-        driveTrain.RightFrontMotor.setTargetPosition(targetPosition + startingPositionRight);
-
-    }
-
     @Override
     public boolean isCompleted() {
 

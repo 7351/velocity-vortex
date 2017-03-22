@@ -101,7 +101,7 @@ public class ConceptNavXDriveStraightPIDLoopOp extends OpMode {
         if (stage == 1) {
             if (driveOnHeading == null && drive == null) {
                 driveOnHeading = new DriveOnHeading(navx_device, driveTrain, 0, 0.75);
-                drive = new EncoderDrive(driveTrain, 4000);
+                drive = new EncoderDrive(driveTrain, 4000, 0);
             }
             driveOnHeading.run();
             if (drive.isCompleted()) {
