@@ -46,7 +46,6 @@ public class TeleOp extends OpMode {
     private double slowPercent = 0.4;
     private double currentScale = 1;
     private ElapsedTime capBallServoTime = new ElapsedTime();
-    public boolean Mecanum = false;
 
     @Override
     public void init() {
@@ -167,123 +166,64 @@ public class TeleOp extends OpMode {
 
         telemetry.addData("FlyWheel", String.valueOf(flyWheel.FlyWheelMotor.getPower()));
 
-
-        /*
-         * Driving controls
-         * Right Joystick - Arcade driving takes both x and y - full speed
-         * Left Joystick - Arcade driving takes both x and y - half speed
-         */
-
-        if (!Mecanum) {
-            float right = 0;
-            float left = 0;
-            double scalePower = 1;
-            double slowerSpeed = 0.5;
-
-            // throttle: right_stick_y ranges from -1 to 1, where -1 is full up, and
-            // 1 is full down
-            // direction: right_stick_x ranges from -1 to 1, where -1 is full left
-            // and 1 is full right
-            float throttle1 = -gamepad1.right_stick_y;
-            float direction1 = gamepad1.right_stick_x;
-
-            // throttle: left_stick_y ranges from -1 to 1, where -1 is full up, and
-            // 1 is full down
-            // direction: left_stick_x ranges from -1 to 1, where -1 is full left
-            // and 1 is full right
-            float throttle2 = -gamepad1.left_stick_y;
-            float direction2 = gamepad1.left_stick_x;
-
-            if ((throttle2 != 0 || direction2 != 0) && (throttle1 == 0 && direction1 == 0)) { // If the second joystick is moving only
-                right = throttle2 - direction2;
-                left = throttle2 + direction2;
-                scalePower = slowerSpeed;
-            }
-
-            if ((throttle1 != 0 || direction1 != 0) && (throttle2 == 0 && direction2 == 0)) { // If the first joystick is moving only
-                right = throttle1 - direction1;
-                left = throttle1 + direction1;
-                scalePower = 1;
-            }
-
-            // clip the right/left values so that the values never exceed +/- 1
-            right = Range.clip(right * ((float) scalePower), -1, 1);
-            left = Range.clip(left * ((float) scalePower), -1, 1);
-
-            // scale the joystick value to make it easier to control
-            // the robot more precisely at slower speeds.
-            right = (float) teleOpUtils.scaleInput(right);
-            left = (float) teleOpUtils.scaleInput(left);
-
-            // write the values to the motors
-            driveTrain.powerLeft(left);
-            driveTrain.powerRight(right);
-
-            /* Controller 1 telemetry data */
-            telemetry.addData("Drive power", "L: " + String.valueOf(left) + ", R: " + String.valueOf(right));
-        }
-
-        if (Mecanum) {
-
-            if (gamepad1.a) {
-                if (!AButton) {
-                    if (SlowMode) {
-                        SlowMode = false;
-                        currentScale = 1;
-                    } else {
-                        SlowMode = true;
-                        currentScale = slowPercent;
-                    }
-                    AButton = true;
+        // Slow mode toggle
+        if (gamepad1.a) {
+            if (!AButton) {
+                if (SlowMode) {
+                    SlowMode = false;
+                    currentScale = 1;
+                } else {
+                    SlowMode = true;
+                    currentScale = slowPercent;
                 }
-            } else {
-                AButton = false;
+                AButton = true;
             }
-
-            // Detecting which is moving
-            boolean LeftStickMovement = gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0;
-            boolean RightStickMovement = gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0;
-
-            // Scaling the joystick inputs
-            double scaledY1 = teleOpUtils.scaleInput(gamepad1.left_stick_y);
-            double scaledX1 = teleOpUtils.scaleInput(-gamepad1.left_stick_x);
-            double scaledY2 = teleOpUtils.scaleInput(-gamepad1.right_stick_y);
-            double scaledX2 = teleOpUtils.scaleInput(gamepad1.right_stick_x);
-
-            // Power temporary values
-            double RF = 0;
-            double LB = 0;
-            double LF = 0;
-            double RB = 0;
-
-
-            // Left joystick driving forward, backwards, left, and right
-            if (LeftStickMovement) { // We prefer the left joystick over the right
-                RF = Range.clip((scaledX1 - scaledY1), -1, 1);
-                LB = Range.clip((scaledX1 - scaledY1), -1, 1);
-                LF = Range.clip((-scaledX1 - scaledY1), -1, 1);
-                RB = Range.clip((-scaledX1 - scaledY1), -1, 1);
-            }
-
-            // Right joystick for rotating clockwise and counterclockwise
-            if (RightStickMovement) {
-                LF = scaledY2 + scaledX2;
-                LB = scaledY2 + scaledX2;
-                RF = scaledY2 - scaledX2;
-                RB = scaledY2 - scaledX2;
-            }
-
-            // Power the motors
-            driveTrain.RightFrontMotor.setPower(RF * currentScale);
-            driveTrain.LeftBackMotor.setPower(LB * currentScale);
-            driveTrain.LeftFrontMotor.setPower(LF * currentScale);
-            driveTrain.RightBackMotor.setPower(RB * currentScale);
-
-
-
-            telemetry.addData("Front power", LF + ", " + RF);
-            telemetry.addData("Back power", LB + ", " + RB);
+        } else {
+            AButton = false;
         }
+
+        // Detecting which is moving
+        boolean LeftStickMovement = gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0;
+        boolean RightStickMovement = gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0;
+
+        // Scaling the joystick inputs
+        double scaledY1 = teleOpUtils.scaleInput(gamepad1.left_stick_y);
+        double scaledX1 = teleOpUtils.scaleInput(-gamepad1.left_stick_x);
+        double scaledY2 = teleOpUtils.scaleInput(-gamepad1.right_stick_y);
+        double scaledX2 = teleOpUtils.scaleInput(gamepad1.right_stick_x);
+
+        // Power temporary values
+        double RF = 0;
+        double LB = 0;
+        double LF = 0;
+        double RB = 0;
+
+
+        // Left joystick driving forward, backwards, left, and right
+        if (LeftStickMovement) { // We prefer the left joystick over the right
+            RF = Range.clip((scaledX1 - scaledY1), -1, 1);
+            LB = Range.clip((scaledX1 - scaledY1), -1, 1);
+            LF = Range.clip((-scaledX1 - scaledY1), -1, 1);
+            RB = Range.clip((-scaledX1 - scaledY1), -1, 1);
+        }
+
+        // Right joystick for rotating clockwise and counterclockwise
+        if (RightStickMovement) {
+            LF = scaledY2 + scaledX2;
+            LB = scaledY2 + scaledX2;
+            RF = scaledY2 - scaledX2;
+            RB = scaledY2 - scaledX2;
+        }
+
+        // Power the motors
+        driveTrain.RightFrontMotor.setPower(RF * currentScale);
+        driveTrain.LeftBackMotor.setPower(LB * currentScale);
+        driveTrain.LeftFrontMotor.setPower(LF * currentScale);
+        driveTrain.RightBackMotor.setPower(RB * currentScale);
+
+
+        telemetry.addData("Front power", LF + ", " + RF);
+        telemetry.addData("Back power", LB + ", " + RB);
 
 
 

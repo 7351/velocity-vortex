@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import android.util.Log;
+
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.COUNTERCLOCKWISE;
@@ -22,8 +26,6 @@ public class EncoderGyroTurn implements Routine {
 
     private StateMachine stateMachine;
     private final static double TIMEOUT = 3; // Timeout time in secs
-    private final static double TOLERANCE = 2; // Tolerance in degrees, goes in both ways
-    private int completedCounter = 0;
 
     private EncoderTurn encoderTurn; // Our encoderturn object
 
@@ -52,24 +54,24 @@ public class EncoderGyroTurn implements Routine {
         this.navx = navx;
         this.stateMachine = stateMachine;
 
-        detail = new GyroUtils.GyroDetail(navx, targetDegree); // FIXME: 3/20/17 
+        detail = new GyroUtils.GyroDetail(navx);
 
-        DbgLog.msg("Initial degrees off " + detail.degreesOff);
+        detail.setData(targetDegree);
+
+        Log.d("7351", "Initial degrees off " + detail.degreesOff);
 
         creationTime.reset();
     }
 
     @Override
     public void run() {
+
         detail.updateData();
-        
-        // TODO Get more data and make a better curve
 
         if (stage == 0) { // Do our action
             if (encoderTurn == null) {
-                double counts = 0;
-                double cpd = ((-0.0009780068)*detail.degreesOff) + (0.1097506219*detail.degreesOff) + 9.094355452;
-                counts = detail.degreesOff * cpd;
+                double counts = Range.clip((10.76609 * (detail.degreesOff)) - 37.8814, 0, 1000000); // We never want negative counts
+                Log.d("7351", "Calculated counts " + counts);
                 encoderTurn = new EncoderTurn(driveTrain, counts, detail.turnDirection, true); // Entering raw counts
                 encoderTurn.setPower(0.65);
                 encoderTurn.run();
@@ -81,20 +83,7 @@ public class EncoderGyroTurn implements Routine {
             }
 
         }
-        if (stage == 1) {
-            // Check ourselves and recalculate
-            if (detail.degreesOff > TOLERANCE) {
-                stage = 0; // Recalculate if we aren't in tolerance
-                completedCounter = 0;
-            }
-            if (detail.degreesOff < TOLERANCE) {
-                completedCounter++;
-                if (completedCounter > 200) {
-                    stage++; // Finish through and let isCompleted do its job
-                }
 
-            }
-        }
 
     }
 
@@ -102,7 +91,7 @@ public class EncoderGyroTurn implements Routine {
     public boolean isCompleted() {
         boolean done = false;
 
-        if (stage == 2) {
+        if (stage == 1) {
             done = true;
         }
 

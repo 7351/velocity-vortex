@@ -51,14 +51,14 @@ public class EncoderGyroTurnTest extends OpMode implements StateMachine {
                     calibrated = true;
                 }
             }
-            if (time.time() > 1) {
+            if (time.time() > 1) { // This won't matter in a real autonomous because we always drive out
                 time.reset();
                 stage++;
             }
         }
 
         if (stage == 1) {
-            EncoderGyroTurn.createTurn(this, navx, driveTrain, 90); // That's it!
+            EncoderGyroTurn.createTurn(this, navx, driveTrain, -45); // That's it!
         }
 
         if (stage == 2) {
