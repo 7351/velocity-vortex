@@ -51,14 +51,6 @@ public class BeaconRed extends StateMachineOpMode {
     private String beaconAmount = "2";
     private int shoot = 2;
 
-    private Runnable waitRunnable = new Runnable() {
-        @Override
-        public void run() {
-            drive = null;
-            turn = null;
-        }
-    };
-
     @Override
     public void init() {
 
@@ -82,7 +74,7 @@ public class BeaconRed extends StateMachineOpMode {
     @Override
     public void loop() {
 
-        if (stage == 0) {//Hold for Gyro Calibration
+        if (stage == 0) {//Gyro Calibration
             if (!navx.isCalibrating()) {
                 navx.zeroYaw();
                 stage++;
