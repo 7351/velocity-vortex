@@ -58,7 +58,7 @@ public class EncoderGyroTurnTest extends OpMode implements StateMachine {
         }
 
         if (stage == 1) {
-            EncoderGyroTurn.createTurn(this, navx, driveTrain, -45); // That's it!
+            EncoderGyroTurn.createTurn(this, navx, driveTrain, 90); // That's it!
         }
 
         if (stage == 2) {

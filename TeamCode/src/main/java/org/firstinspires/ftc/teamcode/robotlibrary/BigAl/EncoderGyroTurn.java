@@ -52,7 +52,7 @@ public class EncoderGyroTurn implements Routine {
      * Standard EncoderGyroTurn. This is a one line, two argument solution for fast, accurate turns to
      * a degree using encoders (gyro assisted). THis is the recommended constructor for a turn. It is a
      * modified singleton to fit with an FTC style OpMode. It will automatically go to the next stage, so
-     * there is no need to wory about boolean statements and other lines. Just wrap this function in a
+     * there is no need to woryy about boolean statements and other lines. Just wrap this function in a
      * stage bracket and you're good!
      * @param opMode if you just type "this" it will work, its just the connection to hardwaremap, and statemachine
      * @param targetDegree Degree that you want to turn to. Range (-180 - 180)
