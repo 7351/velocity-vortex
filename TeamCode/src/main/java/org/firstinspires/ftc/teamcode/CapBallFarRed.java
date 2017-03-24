@@ -133,7 +133,7 @@ public class CapBallFarRed extends OpMode implements StateMachine {
         }
         if (stage == 7) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2100, 0.5);
+                drive = new EncoderDrive(driveTrain, 2200, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {

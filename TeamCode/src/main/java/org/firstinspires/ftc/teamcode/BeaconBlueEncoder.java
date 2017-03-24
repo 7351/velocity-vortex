@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -26,8 +24,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconBlue", group = "Encoder Autonomous")
-public class BeaconBlue extends StateMachineOpMode {
+@Autonomous(name = "BeaconBlueEncoder", group = "Encoder Autonomous")
+public class BeaconBlueEncoder extends StateMachineOpMode {
 
     ColorUtils.Color actedColor;
 
@@ -143,8 +141,7 @@ public class BeaconBlue extends StateMachineOpMode {
             }
         }
         if (stage == 6) {// Turn 27 degrees to point at the white line for Beacon 1
-
-            EncoderGyroTurn.createTurn(this, 41);
+            turn = new EncoderTurn(driveTrain, 43, GyroUtils.Direction.CLOCKWISE);
         }
         if (stage == 7) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
@@ -191,8 +188,8 @@ public class BeaconBlue extends StateMachineOpMode {
                 turn = null;
             }
         }
-        if (stage == 10) { // Turn 32 degrees to face beacon 1
-            EncoderGyroTurn.createTurn(this, 89); // This might not work, so you might need to change the degree
+        if (stage == 10) { // Turn to face beacon 1
+            turn = new EncoderTurn(driveTrain, 89, GyroUtils.Direction.CLOCKWISE);
         }
         if (stage == 11) { // Wait
             if (time.time() > .5) {
@@ -255,7 +252,7 @@ public class BeaconBlue extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 7, turnDirection);
                 turn.run();
             }
             if (turn.isCompleted() || time.time() > 0.5) {
@@ -271,7 +268,7 @@ public class BeaconBlue extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.COUNTERCLOCKWISE : GyroUtils.Direction.CLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 7, turnDirection);
                 turn.run();
             }
             if (turn.isCompleted() || time.time() > 0.5) {
@@ -297,7 +294,7 @@ public class BeaconBlue extends StateMachineOpMode {
         }
 
         if (stage == 19) { // Turn 73 degrees to point at the white line for Beacon 2
-            EncoderGyroTurn.createTurn(this, 0);
+            turn = new EncoderTurn(driveTrain, 73, GyroUtils.Direction.CLOCKWISE);
         }
 
         if (stage == 20) { //wait
@@ -357,7 +354,7 @@ public class BeaconBlue extends StateMachineOpMode {
         }
 
         if (stage == 25) { // Turn 71.5 degrees to face beacon 2
-            EncoderGyroTurn.createTurn(this, 90);
+            turn = new EncoderTurn(driveTrain, 71.5, GyroUtils.Direction.CLOCKWISE);
         }
 
         if (stage == 26) { // Wait
@@ -450,7 +447,8 @@ public class BeaconBlue extends StateMachineOpMode {
             }
         }
         if (stage == 33) {//Turn 31 degrees to point at cap ball
-            EncoderGyroTurn.createTurn(this, -135);
+             turn = new EncoderTurn(driveTrain, 31, GyroUtils.Direction.CLOCKWISE);
+            stage++;
         }
         if (stage == 34) {//drive to X cm/-3100 ticks to hit cap ball and park
             if (capBallGet) {
