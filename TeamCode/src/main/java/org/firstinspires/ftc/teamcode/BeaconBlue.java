@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -143,8 +141,7 @@ public class BeaconBlue extends StateMachineOpMode {
             }
         }
         if (stage == 6) {// Turn 27 degrees to point at the white line for Beacon 1
-
-            EncoderGyroTurn.createTurn(this, 41);
+            EncoderGyroTurn.createTurn(this, 37);
         }
         if (stage == 7) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
@@ -171,13 +168,12 @@ public class BeaconBlue extends StateMachineOpMode {
                 //AutonomousUtils.failSafeError(hardwareMap);
             }
         }
-        if(stage == 222)
-        {
-            if (drive == null){
+        if (stage == 222) {
+            if (drive == null) {
                 drive = new EncoderDrive(driveTrain, -500, 0.4);
                 drive.run();
             }
-            if(drive.isCompleted()) {
+            if (drive.isCompleted()) {
                 drive.completed();
                 drive = null;
                 stage = 9;
@@ -192,7 +188,7 @@ public class BeaconBlue extends StateMachineOpMode {
             }
         }
         if (stage == 10) { // Turn 32 degrees to face beacon 1
-            EncoderGyroTurn.createTurn(this, 89); // This might not work, so you might need to change the degree
+            EncoderGyroTurn.createTurn(this, 87); // This might not work, so you might need to change the degree
         }
         if (stage == 11) { // Wait
             if (time.time() > .5) {
@@ -239,7 +235,7 @@ public class BeaconBlue extends StateMachineOpMode {
         if (stage == 15) {// Get the range to the wall in cm + 50 ticks more, set encoders and drive to the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
-                counts+= 250;
+                counts += 250;
                 drive = new EncoderDrive(driveTrain, counts + 25, 0.225); // Just a little umph to hit the button
                 drive.run();
             }
@@ -455,7 +451,7 @@ public class BeaconBlue extends StateMachineOpMode {
         if (stage == 34) {//drive to X cm/-3100 ticks to hit cap ball and park
             if (capBallGet) {
                 if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, -3700, 1);
+                    drive = new EncoderDrive(driveTrain, 3900, 1);
                     drive.run();
                 }
                 if (drive.isCompleted()) {
@@ -468,13 +464,12 @@ public class BeaconBlue extends StateMachineOpMode {
                 time.reset();
             }
         }
-        if(stage == 908)
-        {
-            if (turn == null){
+        if (stage == 908) {
+            if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
-            if (turn.isCompleted()){
+            if (turn.isCompleted()) {
                 turn.completed();
                 stage++;
                 turn = null;
@@ -482,7 +477,7 @@ public class BeaconBlue extends StateMachineOpMode {
             }
         }
 
-        if (stage == 909){
+        if (stage == 909) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, -3600, 0.25);
                 drive.run();
@@ -500,15 +495,12 @@ public class BeaconBlue extends StateMachineOpMode {
                 AutonomousUtils.failSafeError(hardwareMap);
             }
         }
-        if (stage == 910)
-        {
-            if (turn == null)
-            {
+        if (stage == 910) {
+            if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 130, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
-            if (turn.isCompleted())
-            {
+            if (turn.isCompleted()) {
                 turn.completed();
                 drive = null;
                 turn = null;
@@ -522,7 +514,7 @@ public class BeaconBlue extends StateMachineOpMode {
         telemetry.addData("Beacon", colorUtils.beaconColor().toString());
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Time", String.valueOf(time.time()));
-        //telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
+        telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
 
 
     }
