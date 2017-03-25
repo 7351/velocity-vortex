@@ -287,7 +287,7 @@ public class BeaconRedEncoder extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.COUNTERCLOCKWISE : GyroUtils.Direction.CLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 8, turnDirection);
                 turn.run();
             }
             if (turn.isCompleted() || time.time() > 0.5) {
@@ -299,7 +299,7 @@ public class BeaconRedEncoder extends StateMachineOpMode {
         }
 
         if (stage == 18) { //Back up from Beacon 12cm with Range Sensor to prepare for turn
-            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 12) {
+            if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 15) {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(-0.55);
                 driveTrain.powerRight(-0.55);
@@ -313,7 +313,7 @@ public class BeaconRedEncoder extends StateMachineOpMode {
 
         if (stage == 19) { // Turn towards the white line of the second beacon
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 160, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 158, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
