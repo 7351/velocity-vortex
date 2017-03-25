@@ -57,6 +57,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
  * for the navX-Model sensor should be used.
  */
 @Autonomous(name = "Concept: navX Rotate to Angle PID", group = "Concept")
+@Disabled
 public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     DriveTrain driveTrain;

@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -22,9 +23,9 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachine;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallFarBlue", group = "Encoder Autonomous")
+@Autonomous(name = "CapBallFarBlue", group = "AWorking")
 public class CapBallFarBlue extends OpMode implements StateMachine {
-
+    //1
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
@@ -123,7 +124,7 @@ public class CapBallFarBlue extends OpMode implements StateMachine {
                 if (shoot == 2) {
                     intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
                 }
-                if (time.time() > 2.5 || shoot <= 0) {
+                if (time.time() > 3.5 || shoot <= 0) {
                     stage++;
                     time.reset();
                     intake.stopIntake(Intake.IntakeSpec.BOTH);

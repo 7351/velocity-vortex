@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachine;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallFarRed", group = "Encoder Autonomous")
+@Autonomous(name = "CapBallFarRed", group = "AWorking")
 public class CapBallFarRed extends OpMode implements StateMachine {
 
     int stage = 0;

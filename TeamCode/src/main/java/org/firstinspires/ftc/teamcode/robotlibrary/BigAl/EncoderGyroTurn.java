@@ -83,7 +83,7 @@ public class EncoderGyroTurn implements Routine {
         if (stage == 0) { // Calculate and create EncoderTurn class
             if (encoderTurn == null) {
                 double counts = Range.clip((10.76609 * (detail.degreesOff)) - 37.8814, 0, 1000000); // We never want negative counts
-                Log.d("7351", "Calculated counts " + counts);
+                Log.d("7351", "Calculated counts " + counts + " direction " +  detail.turnDirection);
                 encoderTurn = new EncoderTurn(driveTrain, counts, detail.turnDirection, true); // Entering the calculated counts based on data
                 encoderTurn.setPower(0.65); // We want to go fast!
                 encoderTurn.run();

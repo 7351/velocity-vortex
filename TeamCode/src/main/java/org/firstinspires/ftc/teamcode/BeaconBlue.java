@@ -24,9 +24,9 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconBlue", group = "Encoder Autonomous")
+@Autonomous(name = "BeaconBlue", group = "BNotWorking")
 public class BeaconBlue extends StateMachineOpMode {
-
+    // 1
     ColorUtils.Color actedColor;
 
     DriveTrain driveTrain;
@@ -87,9 +87,7 @@ public class BeaconBlue extends StateMachineOpMode {
                 }
             }
             if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                time.reset();
-                stage++;
+                next();
             }
         }
 
@@ -103,8 +101,7 @@ public class BeaconBlue extends StateMachineOpMode {
                 intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
             }
             if (time.time() > 2.5 || shoot <= 0) {
-                stage++;
-                time.reset();
+                next();
                 intake.stopIntake(Intake.IntakeSpec.BOTH);
                 intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
                 flyWheel.currentlyRunning = false;
@@ -113,10 +110,7 @@ public class BeaconBlue extends StateMachineOpMode {
 
         if (stage == 3) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                drive = null;
-                turn = null;
-                time.reset();
+                next();
             }
         }
 
@@ -126,36 +120,28 @@ public class BeaconBlue extends StateMachineOpMode {
                 drive.run();
             }
             if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
         if (stage == 5) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
         if (stage == 6) {// Turn 27 degrees to point at the white line for Beacon 1
-            EncoderGyroTurn.createTurn(this, 37);
+            EncoderGyroTurn.createTurn(this, 40.5);
         }
         if (stage == 7) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
         if (stage == 8) { // Drive until the color sensor sees the white line of Beacon 1
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 3900, 0.45);
             }
-            drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
+            drive.runWithDecrementPower(0.0003); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
                 stage = 222;
@@ -181,21 +167,15 @@ public class BeaconBlue extends StateMachineOpMode {
         }
         if (stage == 9) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
         if (stage == 10) { // Turn 32 degrees to face beacon 1
-            EncoderGyroTurn.createTurn(this, 87); // This might not work, so you might need to change the degree
+            EncoderGyroTurn.createTurn(this, 86); // This might not work, so you might need to change the degree
         }
         if (stage == 11) { // Wait
-            if (time.time() > .5) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+            if (time.time() > .35) {
+                next();
             }
         }
         if (stage == 12) { // Drive until we see a beacon color
@@ -205,18 +185,13 @@ public class BeaconBlue extends StateMachineOpMode {
                 driveTrain.powerRight(0.25);
             } else {
                 RobotLog.d("Attempted to stop robot at " + rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
         if (stage == 13) { // Wait
-            if (time.time() > 1) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+            if (time.time() > 0.75) {
+                next();
             }
         }
 
@@ -235,7 +210,7 @@ public class BeaconBlue extends StateMachineOpMode {
         if (stage == 15) {// Get the range to the wall in cm + 50 ticks more, set encoders and drive to the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
-                counts += 250;
+                counts += 300;
                 drive = new EncoderDrive(driveTrain, counts + 25, 0.225); // Just a little umph to hit the button
                 drive.run();
             }
@@ -251,14 +226,12 @@ public class BeaconBlue extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 10, turnDirection);
                 turn.run();
             }
-            if (turn.isCompleted() || time.time() > 0.5) {
+            if (turn.isCompleted() || time.time() > 0.3) {
                 turn.completed();
-                stage++;
-                time.reset();
-                turn = null;
+                next();
             }
         }
 
@@ -267,14 +240,12 @@ public class BeaconBlue extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.COUNTERCLOCKWISE : GyroUtils.Direction.CLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 10, turnDirection);
                 turn.run();
             }
-            if (turn.isCompleted() || time.time() > 0.5) {
+            if (turn.isCompleted() || time.time() > 0.3) {
                 turn.completed();
-                stage++;
-                time.reset();
-                turn = null;
+                next();
             }
         }
 
@@ -298,10 +269,7 @@ public class BeaconBlue extends StateMachineOpMode {
 
         if (stage == 20) { //wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
 
@@ -324,10 +292,7 @@ public class BeaconBlue extends StateMachineOpMode {
 
         if (stage == 22) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
 
@@ -337,18 +302,13 @@ public class BeaconBlue extends StateMachineOpMode {
                 drive.run();
             }
             if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
         if (stage == 24) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
 
@@ -358,10 +318,7 @@ public class BeaconBlue extends StateMachineOpMode {
 
         if (stage == 26) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
         if (stage == 27) { // Drive until we see a beacon color
@@ -411,10 +368,10 @@ public class BeaconBlue extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 10, turnDirection);
                 turn.run();
             }
-            if (turn.isCompleted() || time.time() > 0.5) {
+            if (turn.isCompleted() || time.time() > 0.3) {
                 turn.completed();
                 stage++;
                 time.reset();
@@ -424,11 +381,7 @@ public class BeaconBlue extends StateMachineOpMode {
 
         if (stage == 31) { //wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
-
+                next();
             }
         }
 
@@ -518,6 +471,16 @@ public class BeaconBlue extends StateMachineOpMode {
 
 
     }
+
+    @Override
+    public void next() {
+        stage++;
+        driveTrain.stopRobot();
+        time.reset();
+        drive = null;
+        turn = null;
+    }
+
 }
 
 

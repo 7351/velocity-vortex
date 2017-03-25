@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -16,11 +14,9 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderDrive;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderGyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.EncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
@@ -30,7 +26,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRed", group = "Encoder Autonomous")
+@Autonomous(name = "BeaconRed", group = "AWorking")
 public class BeaconRed extends StateMachineOpMode {
     ColorUtils.Color actedColor;
 
@@ -160,7 +156,7 @@ public class BeaconRed extends StateMachineOpMode {
                 drive = new EncoderDrive(driveTrain, 3900, 0.45);
                 drive.run();
             }
-            drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
+            drive.runWithDecrementPower(0.0003); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
                 stage++;
@@ -175,17 +171,31 @@ public class BeaconRed extends StateMachineOpMode {
         }
         if (stage == 9) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
+                stage = 100;
                 time.reset();
                 drive = null;
                 turn = null;
             }
         }
+        if (stage == 100) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, -100, 0.2);
+                drive.run();
+            }
+            if (drive.isCompleted()) {
+                driveTrain.stopRobot();
+                stage = 10;
+                time.reset();
+                drive = null;
+                turn = null;
+            }
+        }
+
         if (stage == 10) { // Turn to face beacon 1
             EncoderGyroTurn.createTurn(this, -86);
         }
         if (stage == 11) { //wait
-            if (time.time() > .5) {
+            if (time.time() > .35) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -207,7 +217,7 @@ public class BeaconRed extends StateMachineOpMode {
         }
 
         if (stage == 13) { // Wait
-            if (time.time() > 1) {
+            if (time.time() > 0.5) {
                 stage++;
                 time.reset();
                 drive = null;
@@ -245,7 +255,7 @@ public class BeaconRed extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 8, turnDirection);
                 turn.run();
             }
             if (turn.isCompleted() || time.time() > 0.5) {
@@ -352,7 +362,7 @@ public class BeaconRed extends StateMachineOpMode {
 
         if (stage == 26) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage ++;
+                stage++;
                 time.reset();
                 drive = null;
                 turn = null;
@@ -371,7 +381,6 @@ public class BeaconRed extends StateMachineOpMode {
                 time.reset();
             }
         }
-
 
 
         if (stage == 28) { // Act on beacon with color sensor/Flip the sunglasses
@@ -407,7 +416,7 @@ public class BeaconRed extends StateMachineOpMode {
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
-                turn = new EncoderTurn(driveTrain, 6, turnDirection);
+                turn = new EncoderTurn(driveTrain, 8, turnDirection);
                 turn.run();
             }
             if (turn.isCompleted() || time.time() > 0.5) {
@@ -462,13 +471,12 @@ public class BeaconRed extends StateMachineOpMode {
             }
         }
 
-        if(stage == 908)
-        {
-            if (turn == null){
+        if (stage == 908) {
+            if (turn == null) {
                 turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
-            if (turn.isCompleted()){
+            if (turn.isCompleted()) {
                 turn.completed();
                 stage++;
                 turn = null;
@@ -476,7 +484,7 @@ public class BeaconRed extends StateMachineOpMode {
             }
         }
 
-        if (stage == 909){
+        if (stage == 909) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, -3600, 0.45);
                 drive.run();
@@ -493,6 +501,18 @@ public class BeaconRed extends StateMachineOpMode {
                 turn = null;
                 driveTrain.stopRobot();
                 AutonomousUtils.failSafeError(hardwareMap);
+            }
+        }
+        if (stage == 910) {
+            if (turn == null) {
+                turn = new EncoderTurn(driveTrain, 160, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn.run();
+            }
+            if (turn.isCompleted()) {
+                turn.completed();
+                drive = null;
+                turn = null;
+                stage = 12;
             }
         }
 
