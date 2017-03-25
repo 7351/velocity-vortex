@@ -61,7 +61,7 @@ public class CornerFarRed   extends OpMode implements StateMachine {
     @Override
     public void loop() {
         if (stage == 0) {
-            next(); // Save this for where the gyro should go
+            next();
         }
 
         if (stage == 1) {
