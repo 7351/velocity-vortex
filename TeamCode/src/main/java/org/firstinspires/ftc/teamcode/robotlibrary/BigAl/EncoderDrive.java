@@ -30,9 +30,6 @@ public class EncoderDrive implements Routine {
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        driveTrain.LeftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        driveTrain.RightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
         driveTrain.LeftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
