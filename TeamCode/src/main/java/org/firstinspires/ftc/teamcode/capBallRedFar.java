@@ -17,24 +17,21 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachine;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 
 /**
- * Created by Leo on 10/16/2016.
+ * Created by Dynamic Signals on 10/16/2016.
  */
 
 @Autonomous(name = "capBallRedFar", group = "AWorking")
-public class capBallRedFar extends OpMode implements StateMachine {
-
-    int stage = 0;
-    ElapsedTime time = new ElapsedTime();
+public class capBallRedFar extends StateMachineOpMode {
+    // Completed on 3/26/17 12:45PM
     DriveTrain driveTrain;
-    GyroUtils gyroUtils;
     ColorUtils colorUtils;
     Intake intake;
-    FlyWheel flyWheel; //0.86
+    FlyWheel flyWheel;
     EncoderDrive drive;
-    BeaconUtils beaconUtils;
     EncoderTurn turn;
     private String alliance = "Red";
     private int shoot = 2;
@@ -44,17 +41,11 @@ public class capBallRedFar extends OpMode implements StateMachine {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
         new Lift(hardwareMap);
 
-    }
-
-    @Override
-    public void start() {
-        colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
@@ -83,7 +74,7 @@ public class capBallRedFar extends OpMode implements StateMachine {
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 86, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 76, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -122,7 +113,7 @@ public class capBallRedFar extends OpMode implements StateMachine {
                 if (shoot == 2) {
                     intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
                 }
-                if (time.time() > 2.5 || shoot <= 0) {
+                if (time.time() > 3.5 || shoot <= 0) {
                     stage++;
                     time.reset();
                     intake.stopIntake(Intake.IntakeSpec.BOTH);
@@ -136,7 +127,7 @@ public class capBallRedFar extends OpMode implements StateMachine {
                 drive = new EncoderDrive(driveTrain, 2200, 0.5);
                 drive.run();
             }
-            if (drive.isCompleted()) {
+            if (drive.isCompleted() || colorUtils.aboveRedLine()) {
                 drive.completed();
                 next();
             }
@@ -159,8 +150,7 @@ public class capBallRedFar extends OpMode implements StateMachine {
 
     @Override
     public void next() {
-        time.reset();
-        stage++;
+        super.next();
         turn = null;
         drive = null;
     }
