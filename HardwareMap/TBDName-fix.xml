@@ -9,7 +9,7 @@
         <Motor name="FlyWheelMotor" port="1" />
         <Motor name="LiftMotor2" port="2" />
     </MotorController>
-    <ServoController name="Servo Controller" serialNumber="AI02RMVY">
+    <ServoController name="Servo Controller" serialNumber="AL026DRM">
         <Servo name="CapBallServoRight" port="1" />
         <Servo name="CapBallServoLeft" port="2" />
         <Servo name="BeaconServo" port="3" />
