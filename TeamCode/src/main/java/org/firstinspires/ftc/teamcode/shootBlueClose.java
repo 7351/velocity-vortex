@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "ShootOnlyClose", group = "Encoder Autonomous")
-public class ShootOnlyBlueClose extends StateMachineOpMode {
+@Autonomous(name = "shootBlueClose", group = "Encoder Autonomous")
+public class shootBlueClose extends StateMachineOpMode {
 
     ColorUtils.Color actedColor;
 

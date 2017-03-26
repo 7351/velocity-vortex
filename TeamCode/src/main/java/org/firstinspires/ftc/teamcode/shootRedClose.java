@@ -25,8 +25,8 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "ShootOnlyRedClose", group = "Encoder Autonomous")
-public class ShootOnlyRedClose extends OpMode {
+@Autonomous(name = "shootRedClose", group = "Encoder Autonomous")
+public class shootRedClose extends OpMode {
     ColorUtils.Color actedColor;
 
     int stage = 0;//testing
