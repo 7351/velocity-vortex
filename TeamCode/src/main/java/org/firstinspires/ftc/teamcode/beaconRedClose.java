@@ -36,7 +36,7 @@ public class beaconRedClose extends StateMachineOpMode {
     Intake intake;
     FlyWheel flyWheel;
     RangeUtils rangeUtils;
-    AHRS navx;
+    //AHRS navx;
 
     EncoderDrive drive;
     EncoderTurn turn;
@@ -57,7 +57,7 @@ public class beaconRedClose extends StateMachineOpMode {
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         rangeUtils = new RangeUtils(hardwareMap);
         new Lift(hardwareMap);
-        navx = AHRS.getInstance(hardwareMap);
+        //navx = AHRS.getInstance(hardwareMap);
 
     }
 
@@ -385,7 +385,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
         if (stage == 25) { // Turn 71.5 degrees to face beacon 2
             if (turn == null) {//
-                turn = new EncoderTurn(driveTrain, 180, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 177, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -489,7 +489,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
         if (stage == 33) {//Turn 113 degrees to point at cap ball
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 270, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 267, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -535,7 +535,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
         if (stage == 909){
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -3600, 0.45);
+                drive = new EncoderDrive(driveTrain, -3600, 0.35);
                 drive.run();
             }
             if (colorUtils.aboveWhiteLine()) {

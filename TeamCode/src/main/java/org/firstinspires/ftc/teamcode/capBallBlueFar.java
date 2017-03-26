@@ -18,22 +18,26 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachine;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 /**
- * Created by Dynamic Signals on 10/16/2016.
+ * Created by Leo on 10/16/2016.
  */
 
 @Autonomous(name = "capBallBlueFar", group = "AWorking")
-public class capBallBlueFar extends StateMachineOpMode {
-    // Completed on 3/26/17 1:20PM
+public class capBallBlueFar extends OpMode implements StateMachine {
+    //1
+    int stage = 0;
+    ElapsedTime time = new ElapsedTime();
     DriveTrain driveTrain;
+    GyroUtils gyroUtils;
     ColorUtils colorUtils;
+    //GyroSensor gyro;
     Intake intake;
+    BeaconUtils beaconUtils;
     FlyWheel flyWheel;
     EncoderDrive drive;
     EncoderTurn turn;
-    private String alliance = "Blue";
+    private String alliance = "Red";
     private int shoot = 2;
 
 
@@ -44,8 +48,13 @@ public class capBallBlueFar extends StateMachineOpMode {
         colorUtils = new ColorUtils(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
+        beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         new Lift(hardwareMap);
+    }
 
+    @Override
+    public void start() {
+        colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
@@ -54,6 +63,8 @@ public class capBallBlueFar extends StateMachineOpMode {
         if (stage == 0) {
             next(); // Save this for where the gyro should go
         }
+
+        // TODO complete and find the driving distances and turning angles
 
         if (stage == 1) {
             if (drive == null) {
@@ -74,7 +85,7 @@ public class capBallBlueFar extends StateMachineOpMode {
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 76, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 87, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -123,12 +134,14 @@ public class capBallBlueFar extends StateMachineOpMode {
             }
         }
 
+        // Missing turn statement
+
         if (stage == 7) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2000, 0.5);
+                drive = new EncoderDrive(driveTrain, 1400, 0.5);
                 drive.run();
             }
-            if (drive.isCompleted() || colorUtils.aboveBlueLine()) {
+            if (drive.isCompleted()) {
                 drive.completed();
                 next();
             }
@@ -151,8 +164,9 @@ public class capBallBlueFar extends StateMachineOpMode {
 
     @Override
     public void next() {
-        super.next();
-        turn = null;
+        stage++;
+        time.reset();
         drive = null;
+        turn = null;
     }
 }
