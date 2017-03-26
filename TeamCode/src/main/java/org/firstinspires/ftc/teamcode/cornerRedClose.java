@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
  * Created by Kate on 3/24/2017.
  */
 
-@Autonomous(name = "CornerFarRed", group = "AWorking")
-public class CornerFarRed   extends OpMode implements StateMachine {
+@Autonomous(name = "cornerRedClose", group = "AWorking")
+public class cornerRedClose extends OpMode implements StateMachine {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();

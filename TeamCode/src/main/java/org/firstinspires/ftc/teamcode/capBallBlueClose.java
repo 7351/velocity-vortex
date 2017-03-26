@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "CapBallCloseRed", group = "Encoder Autonomous")
-public class CapBallCloseRed extends OpMode {
+@Autonomous(name = "capBallBlueClose", group = "Encoder Autonomous")
+public class capBallBlueClose extends OpMode {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -31,7 +31,7 @@ public class CapBallCloseRed extends OpMode {
     FlyWheel flyWheel;
     EncoderDrive drive;
     EncoderTurn turn;
-    private String alliance = "Red";
+    private String alliance = "Blue";
     private int shoot = 2;
 
     @Override
@@ -122,7 +122,7 @@ public class CapBallCloseRed extends OpMode {
 
         if (stage == 6) { // Turn to z90
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.CLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 35, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -162,7 +162,7 @@ public class CapBallCloseRed extends OpMode {
         }
         if (stage == 10) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -180,7 +180,7 @@ public class CapBallCloseRed extends OpMode {
             }
         }
 
-        if (stage == 12){
+        if (stage == 12) {
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 1500, .6);
                 drive.run();
@@ -201,12 +201,12 @@ public class CapBallCloseRed extends OpMode {
             }
         }
 
-            telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
-            telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
-            telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
-            telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
-            telemetry.addData("Beacon", colorUtils.beaconColor().toString());
-            telemetry.addData("Stage", String.valueOf(stage));
+        telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
+        telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
+        telemetry.addData("Right Front Position: ", driveTrain.RightFrontMotor.getCurrentPosition());
+        telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
+        telemetry.addData("Beacon", colorUtils.beaconColor().toString());
+        telemetry.addData("Stage", String.valueOf(stage));
 
-        }
     }
+}

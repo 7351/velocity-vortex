@@ -31,7 +31,8 @@ public class EncoderGyroTurnTest extends OpMode implements StateMachine {
     @Override
     public void init() {
 
-        navx = AHRS.getInstance(hardwareMap);
+        AHRS.getInstance(hardwareMap).close();
+        navx = AHRS.getInstance(hardwareMap, 20); // Lowering refresh rate
         driveTrain = new DriveTrain(hardwareMap);
 
     }
@@ -58,13 +59,17 @@ public class EncoderGyroTurnTest extends OpMode implements StateMachine {
         }
 
         if (stage == 1) {
-            EncoderGyroTurn.createTurn(this, navx, driveTrain, 90); // That's it!
+            EncoderGyroTurn.createTurn(this, navx, driveTrain, 90);
         }
 
         if (stage == 2) {
-            if (completedTime == 0 || completedYaw == 0) {
+            if (completedTime == 0) {
                 completedTime = time.time();
-                completedYaw = navx.getYaw();
+            }
+            if (completedYaw == 0) {
+                if (time.time() > completedTime + 0.5) {
+                    completedYaw = navx.getYaw();
+                }
             }
             telemetry.addData("Yaw", completedYaw);
             telemetry.addData("Time", completedTime);
@@ -80,6 +85,11 @@ public class EncoderGyroTurnTest extends OpMode implements StateMachine {
             }
         }
 
+    }
+
+    @Override
+    public void stop() {
+        navx.close();
     }
 
     @Override

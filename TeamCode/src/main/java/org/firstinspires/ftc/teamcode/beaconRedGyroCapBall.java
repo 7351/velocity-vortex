@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRedCapBall", group = "AWorking")
-public class BeaconRedCapBall extends BeaconRed {
+@Autonomous(name = "beaconRedGyroCapBall", group = "BNotWorking")
+@Disabled
+public class beaconRedGyroCapBall extends beaconRedGyro {
 
     @Override
     public void init() {

@@ -305,10 +305,10 @@ public class AHRS {
         return instance;
     }
 
-    public static AHRS getInstance(HardwareMap hardwareMap, DeviceDataType data_type) {
+    public static AHRS getInstance(HardwareMap hardwareMap, int update_rate_hz) {
         if (instance == null) {
-            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0, data_type,
-            NAVX_DEFAULT_UPDATE_RATE_HZ);
+            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0, DeviceDataType.kProcessedData,
+            update_rate_hz);
         }
         return instance;
     }

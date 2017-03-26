@@ -20,11 +20,11 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 /**
- * Created by Leo on 10/16/2016.
+ * Created by Dynamic Signals on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconBlueEnc", group = "AWorking")
-public class BeaconBlueEncoder extends StateMachineOpMode {
+@Autonomous(name = "beaconBlueClose", group = "AWorking")
+public class beaconBlueClose extends StateMachineOpMode {
 
     ColorUtils.Color actedColor;
 
