@@ -19,8 +19,13 @@ public class TestBenchTeleOp extends OpMode {
     @Override
     public void init() {
 
-        driveTrain = new DriveTrain(hardwareMap);
-        teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
+        try {
+            driveTrain = new DriveTrain(hardwareMap);
+            teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 

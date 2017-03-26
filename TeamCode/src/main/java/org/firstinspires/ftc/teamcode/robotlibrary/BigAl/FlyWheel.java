@@ -21,6 +21,7 @@ public class FlyWheel {
         FlyWheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         FlyWheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     public void powerMotor() {

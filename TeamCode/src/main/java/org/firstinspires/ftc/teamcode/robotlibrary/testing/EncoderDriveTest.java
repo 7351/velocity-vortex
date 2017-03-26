@@ -43,9 +43,7 @@ public class EncoderDriveTest extends OpMode {
 
         if (stage == 0) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1000, 0.45);
-                driveTrain.LeftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                driveTrain.RightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                drive = new EncoderDrive(driveTrain, 1000, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {

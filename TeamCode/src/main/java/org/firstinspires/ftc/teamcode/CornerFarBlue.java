@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
@@ -17,15 +15,16 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachine;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
+
+//import com.qualcomm.robotcore.hardware.GyroSensor;
 
 
 /**
  * Created by Kate on 3/24/2017.
  */
 
-@Autonomous(name = "CornerFarRed", group = "AWorking")
-public class CornerFarRed   extends OpMode implements StateMachine {
+@Autonomous(name = "CornerFarBlue", group = "AWorking")
+public class CornerFarBlue extends OpMode implements StateMachine {
 
     int stage = 0;
     ElapsedTime time = new ElapsedTime();
@@ -37,7 +36,7 @@ public class CornerFarRed   extends OpMode implements StateMachine {
     EncoderDrive drive;
     BeaconUtils beaconUtils;
     EncoderTurn turn;
-    private String alliance = "Red";
+    private String alliance = "Blue";
     private int shoot = 2;
 
 
@@ -83,7 +82,7 @@ public class CornerFarRed   extends OpMode implements StateMachine {
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 86, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 83, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -99,7 +98,7 @@ public class CornerFarRed   extends OpMode implements StateMachine {
 
         if (stage == 5) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1375, 0.5);
+                drive = new EncoderDrive(driveTrain, 1250, 0.5);
                 drive.run();
                 if (shoot > 0) {
                     flyWheel.currentPower = flyWheel.defaultStartingPower;
@@ -132,8 +131,8 @@ public class CornerFarRed   extends OpMode implements StateMachine {
             }
         }
         if (stage == 7) {
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 112, GyroUtils.Direction.COUNTERCLOCKWISE);
+            if (turn == null) { // Turn towards the corner vortex
+                turn = new EncoderTurn(driveTrain, 98, GyroUtils.Direction.CLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
