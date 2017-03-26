@@ -65,8 +65,7 @@ public class SensorNavXProcessedOp extends OpMode {
 
   @Override
   public void init() {
-      navx_device = AHRS.getInstance(hardwareMap,
-            AHRS.DeviceDataType.kProcessedData);
+      navx_device = AHRS.getInstance(hardwareMap);
   }
 
   @Override

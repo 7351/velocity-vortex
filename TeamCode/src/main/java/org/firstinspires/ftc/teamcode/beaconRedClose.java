@@ -26,7 +26,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "BeaconRedEnc", group = "BNotWorking")
+@Autonomous(name = "beaceonRedClose", group = "AWorking")
 public class beaconRedClose extends StateMachineOpMode {
     ColorUtils.Color actedColor;
 

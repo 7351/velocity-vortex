@@ -75,8 +75,8 @@ public class SensorNavXRawOp extends OpMode {
   private AHRS navx_device;
   @Override
   public void init() {
-      navx_device = AHRS.getInstance(hardwareMap,
-              AHRS.DeviceDataType.kQuatAndRawData);  }
+  navx_device = AHRS.getInstance(hardwareMap, AHRS.DeviceDataType.kQuatAndRawData,(byte) 50);
+  }
 
   @Override
   public void stop() {
