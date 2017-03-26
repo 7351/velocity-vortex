@@ -22,13 +22,6 @@ public class ColorSensorTest extends OpMode {
     }
 
     @Override
-    public void start() {
-
-        colorUtils.lineColorSensor.enableLed(true);
-
-    }
-
-    @Override
     public void loop() {
 
         telemetry.addData("Line", "{" + colorUtils.colorData(colorUtils.lineColorSensor) + "} " + "W: " + colorUtils.aboveWhiteLine()

@@ -28,8 +28,5 @@
         <Motor name="LeftFrontMotor" port="1" />
         <Motor name="LeftBackMotor" port="2" />
     </MotorController>
-    <DeviceInterfaceModule name="navX mxp Device Interface Module" serialNumber="AI041S6Y">
-        <I2cDevice name="navx" port="0" />
-    </DeviceInterfaceModule>
 </Robot>
 
