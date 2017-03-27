@@ -9,12 +9,10 @@
         <Motor name="FlyWheelMotor" port="1" />
         <Motor name="LiftMotor2" port="2" />
     </MotorController>
-    <ServoController name="Servo Controller" serialNumber="AL026DRM">
-        <Servo name="CapBallServoRight" port="1" />
-        <Servo name="CapBallServoLeft" port="2" />
-        <Servo name="BeaconServo" port="3" />
+    <ServoController name="Intake &amp; Beacon Servo Controller" serialNumber="AL026DRM">
         <ContinuousRotationServo name="IntakeB1" port="4" />
         <ContinuousRotationServo name="IntakeB2" port="5" />
+        <Servo name="BeaconServo" port="6" />
     </ServoController>
     <MotorController name="Intake Motor Controller" serialNumber="AI049PCI">
         <Motor name="IntakeA" port="1" />
@@ -28,5 +26,8 @@
         <Motor name="LeftFrontMotor" port="1" />
         <Motor name="LeftBackMotor" port="2" />
     </MotorController>
+    <ServoController name="Cap Ball Servo Controller" serialNumber="AI02RMVY">
+        <Servo name="CapBallServoRight" port="2" />
+        <Servo name="CapBallServoLeft" port="3" />
+    </ServoController>
 </Robot>
-
