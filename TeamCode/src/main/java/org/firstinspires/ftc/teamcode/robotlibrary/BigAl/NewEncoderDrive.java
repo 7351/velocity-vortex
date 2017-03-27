@@ -58,4 +58,8 @@ public class NewEncoderDrive implements Routine {
         opMode.next();
         instance = null;
     }
+
+    public static void teardown() {
+        instance = null;
+    }
 }
