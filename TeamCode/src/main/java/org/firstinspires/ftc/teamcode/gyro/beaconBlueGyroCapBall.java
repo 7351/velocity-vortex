@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.gyro;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "beaconRedGyroCapBall", group = "BNotWorking")
+@Autonomous(name = "beaconBlueGyroCapBall", group = "BNotWorking")
 @Disabled
-public class beaconRedGyroCapBall extends beaconRedGyro {
+public class beaconBlueGyroCapBall extends beaconBlueGyro {
 
     @Override
     public void init() {
@@ -17,3 +17,5 @@ public class beaconRedGyroCapBall extends beaconRedGyro {
         capBallGet = true;
     }
 }
+
+

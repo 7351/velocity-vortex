@@ -45,6 +45,7 @@ public class capBallRedFar extends StateMachineOpMode {
         flyWheel = new FlyWheel(hardwareMap);
         intake = new Intake(hardwareMap);
         new Lift(hardwareMap);
+        new BeaconUtils(hardwareMap, colorUtils);
 
     }
 
