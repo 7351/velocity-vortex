@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.NewEncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.NewEncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.RangeUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
@@ -34,13 +36,12 @@ public class beaconBlueClose extends StateMachineOpMode {
     Intake intake;
     FlyWheel flyWheel;
     RangeUtils rangeUtils;
-    AHRS navx;
 
     EncoderDrive drive;
     EncoderTurn turn;
 
     boolean capBallGet = false;
-
+    boolean corner = false;
     /* Selector variables */
     private String alliance = "Blue";
     private String beaconAmount = "2";
@@ -56,14 +57,7 @@ public class beaconBlueClose extends StateMachineOpMode {
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         rangeUtils = new RangeUtils(hardwareMap);
         new Lift(hardwareMap);
-        navx = AHRS.getInstance(hardwareMap);
 
-    }
-
-    @Override
-    public void start() {
-        super.start();
-        colorUtils.lineColorSensor.enableLed(true);
     }
 
     @Override
@@ -109,10 +103,33 @@ public class beaconBlueClose extends StateMachineOpMode {
 
         if (stage == 3) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                drive = null;
-                turn = null;
-                time.reset();
+                if (corner) {
+                    stage = 1000;
+                } else {
+                    next();
+                }
+            }
+        }
+
+        if (stage == 1000) {
+            NewEncoderTurn.createTurn(this, 160, GyroUtils.Direction.CLOCKWISE);
+        }
+
+        if (stage == 1001) {
+            NewEncoderDrive.createDrive(this, 1700);
+        }
+
+        if (stage == 1002) {
+            NewEncoderTurn.createTurn(this, 85, GyroUtils.Direction.CLOCKWISE);
+        }
+
+        if (stage == 1003) {
+            NewEncoderDrive.createDrive(this, 1500);
+        }
+
+        if (stage == 1004) {
+            if (time.time() > 2) {
+                intake.stopIntake(Intake.IntakeSpec.BOTH);
             }
         }
 
@@ -349,43 +366,22 @@ public class beaconBlueClose extends StateMachineOpMode {
         }
 
         if (stage == 23) { // Back up x cm/75 Ticks since we ran past the while line
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -75, 0.3);
-                drive.run();
-            }
-            if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-            }
+            NewEncoderDrive.createDrive(this, -75, 0.3);
         }
 
         if (stage == 24) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
-            }
-        }
-
-        if (stage == 25) { // Turn 71.5 degrees to face beacon 2
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 160, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()) {
-                turn.completed();
                 next();
             }
         }
 
+        if (stage == 25) { // Turn 71.5 degrees to face beacon 2
+            NewEncoderTurn.createTurn(this, 160, GyroUtils.Direction.CLOCKWISE);
+        }
+
         if (stage == 26) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
         if (stage == 27) { // Drive until we see a beacon color
@@ -396,8 +392,7 @@ public class beaconBlueClose extends StateMachineOpMode {
             } else {
                 RobotLog.d("Attempted to stop robot at " + rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
                 driveTrain.stopRobot();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
@@ -424,9 +419,7 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             if (drive.isCompleted() || time.time() > 1.5) { // Time failsafe just in case we need to bail
                 driveTrain.stopRobot();
-                stage++;
-                turn = null;
-                time.reset();
+                next();
             }
         }
 
@@ -471,29 +464,13 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
         }
         if (stage == 33) {//Turn 31 degrees to point at cap ball
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 260, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()) {
-                turn.completed();
-                next();
-            }
+            NewEncoderTurn.createTurn(this, 260, GyroUtils.Direction.CLOCKWISE);
         }
         if (stage == 34) {//drive to X cm/-3100 ticks to hit cap ball and park
             if (capBallGet) {
-                if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 4000, 1);
-                    drive.run();
-                }
-                if (drive.isCompleted()) {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
-                }
+                NewEncoderDrive.createDrive(this, 4000, 1);
             } else {
-                stage++;
-                time.reset();
+                next();
             }
         }
         if (stage == 908) {
@@ -546,9 +523,13 @@ public class beaconBlueClose extends StateMachineOpMode {
         telemetry.addData("Beacon", colorUtils.beaconColor().toString());
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Time", String.valueOf(time.time()));
-        //telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
+    }
 
-
+    @Override
+    public void next() {
+        super.next();
+        turn = null;
+        drive = null;
     }
 }
 
