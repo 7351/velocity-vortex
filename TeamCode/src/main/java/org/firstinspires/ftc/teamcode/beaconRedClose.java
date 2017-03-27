@@ -366,8 +366,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
             if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
                 driveTrain.stopRobot();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
@@ -381,9 +380,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
             if (turn.isCompleted() || time.time() > 0.5) {
                 turn.completed();
-                stage++;
-                time.reset();
-                turn = null;
+                next();
             }
         }
         if (stage == 32) { //wait

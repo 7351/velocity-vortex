@@ -134,41 +134,20 @@ public class beaconBlueClose extends StateMachineOpMode {
         }
 
         if (stage == 4) { // Drive backwards X cm/625 ticks to get a better angle at the white line
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -625, 0.2);
-                drive.run();
-            }
-            if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                stage++;
-                time.reset();
-            }
+            NewEncoderDrive.createDrive(this, -625, 0.2);
         }
 
         if (stage == 5) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
-            }
-        }
-        if (stage == 6) {// Turn 27 degrees to point at the white line for Beacon 1
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 75, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()) {
-                turn.completed();
                 next();
             }
         }
+        if (stage == 6) {// Turn 27 degrees to point at the white line for Beacon 1
+            NewEncoderTurn.createTurn(this, 75, GyroUtils.Direction.CLOCKWISE);
+        }
         if (stage == 7) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
         if (stage == 8) { // Drive until the color sensor sees the white line of Beacon 1
@@ -178,8 +157,7 @@ public class beaconBlueClose extends StateMachineOpMode {
             drive.runWithDecrementPower(0.000325); //slows down gradually to hit white line
             if (colorUtils.aboveWhiteLine()) {
                 driveTrain.stopRobot();
-                stage = 222;
-                time.reset();
+                next();
             }
             if (drive.isCompleted()) { //fail safe if we miss white line
                 stage = 908;
@@ -188,44 +166,23 @@ public class beaconBlueClose extends StateMachineOpMode {
                 //AutonomousUtils.failSafeError(hardwareMap);
             }
         }
-        if (stage == 222) {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, -500, 0.4);
-                drive.run();
-            }
-            if (drive.isCompleted()) {
-                drive.completed();
-                drive = null;
-                stage = 9;
-            }
+        if (stage == 9) {
+            NewEncoderDrive.createDrive(this, -500, 0.4);
         }
-        if (stage == 9) { // Wait
+        if (stage == 10) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
-            }
-        }
-        if (stage == 10) { // Turn to face beacon 1
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 81, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()) {
-                turn.completed();
                 next();
             }
         }
-        if (stage == 11) { // Wait
+        if (stage == 11) { // Turn to face beacon 1
+            NewEncoderTurn.createTurn(this, 81, GyroUtils.Direction.CLOCKWISE);
+        }
+        if (stage == 12) { // Wait
             if (time.time() > .25) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
-        if (stage == 12) { // Drive until we see a beacon color
+        if (stage == 13) { // Drive until we see a beacon color
             if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 20) {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(0.25);
@@ -233,21 +190,17 @@ public class beaconBlueClose extends StateMachineOpMode {
             } else {
                 RobotLog.d("Attempted to stop robot at " + rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
                 driveTrain.stopRobot();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
-        if (stage == 13) { // Wait
+        if (stage == 14) { // Wait
             if (time.time() > 0.5) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
 
-        if (stage == 14) { // Act on beacon with color sensor/Flip the sunglasses
+        if (stage == 15) { // Act on beacon with color sensor/Flip the sunglasses
             if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
                 actedColor = beaconUtils.actOnBeaconWithColorSensor();
                 stage++;
@@ -259,7 +212,7 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
 
         }
-        if (stage == 15) {// Get the range to the wall in cm + 50 ticks more, set encoders and drive to the wall
+        if (stage == 16) {// Get the range to the wall in cm + 50 ticks more, set encoders and drive to the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
                 counts += 250;
@@ -268,13 +221,12 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             if (drive.isCompleted() || time.time() > 2) { // Time failsafe just in case we need to bail
                 driveTrain.stopRobot();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
 
-        if (stage == 16) { // Make a 6 degree turn (wiggle) to make sure we hit the button for beacon 1
+        if (stage == 17) { // Make a 6 degree turn (wiggle) to make sure we hit the button for beacon 1
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
@@ -283,14 +235,12 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             if (turn.isCompleted() || time.time() > 0.5) {
                 turn.completed();
-                stage++;
-                time.reset();
-                turn = null;
+                next();
             }
         }
 
 
-        if (stage == 17) { // Make a 6 degree turn (wiggle back) to attempt to straighten up on beacon 1
+        if (stage == 18) { // Make a 6 degree turn (wiggle back) to attempt to straighten up on beacon 1
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.COUNTERCLOCKWISE : GyroUtils.Direction.CLOCKWISE;
@@ -299,13 +249,11 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             if (turn.isCompleted() || time.time() > 0.5) {
                 turn.completed();
-                stage++;
-                time.reset();
-                turn = null;
+                next();
             }
         }
 
-        if (stage == 18) { //Back up from Beacon 13cm with Range Sensor to prepare for turn
+        if (stage == 19) { //Back up from Beacon 13cm with Range Sensor to prepare for turn
             if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 15) {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(-0.55);
@@ -319,27 +267,17 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
         }
 
-        if (stage == 19) { // Turn 73 degrees to point at the white line for Beacon 2
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 170, GyroUtils.Direction.COUNTERCLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()) {
-                turn.completed();
+        if (stage == 20) { // Turn 73 degrees to point at the white line for Beacon 2
+            NewEncoderTurn.createTurn(this, 170, GyroUtils.Direction.COUNTERCLOCKWISE);
+        }
+
+        if (stage == 21) { //wait
+            if (time.time() > AutonomousUtils.WAITTIME) {
                 next();
             }
         }
 
-        if (stage == 20) { //wait
-            if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
-            }
-        }
-
-        if (stage == 21) { // Drive until the color sensor sees the white line of Beacon 2
+        if (stage == 22) { // Drive until the color sensor sees the white line of Beacon 2
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 3100, 0.45);
             }
@@ -356,35 +294,32 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
         }
 
-        if (stage == 22) { // Wait
+        if (stage == 23) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
 
-        if (stage == 23) { // Back up x cm/75 Ticks since we ran past the while line
+        if (stage == 24) { // Back up x cm/75 Ticks since we ran past the while line
             NewEncoderDrive.createDrive(this, -75, 0.3);
         }
 
-        if (stage == 24) { // Wait
+        if (stage == 25) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 next();
             }
         }
 
-        if (stage == 25) { // Turn 71.5 degrees to face beacon 2
+        if (stage == 26) { // Turn 71.5 degrees to face beacon 2
             NewEncoderTurn.createTurn(this, 160, GyroUtils.Direction.CLOCKWISE);
         }
 
-        if (stage == 26) { // Wait
+        if (stage == 27) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 next();
             }
         }
-        if (stage == 27) { // Drive until we see a beacon color
+        if (stage == 28) { // Drive until we see a beacon color
             if (colorUtils.beaconColor().equals(ColorUtils.Color.NONE) && rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) > 20) {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(0.25);
@@ -396,7 +331,7 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
         }
 
-        if (stage == 28) { // Act on beacon with color sensor/Flip the sunglasses
+        if (stage == 29) { // Act on beacon with color sensor/Flip the sunglasses
             if (!colorUtils.beaconColor().equals(ColorUtils.Color.NONE)) {
                 beaconUtils.actOnBeaconWithColorSensor();
                 actedColor = beaconUtils.actOnBeaconWithColorSensor();
@@ -410,7 +345,7 @@ public class beaconBlueClose extends StateMachineOpMode {
 
         }
 
-        if (stage == 29) { // Get the range to the wall in cm + X ticks more, set encoders and drive to the wall
+        if (stage == 30) { // Get the range to the wall in cm + X ticks more, set encoders and drive to the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
                 counts += 250;
@@ -424,7 +359,7 @@ public class beaconBlueClose extends StateMachineOpMode {
         }
 
 
-        if (stage == 30) { // Make a 6 degree turn (wiggle) to make sure we hit the button for beacon 6
+        if (stage == 31) { // Make a 6 degree turn (wiggle) to make sure we hit the button for beacon 6
             if (turn == null) {
                 GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                         GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
@@ -433,22 +368,17 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             if (turn.isCompleted() || time.time() > 0.5) {
                 turn.completed();
-                stage++;
-                time.reset();
-                turn = null;
+                next();
             }
         }
 
-        if (stage == 31) { //wait
+        if (stage == 32) { //wait
             if (time.time() > AutonomousUtils.WAITTIME) {
-                stage++;
-                time.reset();
-                drive = null;
-                turn = null;
+                next();
             }
         }
 
-        if (stage == 32) { ///Back up 10 cm with prox to prepare for turn
+        if (stage == 33) { ///Back up 10 cm with prox to prepare for turn
             if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
                 driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 driveTrain.powerLeft(-0.55);
@@ -463,10 +393,10 @@ public class beaconBlueClose extends StateMachineOpMode {
                 time.reset();
             }
         }
-        if (stage == 33) {//Turn 31 degrees to point at cap ball
+        if (stage == 34) {//Turn 31 degrees to point at cap ball
             NewEncoderTurn.createTurn(this, 260, GyroUtils.Direction.CLOCKWISE);
         }
-        if (stage == 34) {//drive to X cm/-3100 ticks to hit cap ball and park
+        if (stage == 35) {//drive to X cm/-3100 ticks to hit cap ball and park
             if (capBallGet) {
                 NewEncoderDrive.createDrive(this, 4000, 1);
             } else {
