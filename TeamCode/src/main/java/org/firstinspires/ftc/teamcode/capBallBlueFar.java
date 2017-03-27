@@ -1,11 +1,6 @@
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.BeaconUtils;
@@ -17,7 +12,8 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.FlyWheel;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachine;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.NewEncoderDrive;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.NewEncoderTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 /**
@@ -26,6 +22,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 @Autonomous(name = "capBallBlueFar", group = "AWorking")
 public class capBallBlueFar extends StateMachineOpMode {
+    public String target = "Cap Ball"; // or Corner
     // Completed on 3/27/17 11:28AM
     DriveTrain driveTrain;
     ColorUtils colorUtils;
@@ -35,7 +32,6 @@ public class capBallBlueFar extends StateMachineOpMode {
     EncoderTurn turn;
     private String alliance = "Blue";
     private int shoot = 2;
-
 
     @Override
     public void init() {
@@ -115,8 +111,7 @@ public class capBallBlueFar extends StateMachineOpMode {
                     intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
                 }
                 if (time.time() > 4 || shoot <= 0) {
-                    stage++;
-                    time.reset();
+                    next();
                     intake.stopIntake(Intake.IntakeSpec.BOTH);
                     intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
                     flyWheel.currentlyRunning = false;
@@ -126,23 +121,66 @@ public class capBallBlueFar extends StateMachineOpMode {
 
         // Missing turn statement
 
-        if (stage == 7) {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 2000, 0.5);
-                drive.run();
+        if (target.equals("Cap Ball")) {
+            if (stage == 7) {
+                if (drive == null) {
+                    drive = new EncoderDrive(driveTrain, 2000, 0.5);
+                    drive.run();
+                }
+                if (drive.isCompleted() || colorUtils.aboveBlueLine()) {
+                    drive.completed();
+                    next();
+                }
             }
-            if (drive.isCompleted() || colorUtils.aboveBlueLine()) {
-                drive.completed();
-                next();
+
+            if (stage == 8) {
+                if (time.time() > 2) {
+                    intake.stopIntake(Intake.IntakeSpec.A);
+                    next();
+                }
             }
         }
 
-        if (stage == 8) {
-            if (time.time() > 2) {
-                intake.stopIntake(Intake.IntakeSpec.A);
-                next();
+        if (target.equals("Corner")) {
+            if (stage == 7) {
+                NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
+            }
+
+            if (stage == 8) {
+                if (time.time() > 10) {
+                    next();
+                }
+            }
+
+            if (stage == 9) {
+                NewEncoderDrive.createDrive(this, 2500);
+            }
+
+            if (stage == 10) {
+                NewEncoderTurn.createTurn(this, 60, GyroUtils.Direction.CLOCKWISE);
+            }
+
+            if (stage == 11) {
+                NewEncoderDrive.createDrive(this, 1500);
+            }
+
+            if (stage == 12) {
+                if (time.time() > 2) {
+                    intake.stopIntake(Intake.IntakeSpec.A);
+                    next();
+                }
             }
         }
+
+        if (target.equals("Stay")) {
+            if (stage == 7) {
+                if (time.time() > 2) {
+                    intake.stopIntake(Intake.IntakeSpec.A);
+                    next();
+                }
+            }
+        }
+
 
         telemetry.addData("Left Front Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
         telemetry.addData("Left Back Position: ", driveTrain.LeftBackMotor.getCurrentPosition());
