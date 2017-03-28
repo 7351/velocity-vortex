@@ -13,7 +13,7 @@ class UserOptions {
              * You need the comma at the end unless it is the last option in the list
              * Example: A option where the drive team can enter in a value for the angle heading with a max value of 3 characters
              * the hashmap key would be "gyroValue" so you can call selectorHashmap.get("gyroValue"); in the op-mode code
-             * You would write: new NumberOption(3, "Gyro value?", "gyroValue"), unless
+             * You would write: new NumberOption(3, "Gyro value?", "gyroValue")
              * @see NumberOption
             */
 
@@ -29,9 +29,9 @@ class UserOptions {
             */
             new RadioOption(new String[]{"Red", "Blue"}, "Alliance?", "alliance"),
             new NumberOption(2, "Delay before match?", "delay"),
-            new RadioOption(new String[]{"0", "1", "2"}, "How many particles to shoot?", "shoot"),
             new RadioOption(new String[]{"Close to Corner Vortex", "Far from Corner Vortex"}, "Where are you starting?", "starting"),
-            new RadioOption(new String[]{"1 Beacon", "2 Beacons", "Cap ball"}, "Target?", "target"),
+            new RadioOption(new String[]{"Beacons", "Beacons w/Cap Ball", "Cap Ball", "Corner", "Shoot only"}, "Target?", "target"),
+            new RadioOption(new String[]{"1", "2"}, "Amount of beacons (if chose beacons)", "beacons")
 
     };
 }
