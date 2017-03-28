@@ -31,12 +31,12 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
 /**
  * Created by Dynamic Signals on 11/10/2016.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Autonomous", group = "Autonomous")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Autonomous", group = "A")
 public class Autonomous extends StateMachineOpMode {
 
     BigAl bigAl; // Robot object
 
-    private ElapsedTime delayTime = new ElapsedTime(); // delay time elapsed time
+    private ElapsedTime autoTimer = new ElapsedTime(); // delay time elapsed time
 
     // Selector variables
     private double delay;
@@ -78,29 +78,24 @@ public class Autonomous extends StateMachineOpMode {
         alliance = bigAl.das.getRadio("alliance", "ns"); // Not selected - ns
         starting = bigAl.das.get("starting", "ns");
         target = bigAl.das.get("target", "ns");
-        beaconAmount = bigAl.das.get("beacons", "2");
+        beaconAmount = bigAl.das.get("beacons", "2"); // We want 2 beacons by default
         if (target.equals("Beacons w/Cap Ball")) capBallGet = true;
         if (target.equals("Corner")) corner = true;
-        beaconUtils.setAlliance(alliance);
+        beaconUtils.setAlliance("Red");
+        stage = -1;
     }
 
     @Override
     public void init_loop() {
 
-        // We log all the selector choices just to show the drive team if what they type in was correct
-        Iterator it = bigAl.das.getSelectorChoices().entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            telemetry.addData((String) pair.getKey(), pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+        bigAl.das.displayTelemetry(this);
 
     }
 
     @Override
     public void start() {
-
-        delayTime.reset();
+        super.start();
+        autoTimer.reset();
 
     }
 
@@ -108,7 +103,7 @@ public class Autonomous extends StateMachineOpMode {
     public void loop() {
 
         if (stage == -1) {
-            if (delayTime.time() > delay) {
+            if (autoTimer.time() > delay) {
                 next();
             }
         }
@@ -903,7 +898,7 @@ public class Autonomous extends StateMachineOpMode {
                 }
                 if (stage == 3) {
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 76, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 79, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
                     if (turn.isCompleted()) {
@@ -981,11 +976,11 @@ public class Autonomous extends StateMachineOpMode {
 
                 if (target.equals("Corner")) {
                     if (stage == 7) {
-                        NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        NewEncoderTurn.createTurn(this, 77, GyroUtils.Direction.COUNTERCLOCKWISE);
                     }
 
                     if (stage == 8) {
-                        if (time.time() > 10) {
+                        if (autoTimer.time() > 22) {
                             next();
                         }
                     }
@@ -1100,13 +1095,13 @@ public class Autonomous extends StateMachineOpMode {
                     }
                 }
 
-                if (target.equals("Shoot only")) {
+                if (target.equals("Corner")) {
                     if (stage == 7) {
                         NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
                     }
 
                     if (stage == 8) {
-                        if (time.time() > 10) {
+                        if (autoTimer.time() > 22) {
                             next();
                         }
                     }
@@ -1131,7 +1126,7 @@ public class Autonomous extends StateMachineOpMode {
                     }
                 }
 
-                if (target.equals("Stay")) {
+                if (target.equals("Shoot only")) {
                     if (stage == 7) {
                         if (time.time() > 2) {
                             intake.stopIntake(Intake.IntakeSpec.A);

@@ -22,7 +22,7 @@ public class BigAl {
         intake = new Intake(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
         colorUtils = new ColorUtils(hardwareMap);
-        das = new DynamicAutonomousSelector(false);
+        das = new DynamicAutonomousSelector(true);
         lift = new Lift(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils);
     }

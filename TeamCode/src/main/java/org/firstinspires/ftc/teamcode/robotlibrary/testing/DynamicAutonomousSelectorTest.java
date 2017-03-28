@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by Leo on 10/8/2016.
  */
 
-@Autonomous(name = "SelectorTest", group = "concept")
+@Autonomous(name = "SelectorTest", group = "Testing")
 public class DynamicAutonomousSelectorTest extends OpMode {
 
     DynamicAutonomousSelector das;

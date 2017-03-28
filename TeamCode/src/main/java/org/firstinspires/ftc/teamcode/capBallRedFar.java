@@ -70,7 +70,7 @@ public class capBallRedFar extends StateMachineOpMode {
         }
         if (stage == 3) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 76, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 79, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -148,7 +148,7 @@ public class capBallRedFar extends StateMachineOpMode {
 
         if (target.equals("Corner")) {
             if (stage == 7) {
-                NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
+                NewEncoderTurn.createTurn(this, 77, GyroUtils.Direction.COUNTERCLOCKWISE);
             }
 
             if (stage == 8) {

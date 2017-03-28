@@ -141,7 +141,7 @@ public class capBallBlueFar extends StateMachineOpMode {
             }
         }
 
-        if (target.equals("Shoot only")) {
+        if (target.equals("Corner")) {
             if (stage == 7) {
                 NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
             }
@@ -172,7 +172,7 @@ public class capBallBlueFar extends StateMachineOpMode {
             }
         }
 
-        if (target.equals("Stay")) {
+        if (target.equals("Shoot only")) {
             if (stage == 7) {
                 if (time.time() > 2) {
                     intake.stopIntake(Intake.IntakeSpec.A);
