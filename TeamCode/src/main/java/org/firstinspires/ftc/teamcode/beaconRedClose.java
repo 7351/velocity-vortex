@@ -182,8 +182,8 @@ public class beaconRedClose extends StateMachineOpMode {
             NewEncoderTurn.createTurn(this, 63, GyroUtils.Direction.COUNTERCLOCKWISE);
         }
 
-        if (stage == 12) { //wait
-            if (time.time() > .35) {
+        if (stage == 12) { // Wait
+            if (time.time() > .25) {
                 next();
             }
         }
@@ -217,7 +217,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
         }
 
-        if (stage == 16) { // Get the range to the wall in cm + 120 ticks more, set encoders and drive to the wall
+        if (stage == 16) { // Get the range to the wall in cm + ticks more, set encoders and drive to the wall
             if (drive == null) {
                 int counts = (int) (rangeUtils.rangeSensor.getDistance(DistanceUnit.CM) - 4) * 19; // Get the distance to the wall in enc counts, -4 ajusts for chaisi
                 counts += 300;
@@ -273,7 +273,7 @@ public class beaconRedClose extends StateMachineOpMode {
             NewEncoderTurn.createTurn(this, 162, GyroUtils.Direction.COUNTERCLOCKWISE);
         }
 
-        if (stage == 21) { //wait and set RUN_WITHOUT_ENCODER for next stage and set zero power brake
+        if (stage == 21) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
                 next();
             }
@@ -313,7 +313,7 @@ public class beaconRedClose extends StateMachineOpMode {
         }
 
         if (stage == 26) { // Turn to face beacon 2
-            NewEncoderTurn.createTurn(this, 17, GyroUtils.Direction.CLOCKWISE);
+            NewEncoderTurn.createTurn(this, 177, GyroUtils.Direction.CLOCKWISE);
         }
 
         if (stage == 27) { // Wait
