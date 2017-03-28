@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Lift;
  */
 
 @Autonomous(name = "defendBlueFarMiddle", group = "Encoder Autonomous")
+@Disabled
 public class defendBlueFarMiddle extends OpMode {
 
     int stage = 0;

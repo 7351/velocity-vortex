@@ -10,7 +10,7 @@ public class shootBlueFar extends capBallBlueFar {
     @Override
     public void init() {
         super.init();
-        target = "Stay";
+        target = "Shoot only";
     }
 
 }

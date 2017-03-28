@@ -137,7 +137,7 @@ public class capBallRedFar extends StateMachineOpMode {
             }
         }
 
-        if (target.equals("Stay")) {
+        if (target.equals("Shoot only")) {
             if (stage == 7) {
                 if (time.time() > 2) {
                     intake.stopIntake(Intake.IntakeSpec.A);

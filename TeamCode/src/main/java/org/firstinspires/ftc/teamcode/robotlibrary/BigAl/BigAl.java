@@ -7,7 +7,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class BigAl {
 
     // We declare all of the objects that the opmode brings into the programs lifecycle
-    public VuforiaSystem vuforiaSystem;
     public DriveTrain driveTrain;
     public BeaconUtils beaconUtils;
     public ColorUtils colorUtils;
@@ -17,10 +16,7 @@ public class BigAl {
     public DynamicAutonomousSelector das;
     public Lift lift;
 
-    public BigAl(HardwareMap hardwareMap, boolean VuforiaEnabled) {
-        if (VuforiaEnabled) {
-            vuforiaSystem = new VuforiaSystem();
-        }
+    public BigAl(HardwareMap hardwareMap) {
         rangeUtils = new RangeUtils(hardwareMap);
         driveTrain = new DriveTrain(hardwareMap);
         intake = new Intake(hardwareMap);
@@ -29,14 +25,6 @@ public class BigAl {
         das = new DynamicAutonomousSelector(false);
         lift = new Lift(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils);
-    }
-
-    public BigAl(HardwareMap hardwareMap) {
-        this(hardwareMap, false); // Assume no vuforia
-    }
-
-    public void start() {
-        colorUtils.lineColorSensor.enableLed(true);
     }
 
 }
