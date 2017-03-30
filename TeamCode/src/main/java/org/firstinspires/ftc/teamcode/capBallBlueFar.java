@@ -143,25 +143,25 @@ public class capBallBlueFar extends StateMachineOpMode {
 
         if (target.equals("Corner")) {
             if (stage == 7) {
-                NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
-            }
-
-            if (stage == 8) {
                 if (time.time() > 10) {
                     next();
                 }
             }
 
+            if (stage == 8) {
+                NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
+            }
+
             if (stage == 9) {
-                NewEncoderDrive.createDrive(this, 2500);
+                NewEncoderDrive.createDrive(this, 3200);
             }
 
             if (stage == 10) {
-                NewEncoderTurn.createTurn(this, 60, GyroUtils.Direction.CLOCKWISE);
+                NewEncoderTurn.createTurn(this, 55, GyroUtils.Direction.CLOCKWISE);
             }
 
             if (stage == 11) {
-                NewEncoderDrive.createDrive(this, 1500);
+                NewEncoderDrive.createDrive(this, 2500);
             }
 
             if (stage == 12) {

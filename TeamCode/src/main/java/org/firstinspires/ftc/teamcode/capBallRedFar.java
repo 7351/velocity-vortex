@@ -86,7 +86,7 @@ public class capBallRedFar extends StateMachineOpMode {
 
         if (stage == 5) {
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1375, 0.5);
+                drive = new EncoderDrive(driveTrain, 1250, 0.5);
                 drive.run();
                 if (shoot > 0) {
                     flyWheel.currentPower = flyWheel.defaultStartingPower;
@@ -120,7 +120,7 @@ public class capBallRedFar extends StateMachineOpMode {
         if (target.equals("Cap Ball")) {
             if (stage == 7) {
                 if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 2200, 0.5);
+                    drive = new EncoderDrive(driveTrain, 2300, 0.5);
                     drive.run();
                 }
                 if (drive.isCompleted() || colorUtils.aboveRedLine()) {
@@ -148,25 +148,25 @@ public class capBallRedFar extends StateMachineOpMode {
 
         if (target.equals("Corner")) {
             if (stage == 7) {
-                NewEncoderTurn.createTurn(this, 77, GyroUtils.Direction.COUNTERCLOCKWISE);
-            }
-
-            if (stage == 8) {
                 if (time.time() > 10) {
                     next();
                 }
             }
 
+            if (stage == 8) {
+                NewEncoderTurn.createTurn(this, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+            }
+
             if (stage == 9) {
-                NewEncoderDrive.createDrive(this, 2100);
+                NewEncoderDrive.createDrive(this, 2900);
             }
 
             if (stage == 10) {
-                NewEncoderTurn.createTurn(this, 60, GyroUtils.Direction.COUNTERCLOCKWISE);
+                NewEncoderTurn.createTurn(this, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
             }
 
             if (stage == 11) {
-                NewEncoderDrive.createDrive(this, 1900);
+                NewEncoderDrive.createDrive(this, 2900);
             }
 
             if (stage == 12) {
