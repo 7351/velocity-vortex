@@ -914,7 +914,7 @@ public class Autonomous extends StateMachineOpMode {
 
                 if (stage == 5) {
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 1375, 0.5);
+                        drive = new EncoderDrive(driveTrain, 1250, 0.5);
                         drive.run();
                         if (shoot > 0) {
                             flyWheel.currentPower = flyWheel.defaultStartingPower;
@@ -948,7 +948,7 @@ public class Autonomous extends StateMachineOpMode {
                 if (target.equals("Cap Ball")) {
                     if (stage == 7) {
                         if (drive == null) {
-                            drive = new EncoderDrive(driveTrain, 2200, 0.5);
+                            drive = new EncoderDrive(driveTrain, 2300, 0.5);
                             drive.run();
                         }
                         if (drive.isCompleted() || colorUtils.aboveRedLine()) {
@@ -976,25 +976,25 @@ public class Autonomous extends StateMachineOpMode {
 
                 if (target.equals("Corner")) {
                     if (stage == 7) {
-                        NewEncoderTurn.createTurn(this, 77, GyroUtils.Direction.COUNTERCLOCKWISE);
-                    }
-
-                    if (stage == 8) {
                         if (autoTimer.time() > 22) {
                             next();
                         }
                     }
 
+                    if (stage == 8) {
+                        NewEncoderTurn.createTurn(this, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    }
+
                     if (stage == 9) {
-                        NewEncoderDrive.createDrive(this, 2100);
+                        NewEncoderDrive.createDrive(this, 2900);
                     }
 
                     if (stage == 10) {
-                        NewEncoderTurn.createTurn(this, 60, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        NewEncoderTurn.createTurn(this, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
                     }
 
                     if (stage == 11) {
-                        NewEncoderDrive.createDrive(this, 1900);
+                        NewEncoderDrive.createDrive(this, 2900);
                     }
 
                     if (stage == 12) {
@@ -1097,25 +1097,25 @@ public class Autonomous extends StateMachineOpMode {
 
                 if (target.equals("Corner")) {
                     if (stage == 7) {
-                        NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
-                    }
-
-                    if (stage == 8) {
                         if (autoTimer.time() > 22) {
                             next();
                         }
                     }
 
+                    if (stage == 8) {
+                        NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
+                    }
+
                     if (stage == 9) {
-                        NewEncoderDrive.createDrive(this, 2500);
+                        NewEncoderDrive.createDrive(this, 3200);
                     }
 
                     if (stage == 10) {
-                        NewEncoderTurn.createTurn(this, 60, GyroUtils.Direction.CLOCKWISE);
+                        NewEncoderTurn.createTurn(this, 55, GyroUtils.Direction.CLOCKWISE);
                     }
 
                     if (stage == 11) {
-                        NewEncoderDrive.createDrive(this, 1500);
+                        NewEncoderDrive.createDrive(this, 2500);
                     }
 
                     if (stage == 12) {
@@ -1134,6 +1134,7 @@ public class Autonomous extends StateMachineOpMode {
                         }
                     }
                 }
+
             }
         }
 
