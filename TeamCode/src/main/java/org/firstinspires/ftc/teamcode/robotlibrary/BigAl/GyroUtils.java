@@ -106,6 +106,9 @@ public class GyroUtils {
         public Direction turnDirection;
         public double movedZero;
         public double targetDegree = 0;
+        public double percentComplete = 0;
+        public Direction initialTurnDirection = null;
+        private double initialDegreesOff = -1;
 
         private AHRS navx;
         /**
@@ -125,6 +128,13 @@ public class GyroUtils {
         }
 
         public void updateData() {
+            if (initialDegreesOff == -1) {
+                initialDegreesOff = degreesOff;
+            }
+
+            if (initialTurnDirection == null) {
+                initialTurnDirection = turnDirection;
+            }
             movedZero = GyroUtils.temporaryZero(navx, Range.clip(targetDegree, -180, 180)); // This is basically spoofedZero, it is used to cross over -180 & 180
 
             if (movedZero > 0 && movedZero < 180) { // We need to turn counterclockwise
@@ -136,6 +146,8 @@ public class GyroUtils {
                 degreesOff = Math.abs(90 - (movedZero - 270)); // We need to find abs of 90 - (degree - 270) to get the degrees off
                 turnDirection = CLOCKWISE;
             }
+
+            percentComplete = 100 - Range.clip((degreesOff / initialDegreesOff) * 100, 0, 100);
         }
 
         public void setData(double degree) {

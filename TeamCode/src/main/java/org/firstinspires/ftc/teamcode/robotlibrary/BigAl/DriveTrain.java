@@ -120,6 +120,19 @@ public class DriveTrain {
         return LeftFrontMotor.getZeroPowerBehavior();
     }
 
+    public void rotate(GyroUtils.Direction turnDirection, double power) {
+        switch (turnDirection) {
+            case CLOCKWISE:
+                powerLeft(power);
+                powerRight(-power);
+                break;
+            case COUNTERCLOCKWISE:
+                powerLeft(-power);
+                powerRight(power);
+                break;
+        }
+    }
+
 }
 
 

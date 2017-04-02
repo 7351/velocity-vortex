@@ -34,14 +34,10 @@ import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
-
-import java.text.DecimalFormat;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
 
@@ -60,6 +56,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
 @Disabled
 public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
+    /*
     DriveTrain driveTrain;
     AHRS navx_device;
 
@@ -69,13 +66,15 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     ElapsedTime time = new ElapsedTime();
     double completedTime;
+    */
 
     @Override
     public void init() {
 
+        /*
         driveTrain = new DriveTrain(hardwareMap);
         navx_device = AHRS.getInstance(hardwareMap);
-
+        */
     }
 
     @Override
@@ -85,6 +84,7 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     @Override
     public void loop() {
+        /*
         if (stage == 0) {
             if (!navx_device.isCalibrating()) {
                 navx_device.zeroYaw();
@@ -120,10 +120,11 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
         telemetry.addData("L", driveTrain.LeftFrontMotor.getPower());
         telemetry.addData("R", driveTrain.RightFrontMotor.getPower());
         telemetry.addData("Heading", df.format(navx_device.getYaw()));
+        */
     }
 
     @Override
     public void stop() {
-        navx_device.close();
+        //navx_device.close();
     }
 }

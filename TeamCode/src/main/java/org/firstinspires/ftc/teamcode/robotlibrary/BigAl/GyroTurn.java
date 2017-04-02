@@ -1,136 +1,117 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
-import android.support.annotation.Nullable;
-
 import com.kauailabs.navx.ftc.AHRS;
-import com.kauailabs.navx.ftc.navXPIDController;
-import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by Dynamic Signals on 1/16/2017.
+ * Created by leo on 3/25/17.
  */
 
 public class GyroTurn implements Routine {
 
-    private final double TOLERANCE_DEGREES = 5;
-    private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
-    private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
-    public navXPIDController yawPIDController;
-    AHRS navx;
-    DriveTrain driveTrain;
-    int targetDegree = 0;
-    int completedCounter = 0;
-    private navXPIDController.PIDResult yawPIDResult;
+    private static GyroTurn instance;
 
-    int timesRan = 0;
+    private DriveTrain driveTrain;
+    private AHRS navx;
 
-    PID pid;
+    private StateMachineOpMode opMode;
+    public GyroUtils.GyroDetail detail;
 
-    boolean PCalculated = false;
+    private ElapsedTime creationTime = new ElapsedTime(); // Used for timeout failsafe
+    private ElapsedTime waitTime = new ElapsedTime(); // Used for wait in between to catch up gyro
+    private final static double TIMEOUT = 2.5; // Timeout time in secs
+    private final static double TOLERANCE = 3;
+    private final static double MinMotor = 0.2, MaxMotor = 0.5;
 
-    private double MinMotor = 0.0925, MaxMotor = 0.25;
+    private int stage = 0;
 
-    // 3/1/17 ---
     /*
-    90 - 0.25 max is the best 0.52% error
-    45 - 0.2 max is adequate 2.90% error
+    This class is basically a wrapper for EncoderTurn in the new StateMachine format
      */
 
-    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree, @Nullable PID pid) {
-        this.navx = navx;
-        this.driveTrain = driveTrain;
-        this.targetDegree = targetDegree;
-        this.pid = pid;
-
-        /* Create a PID Controller which uses the Yaw Angle as input. */
-        yawPIDController = new navXPIDController(navx,
-                navXPIDController.navXTimestampedDataSource.YAW);
-
-        /* Configure the PID controller */
-        yawPIDController.setSetpoint(targetDegree);
-        yawPIDController.setContinuous(true);
-        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
-        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        if (pid == null) {
-            yawPIDController.setPID(0.005, 0, 0);
-        } else {
-            yawPIDController.setPID(pid.p, pid.i, pid.d);
+    public static GyroTurn createTurn(StateMachineOpMode opMode, double targetDegree) {
+        if (instance == null) {
+            instance = new GyroTurn(opMode, targetDegree);
         }
-
-        yawPIDController.enable(true);
-
-        driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        yawPIDResult = new navXPIDController.PIDResult();
-
+        instance.isCompleted();
+        return instance;
     }
 
-    public GyroTurn(AHRS navx, DriveTrain driveTrain, int targetDegree) {
-        this(navx, driveTrain, targetDegree, null);
+    private GyroTurn(StateMachineOpMode opMode, double targetDegree) {
+        this.opMode = opMode;
+        this.navx = AHRS.getInstance(opMode.hardwareMap, 20);
+
+        driveTrain = new DriveTrain(opMode.hardwareMap);
+        detail = new GyroUtils.GyroDetail(navx, targetDegree);
+
+        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        creationTime.reset();
     }
 
     @Override
     public void run() {
 
-        if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
-            double output = yawPIDResult.getOutput();
-            double power = 0; // Temp value
-            if (Math.signum(output) == 1) {
-                power = Range.clip(output, MinMotor, MaxMotor);
+        detail.updateData();
+
+        if (stage == 0) {
+            if (detail.degreesOff > TOLERANCE) {
+                if (detail.turnDirection.equals(detail.initialTurnDirection)) { // If we were initially going in the right direction
+                    double rawPower = Range.clip(detail.percentComplete / 100 * 0.45, MinMotor, MaxMotor);
+                    driveTrain.rotate(detail.turnDirection, rawPower);
+                } else { // If we already passed it
+                    stage++;
+                    waitTime.reset();
+                }
+            } else {
+                stage++;
+                waitTime.reset();
             }
-            if (Math.signum(output) == -1) {
-                power = Range.clip(output, -MaxMotor, -MinMotor);
-            }
-            driveTrain.powerLeft(power);
-            driveTrain.powerRight(-power);
+
         }
 
-        timesRan++;
-
-        if (timesRan > 25 && !PCalculated && pid != null) {
-            double degreesOff = Math.round(yawPIDController.getError());
-
-            pid.p = (degreesOff * 0.0000355) + 0.0030521;
-
-            yawPIDController.setPID(pid.p, pid.i, pid.d);
-
-            DbgLog.msg("Degrees off! : " + String.valueOf(degreesOff));
-
-            PCalculated = true;
+        if (stage == 1) {
+            if (waitTime.time() > 0.5) { // Wait a little bit to catch up gyro
+                stage++;
+            }
         }
 
-
-    }
-
-    public void setPBasedOnDegreesLeft() {
-        double degreesOff = Math.round(yawPIDController.getError());
-        pid.p = (degreesOff * 0.0000355) + 0.0030521;
-
-        yawPIDController.setPID(pid.p, pid.i, pid.d);
+        if (stage == 2) { // Turn back stage
+            if (detail.degreesOff > TOLERANCE) { // We're out of tolerance
+                if (!detail.turnDirection.equals(detail.initialTurnDirection)) { // If we are turning back
+                    driveTrain.rotate(detail.turnDirection, 0.15); // Turn really really slow
+                } else { // If we messed it up
+                    stage++;
+                }
+            } else { // We are within tolerance
+                stage++;
+            }
+        }
     }
 
     @Override
     public boolean isCompleted() {
-        boolean onTarget = yawPIDResult.isOnTarget();
-        if (onTarget) {
-            completedCounter++;
-        } else {
-            completedCounter = 0;
+        boolean completed = false;
+        if (creationTime.time() > TIMEOUT) { // 3 second timeout
+            completed = true;
         }
-        if (completedCounter > 25) {
+        if (stage == 3) { // Has completed all of its stages
+            completed = true;
+        }
+
+        if (completed) {
             completed();
         } else {
             run();
         }
-        return (completedCounter > 25);
+        return completed;
     }
 
     @Override
     public void completed() {
-        driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         driveTrain.stopRobot();
-        yawPIDController.enable(false);
+        opMode.next();
+        instance = null;
     }
 }
