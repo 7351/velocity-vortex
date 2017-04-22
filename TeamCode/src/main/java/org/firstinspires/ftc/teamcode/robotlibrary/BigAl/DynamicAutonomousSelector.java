@@ -5,7 +5,6 @@ import android.os.Environment;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.qualcomm.ftccommon.Device;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -39,9 +38,6 @@ public class DynamicAutonomousSelector {
     }
 
     public DynamicAutonomousSelector(boolean network) {
-        if (Build.MODEL.equals(Device.MODEL_ZTE_SPEED)) { // ZTE can't decide what network interface to use
-            network = false;
-        }
         if (network) {
             allNodes = new ArrayList<>();
             readAddresses();

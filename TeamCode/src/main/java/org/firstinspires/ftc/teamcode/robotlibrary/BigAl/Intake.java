@@ -74,7 +74,7 @@ public class Intake {
                 setIntakePower(A, 0);
                 break;
             case B:
-                setIntakePower(B, -0.05);
+                setIntakePower(B, 0);
                 break;
             case BOTH:
                 stopIntake(A);
