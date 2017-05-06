@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robotlibrary.TestBench;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
@@ -16,14 +18,44 @@ public class TestBenchTeleOp extends OpMode {
 
     DriveTrain driveTrain;
     TeleOpUtils teleOpUtils;
+    boolean twoMotors = true;
+    DcMotor LeftMotor;
+    DcMotor RightMotor;
+
+    boolean RightDPad = false;
 
     @Override
     public void init() {
 
-        driveTrain = new DriveTrain(hardwareMap);
+        if (!twoMotors) {
+            driveTrain = new DriveTrain(hardwareMap);
+        } else {
+            LeftMotor = hardwareMap.dcMotor.get("LeftMotor");
+            RightMotor = hardwareMap.dcMotor.get("RightMotor");
+            RightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
+
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
 
 
+    }
+
+    @Override
+    public void init_loop() {
+        if (gamepad1.dpad_right) {
+            if (!RightDPad) {
+                if (twoMotors) {
+                    twoMotors = false;
+                } else {
+                    twoMotors = true;
+                }
+                RightDPad = true;
+            }
+        } else {
+            RightDPad = false;
+        }
+        telemetry.addData("Motor mode", (twoMotors ? "Two Motors": "Four Motors"));
+        telemetry.addData("", "Change motor mode by right dpad");
     }
 
     @Override
@@ -35,6 +67,9 @@ public class TestBenchTeleOp extends OpMode {
         // and 1 is full right
         float throttle = -gamepad1.right_stick_y;
         float direction = gamepad1.right_stick_x;
+        if (twoMotors) {
+            direction = -direction;
+        }
         float right = throttle - direction;
         float left = throttle + direction;
 
@@ -48,8 +83,13 @@ public class TestBenchTeleOp extends OpMode {
         left = (float) teleOpUtils.scaleInput(left);
 
         // write the values to the motors
-        driveTrain.powerLeft(left);
-        driveTrain.powerRight(right);
+        if (!twoMotors) {
+            driveTrain.powerLeft(left);
+            driveTrain.powerRight(right);
+        } else {
+            LeftMotor.setPower(Range.clip(left, -1, 1));
+            RightMotor.setPower(Range.clip(right, -1, 1));
+        }
 
         /* Controller 1 telemetry data */
         telemetry.addData("Drive power", "L: " + String.valueOf(left) + ", R: " + String.valueOf(right));
