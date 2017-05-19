@@ -34,16 +34,8 @@ public class ColorSensorTest extends OpMode {
                 + ", R: " + colorUtils.aboveRedLine() + ", B: " + colorUtils.aboveBlueLine());
         telemetry.addData("Beacon", "{" + colorUtils.colorData(colorUtils.beaconColorSensor) + "} " + colorUtils.beaconColor());
 
-        NormalizedRGBA colors = i2cColorSensor.getNormalizedColors();
-
-        float[] hsv = new float[3];
-        Color.RGBToHSV(Math.round(colors.red * 100), Math.round(colors.green * 100), Math.round(colors.blue * 100), hsv);
-
-        float hue = hsv[0];
-        float sat = hsv[1];
-        float val = hsv[2];
-
-        telemetry.addData("Beacon HSV", "H: " + hue + ", S: " + sat + "m V: " + val);
+        telemetry.addData("Beacon HSI", colorUtils.getSensorHSV(colorUtils.beaconColorSensor));
+        telemetry.addData("Beacon Color Android", colorUtils.getSensorColorFromHSV(colorUtils.beaconColorSensor));
 
     }
 
