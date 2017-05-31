@@ -32,6 +32,10 @@ public class capBallBlueFar extends StateMachineOpMode {
     EncoderTurn turn;
     private String alliance = "Blue";
     private int shoot = 2;
+    private int moveType = 0;
+    //0 is for just encoders
+    //1 is for encoders and gyro
+    //2 is for encoders and navX
 
     @Override
     public void init() {
@@ -53,15 +57,17 @@ public class capBallBlueFar extends StateMachineOpMode {
         }
 
         if (stage == 1) {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 475, .75);
-                drive.run();
+            if (moveType == 0)
+            {
+                if (drive == null) {
+                    drive = new EncoderDrive(driveTrain, 475, .75);
+                    drive.run();
+                }
+                if (drive.isCompleted()) {
+                    driveTrain.stopRobot();
+                    next();
+                }
             }
-            if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                next();
-            }
-
         }
 
         if (stage == 2) {
@@ -70,13 +76,15 @@ public class capBallBlueFar extends StateMachineOpMode {
             }
         }
         if (stage == 3) {
-            if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 82, GyroUtils.Direction.CLOCKWISE);
-                turn.run();
-            }
-            if (turn.isCompleted()) {
-                turn.completed();
-                next();
+            if(moveType == 0) {
+                if (turn == null) {
+                    turn = new EncoderTurn(driveTrain, 82, GyroUtils.Direction.CLOCKWISE);
+                    turn.run();
+                }
+                if (turn.isCompleted()) {
+                    turn.completed();
+                    next();
+                }
             }
         }
         if (stage == 4) {
@@ -86,17 +94,19 @@ public class capBallBlueFar extends StateMachineOpMode {
         }
 
         if (stage == 5) {
-            if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 1150, 0.5);
-                drive.run();
-                if (shoot > 0) {
-                    flyWheel.currentPower = flyWheel.defaultStartingPower;
-                    flyWheel.currentlyRunning = true;
+            if (moveType == 0) {
+                if (drive == null) {
+                    drive = new EncoderDrive(driveTrain, 1150, 0.5);
+                    drive.run();
+                    if (shoot > 0) {
+                        flyWheel.currentPower = flyWheel.defaultStartingPower;
+                        flyWheel.currentlyRunning = true;
+                    }
                 }
-            }
-            if (drive.isCompleted()) {
-                driveTrain.stopRobot();
-                next();
+                if (drive.isCompleted()) {
+                    driveTrain.stopRobot();
+                    next();
+                }
             }
         }
 
@@ -122,52 +132,56 @@ public class capBallBlueFar extends StateMachineOpMode {
         // Missing turn statement
 
         if (target.equals("Cap Ball")) {
-            if (stage == 7) {
-                if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 2000, 0.5);
-                    drive.run();
+            if (moveType == 0){
+                if (stage == 7) {
+                    if (drive == null) {
+                        drive = new EncoderDrive(driveTrain, 2000, 0.5);
+                        drive.run();
+                    }
+                    if (drive.isCompleted() || colorUtils.aboveBlueLine()) {
+                        drive.completed();
+                        next();
+                    }
                 }
-                if (drive.isCompleted() || colorUtils.aboveBlueLine()) {
-                    drive.completed();
-                    next();
-                }
-            }
 
-            if (stage == 8) {
-                if (time.time() > 2) {
-                    intake.stopIntake(Intake.IntakeSpec.A);
-                    next();
+                if (stage == 8) {
+                    if (time.time() > 2) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        next();
+                    }
                 }
             }
         }
 
         if (target.equals("Corner")) {
-            if (stage == 7) {
-                if (time.time() > 10) {
-                    next();
+            if (moveType == 0){
+                if (stage == 7) {
+                    if (time.time() > 10) {
+                        next();
+                    }
                 }
-            }
 
-            if (stage == 8) {
-                NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
-            }
+                if (stage == 8) {
+                    NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.CLOCKWISE);
+                }
 
-            if (stage == 9) {
-                NewEncoderDrive.createDrive(this, 3200);
-            }
+                if (stage == 9) {
+                    NewEncoderDrive.createDrive(this, 3200);
+                }
 
-            if (stage == 10) {
-                NewEncoderTurn.createTurn(this, 55, GyroUtils.Direction.CLOCKWISE);
-            }
+                if (stage == 10) {
+                    NewEncoderTurn.createTurn(this, 55, GyroUtils.Direction.CLOCKWISE);
+                }
 
-            if (stage == 11) {
-                NewEncoderDrive.createDrive(this, 2500);
-            }
+                if (stage == 11) {
+                    NewEncoderDrive.createDrive(this, 2500);
+                }
 
-            if (stage == 12) {
-                if (time.time() > 2) {
-                    intake.stopIntake(Intake.IntakeSpec.A);
-                    next();
+                if (stage == 12) {
+                    if (time.time() > 2) {
+                        intake.stopIntake(Intake.IntakeSpec.A);
+                        next();
+                    }
                 }
             }
         }
