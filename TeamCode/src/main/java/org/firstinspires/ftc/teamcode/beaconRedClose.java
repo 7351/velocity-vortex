@@ -36,6 +36,8 @@ public class beaconRedClose extends StateMachineOpMode {
     Intake intake;
     FlyWheel flyWheel;
     RangeUtils rangeUtils;
+    GyroUtils gyroUtils;
+
 
     EncoderDrive drive;
     EncoderTurn turn;
@@ -57,6 +59,7 @@ public class beaconRedClose extends StateMachineOpMode {
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, alliance);
         rangeUtils = new RangeUtils(hardwareMap);
         new Lift(hardwareMap);
+        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
 
     }
 
@@ -141,11 +144,23 @@ public class beaconRedClose extends StateMachineOpMode {
 
         if (stage == 5) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
+                turn = null;
                 next();
             }
         }
         if (stage == 6) {// Turn 28 degrees to point at the white line for Beacon 1
-            NewEncoderTurn.createTurn(this, 81, GyroUtils.Direction.COUNTERCLOCKWISE);
+            if(turn == null){
+                turn = new EncoderTurn(driveTrain, 90, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn.run();
+            }
+            if ((gyroUtils.gyro.getHeading() < 210) || turn.isCompleted())
+            {
+                driveTrain.stopRobot();
+                stage++;
+                time.reset();
+            }
+
+            //NewEncoderTurn.createTurn(this, 81, GyroUtils.Direction.COUNTERCLOCKWISE);
         }
         if (stage == 7) { // Wait
             if (time.time() > AutonomousUtils.WAITTIME) {
@@ -184,7 +199,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
         if (stage == 12) { // Wait
             if (time.time() > .25) {
-                next();
+                stage = 912;
             }
         }
         if (stage == 13) { // Drive until we see a beacon color
@@ -438,7 +453,7 @@ public class beaconRedClose extends StateMachineOpMode {
         }
         if (stage == 910) {
             if (turn == null) {
-                turn = new EncoderTurn(driveTrain, 170, GyroUtils.Direction.COUNTERCLOCKWISE);
+                turn = new EncoderTurn(driveTrain, 172, GyroUtils.Direction.COUNTERCLOCKWISE);
                 turn.run();
             }
             if (turn.isCompleted()) {
@@ -456,6 +471,7 @@ public class beaconRedClose extends StateMachineOpMode {
         telemetry.addData("Beacon", colorUtils.beaconColor().toString());
         telemetry.addData("Stage", String.valueOf(stage));
         telemetry.addData("Time", String.valueOf(time.time()));
+        telemetry.addData("Heading", gyroUtils.gyro.getHeading());
     }
 
     @Override
