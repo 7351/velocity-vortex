@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "NatEncoderGyroTurnTest", group = "Testing")
-public class NatEncoderGyroTurn extends OpMode {
+public class NatEncoderGyroTurnTest extends OpMode {
 
     DriveTrain driveTrain;
     //AHRS navx;
