@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot type="FirstInspires-FTC">
-    <DeviceInterfaceModule name="Device Interface Module" serialNumber="AL00VDA6">
-        <Gyro name="gyro" port="0" />
+    <DeviceInterfaceModule name="Device Interface Module" serialNumber="AI02RLO3">
+        <Gyro name="gyro" port="1" />
         <ModernRoboticsI2cRangeSensor name="beaconRange" port="2" />
         <ColorSensor name="lineColorSensor" port="3" />
         <ColorSensor name="beaconColorSensor" port="4" />

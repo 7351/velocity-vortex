@@ -37,7 +37,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
 
@@ -53,28 +55,21 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
  * for the navX-Model sensor should be used.
  */
 @Autonomous(name = "Concept: navX Rotate to Angle PID", group = "Concept")
-@Disabled
-public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
-
-    /*
-    DriveTrain driveTrain;
-    AHRS navx_device;
+public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
 
     int stage = 0;
-
-    GyroTurn gyroTurn;
-
-    ElapsedTime time = new ElapsedTime();
+    AHRS navx_device;
+    DriveTrain driveTrain;
     double completedTime;
-    */
+
 
     @Override
     public void init() {
 
-        /*
         driveTrain = new DriveTrain(hardwareMap);
+        AHRS.setLogging(true);
         navx_device = AHRS.getInstance(hardwareMap);
-        */
+
     }
 
     @Override
@@ -84,7 +79,8 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
 
     @Override
     public void loop() {
-        /*
+
+
         if (stage == 0) {
             if (!navx_device.isCalibrating()) {
                 navx_device.zeroYaw();
@@ -93,18 +89,11 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
             }
         }
         if (stage == 1) {
-            if (gyroTurn == null) {
-                // TWEAK THESE VARIABLES FOR TESTING
-                PID pid = new PID(
-                        0.00625,
-                        0.0,
-                        0.0);
-                gyroTurn = new GyroTurn(navx_device, driveTrain, 90, pid); // You don't have to provide a pid argument
-            }
-            gyroTurn.run(); // You must place this outside of the null statement, this is different from encoder routines
-            if (gyroTurn.isCompleted()) { // isCompleted will automatically stop robot
-                stage++;
-            }
+            PID pid = new PID(
+                    0.01,
+                    0.0,
+                    0.0);
+            GyroTurn.createTurn(this, 180, pid);
         }
 
         if (stage == 2) {
@@ -120,11 +109,17 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends OpMode {
         telemetry.addData("L", driveTrain.LeftFrontMotor.getPower());
         telemetry.addData("R", driveTrain.RightFrontMotor.getPower());
         telemetry.addData("Heading", df.format(navx_device.getYaw()));
-        */
+        telemetry.addData("Connected", navx_device.isConnected());
+
     }
 
     @Override
     public void stop() {
-        //navx_device.close();
+        navx_device.close();
+    }
+
+    @Override
+    public void next() {
+        stage++;
     }
 }

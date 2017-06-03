@@ -38,6 +38,8 @@ import com.qualcomm.robotcore.hardware.I2cController;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceImpl;
 
+import org.firstinspires.ftc.teamcode.R;
+
 import java.util.Arrays;
 
 /**
@@ -299,7 +301,7 @@ public class AHRS {
      */
     public static AHRS getInstance(HardwareMap hardwareMap, DeviceDataType data_type, byte update_rate_hz) {
         if (instance == null) {
-            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0, data_type,
+            instance = new AHRS(hardwareMap.deviceInterfaceModule.get(hardwareMap.appContext.getResources().getString(R.string.navxdim)), Integer.parseInt(hardwareMap.appContext.getResources().getString(R.string.navxport)), data_type,
                     update_rate_hz);
         }
         return instance;
@@ -307,7 +309,7 @@ public class AHRS {
 
     public static AHRS getInstance(HardwareMap hardwareMap, int update_rate_hz) {
         if (instance == null) {
-            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0, DeviceDataType.kProcessedData,
+            instance = new AHRS(hardwareMap.deviceInterfaceModule.get(hardwareMap.appContext.getResources().getString(R.string.navxdim)), Integer.parseInt(hardwareMap.appContext.getResources().getString(R.string.navxport)), DeviceDataType.kProcessedData,
             update_rate_hz);
         }
         return instance;
@@ -315,7 +317,7 @@ public class AHRS {
 
     public static AHRS getInstance(HardwareMap hardwareMap) {
         if (instance == null) {
-            instance = new AHRS(hardwareMap.deviceInterfaceModule.get("navX mxp Device Interface Module"), 0,
+            instance = new AHRS(hardwareMap.deviceInterfaceModule.get(hardwareMap.appContext.getResources().getString(R.string.navxdim)), Integer.parseInt(hardwareMap.appContext.getResources().getString(R.string.navxport)),
                     DeviceDataType.kProcessedData,
                     NAVX_DEFAULT_UPDATE_RATE_HZ);
         }

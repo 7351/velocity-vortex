@@ -1,117 +1,127 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import android.support.annotation.Nullable;
+
 import com.kauailabs.navx.ftc.AHRS;
+import com.kauailabs.navx.ftc.navXPIDController;
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by leo on 3/25/17.
+ * Created by Dynamic Signals on 1/16/2017.
  */
 
 public class GyroTurn implements Routine {
 
     private static GyroTurn instance;
+    private final double TOLERANCE_DEGREES = 5;
+    private final double TIMEOUT = 2;
 
-    private DriveTrain driveTrain;
-    private AHRS navx;
+    public navXPIDController yawPIDController;
 
-    private StateMachineOpMode opMode;
-    public GyroUtils.GyroDetail detail;
+    double targetDegree = 0;
+    int completedCounter = 0;
 
     private ElapsedTime creationTime = new ElapsedTime(); // Used for timeout failsafe
-    private ElapsedTime waitTime = new ElapsedTime(); // Used for wait in between to catch up gyro
-    private final static double TIMEOUT = 2.5; // Timeout time in secs
-    private final static double TOLERANCE = 3;
-    private final static double MinMotor = 0.2, MaxMotor = 0.5;
+    private DriveTrain driveTrain;
+    private AHRS navx;
+    private StateMachineOpMode opMode;
+    private navXPIDController.PIDResult yawPIDResult;
+    private double MinMotor = 0.0925, MaxMotor = 0.25;
 
-    private int stage = 0;
-
-    /*
-    This class is basically a wrapper for EncoderTurn in the new StateMachine format
-     */
-
-    public static GyroTurn createTurn(StateMachineOpMode opMode, double targetDegree) {
+    public static GyroTurn createTurn(StateMachineOpMode opMode, double targetDegree, PID pid) {
         if (instance == null) {
-            instance = new GyroTurn(opMode, targetDegree);
+            instance = new GyroTurn(opMode, targetDegree, pid);
         }
         instance.isCompleted();
         return instance;
     }
 
-    private GyroTurn(StateMachineOpMode opMode, double targetDegree) {
+    public static GyroTurn createTurn(StateMachineOpMode opMode, double targetDegree) {
+        return createTurn(opMode, targetDegree);
+    }
+
+    private GyroTurn(StateMachineOpMode opMode, double targetDegree, @Nullable PID pid) {
         this.opMode = opMode;
         this.navx = AHRS.getInstance(opMode.hardwareMap, 20);
+        this.targetDegree = targetDegree;
 
         driveTrain = new DriveTrain(opMode.hardwareMap);
-        detail = new GyroUtils.GyroDetail(navx, targetDegree);
 
-        driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         creationTime.reset();
+
+        /* Create a PID Controller which uses the Yaw Angle as input. */
+        yawPIDController = new navXPIDController(navx,
+                navXPIDController.navXTimestampedDataSource.YAW);
+
+        /* Configure the PID controller */
+        yawPIDController.setSetpoint(targetDegree);
+        yawPIDController.setContinuous(true);
+        yawPIDController.setOutputRange(-1, 1);
+        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
+
+        if (pid == null) {
+            yawPIDController.setPID(0.005, 0, 0);
+        } else {
+            yawPIDController.setPID(pid.p, pid.i, pid.d);
+        }
+
+        yawPIDController.enable(true);
+
+        driveTrain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        yawPIDResult = new navXPIDController.PIDResult();
+
     }
 
     @Override
     public void run() {
 
-        detail.updateData();
-
-        if (stage == 0) {
-            if (detail.degreesOff > TOLERANCE) {
-                if (detail.turnDirection.equals(detail.initialTurnDirection)) { // If we were initially going in the right direction
-                    double rawPower = Range.clip(detail.percentComplete / 100 * 0.45, MinMotor, MaxMotor);
-                    driveTrain.rotate(detail.turnDirection, rawPower);
-                } else { // If we already passed it
-                    stage++;
-                    waitTime.reset();
-                }
-            } else {
-                stage++;
-                waitTime.reset();
+        if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
+            double output = yawPIDResult.getOutput();
+            double power = 0; // Temp value
+            if (Math.signum(output) == 1) {
+                power = Range.clip(output, MinMotor, MaxMotor);
             }
-
+            if (Math.signum(output) == -1) {
+                power = Range.clip(output, -MaxMotor, -MinMotor);
+            }
+            driveTrain.powerLeft(power);
+            driveTrain.powerRight(-power);
         }
 
-        if (stage == 1) {
-            if (waitTime.time() > 0.5) { // Wait a little bit to catch up gyro
-                stage++;
-            }
-        }
 
-        if (stage == 2) { // Turn back stage
-            if (detail.degreesOff > TOLERANCE) { // We're out of tolerance
-                if (!detail.turnDirection.equals(detail.initialTurnDirection)) { // If we are turning back
-                    driveTrain.rotate(detail.turnDirection, 0.15); // Turn really really slow
-                } else { // If we messed it up
-                    stage++;
-                }
-            } else { // We are within tolerance
-                stage++;
-            }
-        }
     }
 
     @Override
     public boolean isCompleted() {
-        boolean completed = false;
-        if (creationTime.time() > TIMEOUT) { // 3 second timeout
-            completed = true;
+        boolean onTarget = yawPIDResult.isOnTarget();
+        if (onTarget) {
+            completedCounter++;
+        } else {
+            completedCounter = 0;
         }
-        if (stage == 3) { // Has completed all of its stages
-            completed = true;
-        }
-
-        if (completed) {
+        if (completedCounter > 25 || creationTime.time() > TIMEOUT) {
             completed();
         } else {
             run();
         }
-        return completed;
+        return (completedCounter > 25);
     }
 
     @Override
     public void completed() {
+        driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        driveTrain.stopRobot();
+        yawPIDController.enable(false);
         driveTrain.stopRobot();
         opMode.next();
+        instance = null;
+    }
+
+    public static void teardown() {
         instance = null;
     }
 }
