@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.testing;
 
-import com.kauailabs.navx.ftc.AHRS;
+//import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils;
 public class EncoderTurnTest extends OpMode {
 
     DriveTrain driveTrain;
-    AHRS navx;
+    //AHRS navx;
 
     EncoderTurn turn;
 
@@ -36,7 +36,7 @@ public class EncoderTurnTest extends OpMode {
     public void init() {
 
         driveTrain = new DriveTrain(hardwareMap);
-        navx = AHRS.getInstance(hardwareMap);
+        //navx = AHRS.getInstance(hardwareMap);
 
         driveTrain.RightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
@@ -60,14 +60,20 @@ public class EncoderTurnTest extends OpMode {
         if (stage != 2) {
             telemetry.addData("F", driveTrain.LeftFrontMotor.getCurrentPosition() + ":" + driveTrain.RightFrontMotor.getCurrentPosition());
             telemetry.addData("B", driveTrain.LeftBackMotor.getCurrentPosition() + ":" + driveTrain.RightBackMotor.getCurrentPosition());
-            telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
+            //telemetry.addData("Yaw", AutonomousUtils.df.format(navx.getYaw()));
             telemetry.addData("Stage", stage);
         }
 
 
         if (stage == 0) {
-            if (!navx.isCalibrating()) {
+            /*if (!navx.isCalibrating()) {
                 navx.zeroYaw();
+                stage++;
+                time.reset();
+                turn = null;
+            }*/
+            if(time.time() > .5)
+            {
                 stage++;
                 time.reset();
                 turn = null;
@@ -92,7 +98,7 @@ public class EncoderTurnTest extends OpMode {
                 time.reset();
             }
             if (completedCounts == 0) completedCounts = driveTrain.LeftFrontMotor.getCurrentPosition();
-            if (completedYaw == 0) completedYaw = navx.getYaw();
+            //if (completedYaw == 0) completedYaw = navx.getYaw();
             telemetry.addData("Counts", completedCounts);
             telemetry.addData("Yaw", AutonomousUtils.df.format(completedYaw));
             telemetry.addData("Time", AutonomousUtils.df.format(completedTime));
