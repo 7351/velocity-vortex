@@ -35,6 +35,10 @@ public class DriveTrain {
 
     }
 
+    /**
+     * Get voltage function for getting the voltage of the robot programatically
+     * @return the voltage as a double point number
+     */
     public double getVoltage() {
         double sum = LeftSensor.getVoltage() + RightSensor.getVoltage();
         return sum/2;

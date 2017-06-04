@@ -73,8 +73,7 @@ public class TeleOp extends OpMode {
          * Intake controls
          * Left Trigger - Intake A sets power to -1
          * Right Trigger - Intake A sets power to 1
-         * Left Bumper - Intake B sets power to -1
-         * Right Bumper - Intake B sets power to 1
+         * Right Bumper - Open the Intake Stopper
          */
 
         if (gamepad1.left_trigger >= 0.5) {
@@ -89,16 +88,10 @@ public class TeleOp extends OpMode {
             intake.stopIntake(IntakeSpec.A);
         }
 
-        if (gamepad1.left_bumper) {
-            intake.setIntakePower(IntakeSpec.B, 1);
-        }
-
         if (gamepad1.right_bumper) {
-            intake.setIntakePower(IntakeSpec.B, -1);
-        }
-
-        if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
-            intake.stopIntake(IntakeSpec.B);
+            intake.openStopper();
+        } else {
+            intake.closeStopper();
         }
 
         /*

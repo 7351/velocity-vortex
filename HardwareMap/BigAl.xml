@@ -11,8 +11,7 @@
         <Motor name="LiftMotor2" port="2" />
     </MotorController>
     <ServoController name="Intake &amp; Beacon Servo Controller" serialNumber="AL026DRM">
-        <ContinuousRotationServo name="IntakeB1" port="4" />
-        <ContinuousRotationServo name="IntakeB2" port="5" />
+        <Servo name="IntakeStopper" port="1" />
         <Servo name="BeaconServo" port="6" />
     </ServoController>
     <MotorController name="Intake Motor Controller" serialNumber="AI049PCI">
