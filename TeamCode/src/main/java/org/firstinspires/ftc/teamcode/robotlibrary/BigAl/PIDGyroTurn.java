@@ -56,7 +56,7 @@ public class PIDGyroTurn implements Routine {
 
     private PIDGyroTurn(StateMachineOpMode opMode, double targetDegree, @Nullable PID pid) {
         this.opMode = opMode;
-        this.navx = AHRS.getInstance(opMode.hardwareMap, 20);
+        this.navx = AHRS.getInstance(opMode.hardwareMap);
         this.targetDegree = targetDegree;
 
         driveTrain = new DriveTrain(opMode.hardwareMap);

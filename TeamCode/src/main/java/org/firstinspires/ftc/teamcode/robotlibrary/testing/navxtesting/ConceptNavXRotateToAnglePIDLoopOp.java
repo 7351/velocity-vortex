@@ -80,6 +80,7 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
                 time.reset();
             }
         }
+
         if (stage == 1) {
             PID pid = new PID(
                     0.01,
