@@ -334,7 +334,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
             if (stage == 20) { // Turn towards the white line of the second beacon
                 if (turn == null) {
-                    turn = new EncoderTurn(driveTrain, 162, GyroUtils.Direction.CLOCKWISE);
+                    turn = new EncoderTurn(driveTrain, 162, GyroUtils.Direction.COUNTERCLOCKWISE);
                     turn.run();
                 }
                 if (((gyroUtils.gyro.getHeading() < 10) || turn.isCompleted())) {
