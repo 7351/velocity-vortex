@@ -106,11 +106,12 @@ public class GyroUtils {
         public Direction turnDirection;
         public double movedZero;
         public double targetDegree = 0;
-        public double percentComplete = 0;
+        public double percentComplete = 0; // 0 - 100
         public Direction initialTurnDirection = null;
         private double initialDegreesOff = -1;
 
         private AHRS navx;
+
         /**
          * Constructor for GyroDetail
          * @param navx navX device

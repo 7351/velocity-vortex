@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -12,6 +13,8 @@ public class DriveTrain {
 
     public final double DIFFERENCE = 0;
     public DcMotor LeftFrontMotor, RightFrontMotor, LeftBackMotor, RightBackMotor;
+    public DcMotorController LeftMotorController, RightMotorController;
+    public VoltageSensor LeftSensor, RightSensor;
 
     public DriveTrain(HardwareMap hardwareMap) {
         if (hardwareMap != null) {
@@ -22,8 +25,19 @@ public class DriveTrain {
 
             RightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             RightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            LeftMotorController = LeftFrontMotor.getController();
+            RightMotorController = RightFrontMotor.getController();
+
+            LeftSensor = (VoltageSensor) LeftMotorController;
+            RightSensor = (VoltageSensor) RightMotorController;
         }
 
+    }
+
+    public double getVoltage() {
+        double sum = LeftSensor.getVoltage() + RightSensor.getVoltage();
+        return sum/2;
     }
 
     public DriveTrain(OpMode opMode) {

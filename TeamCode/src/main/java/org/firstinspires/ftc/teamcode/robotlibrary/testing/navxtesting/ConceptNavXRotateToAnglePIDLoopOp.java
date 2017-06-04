@@ -32,13 +32,10 @@ package org.firstinspires.ftc.teamcode.robotlibrary.testing.navxtesting;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PIDGyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
@@ -73,11 +70,6 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void loop() {
 
 
@@ -93,7 +85,7 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
                     0.01,
                     0.0,
                     0.0);
-            GyroTurn.createTurn(this, 180, pid);
+            PIDGyroTurn.createTurn(this, 180, pid);
         }
 
         if (stage == 2) {
