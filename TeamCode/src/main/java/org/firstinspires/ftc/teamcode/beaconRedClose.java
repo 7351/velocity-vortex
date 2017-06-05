@@ -49,7 +49,7 @@ public class beaconRedClose extends StateMachineOpMode {
     private String beaconAmount = "2";
     private int shoot = 2;
     private int moveType = 0;
-    //0 is for just encoders
+    //0 is for gyro with encoder backup
     //1 is for encoders and gyro
     //2 is for encoders and navX
     private double wheelPower = 0;
@@ -395,7 +395,7 @@ public class beaconRedClose extends StateMachineOpMode {
                         turn = new EncoderTurn(driveTrain, 177, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 95)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() < 90)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
