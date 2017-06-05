@@ -49,9 +49,10 @@ public class beaconRedClose extends StateMachineOpMode {
     private String beaconAmount = "2";
     private int shoot = 2;
     private int moveType = 0;
-    //0 is for just encoders
+    //0 is for gyro with encoder backup
     //1 is for encoders and gyro
     //2 is for encoders and navX
+    private double wheelPower = 0;
 
     @Override
     public void init() {
@@ -64,6 +65,7 @@ public class beaconRedClose extends StateMachineOpMode {
         rangeUtils = new RangeUtils(hardwareMap);
         new Lift(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
+        gyroUtils.gyro.calibrate();
 
     }
 
@@ -76,6 +78,10 @@ public class beaconRedClose extends StateMachineOpMode {
                 time.reset();
             }
             telemetry.addData("Calibrating", String.valueOf(gyroUtils.gyro.isCalibrating()));
+            if (driveTrain.getVoltage() > 12)
+                wheelPower = .82;
+            else
+                wheelPower = .92;
         }
 
         if (stage == 1) {//drive forward X cm/725 ticks to shooting position&start flywheel
@@ -84,7 +90,7 @@ public class beaconRedClose extends StateMachineOpMode {
                     drive = new EncoderDrive(driveTrain, 500, 0.5);
                     drive.run();
                     if (shoot > 0) {
-                        flyWheel.currentPower = .82;
+                        flyWheel.currentPower = wheelPower;
                         flyWheel.currentlyRunning = true;
                     }
                 }
@@ -124,7 +130,18 @@ public class beaconRedClose extends StateMachineOpMode {
          */
         if(corner) {
             if (stage == 4) {
-                NewEncoderTurn.createTurn(this, 170, GyroUtils.Direction.COUNTERCLOCKWISE);
+                if(moveType == 0){
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 170, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 95)) || turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+                //NewEncoderTurn.createTurn(this, 170, GyroUtils.Direction.COUNTERCLOCKWISE);
             }
 
             if (stage == 5) {
@@ -132,7 +149,18 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 6) {
-                NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
+                if(moveType == 0){
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 140)) || turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+                //NewEncoderTurn.createTurn(this, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
             }
 
             if (stage == 7) {
@@ -148,7 +176,6 @@ public class beaconRedClose extends StateMachineOpMode {
 
         if(!corner) {
             if (stage == 4) { // Drive backwards 225 ticks to get a better angle at the white line
-
                 //NewEncoderDrive.createDrive(this, -225, 0.2);
                 next();
             }
@@ -165,7 +192,7 @@ public class beaconRedClose extends StateMachineOpMode {
                         turn = new EncoderTurn(driveTrain, 90, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 180)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 50)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -197,8 +224,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
             if (stage == 9) { // Wait
                 if (time.time() > AutonomousUtils.WAITTIME) {
-                    //next();
-                    stage = 909;
+                    next();
                 }
             }
             if (stage == 10) { // Backup to line
@@ -206,16 +232,17 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 11) { // Turn to face beacon 1
-                if (turn == null) {
-                    turn = new EncoderTurn(driveTrain, 69, GyroUtils.Direction.COUNTERCLOCKWISE);
-                    turn.run();
+                if(moveType == 0){
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 69, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 90)) || turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
                 }
-                if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 100)) || turn.isCompleted()) {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
-                }
-
                 //NewEncoderTurn.createTurn(this, 63, GyroUtils.Direction.COUNTERCLOCKWISE);
             }
 
@@ -308,14 +335,16 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 20) { // Turn towards the white line of the second beacon
-                if (turn == null) {
-                    turn = new EncoderTurn(driveTrain, 162, GyroUtils.Direction.CLOCKWISE);
-                    turn.run();
-                }
-                if (((gyroUtils.gyro.getHeading() < 10) || turn.isCompleted())) {
-                    driveTrain.stopRobot();
-                    stage++;
-                    time.reset();
+                if(moveType == 0){
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 192, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 180)) || turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
                 }
 
                 //NewEncoderTurn.createTurn(this, 162, GyroUtils.Direction.COUNTERCLOCKWISE);
@@ -361,7 +390,18 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 26) { // Turn to face beacon 2
-                NewEncoderTurn.createTurn(this, 177, GyroUtils.Direction.CLOCKWISE);
+                if(moveType == 0){
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 177, GyroUtils.Direction.CLOCKWISE);
+                        turn.run();
+                    }
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() < 90)) || turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
+                //NewEncoderTurn.createTurn(this, 177, GyroUtils.Direction.CLOCKWISE);
             }
 
             if (stage == 27) { // Wait
@@ -444,6 +484,17 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 34) {//Turn 113 degrees to point at cap ball
+                if(moveType == 0){
+                    if (turn == null) {
+                        turn = new EncoderTurn(driveTrain, 269, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn.run();
+                    }
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 50)) || turn.isCompleted()) {
+                        driveTrain.stopRobot();
+                        stage++;
+                        time.reset();
+                    }
+                }
                 NewEncoderTurn.createTurn(this, 269, GyroUtils.Direction.COUNTERCLOCKWISE);
                 NewEncoderDrive.teardown();
             }
