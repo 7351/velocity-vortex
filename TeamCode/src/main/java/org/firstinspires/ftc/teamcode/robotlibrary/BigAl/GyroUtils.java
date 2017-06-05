@@ -86,6 +86,7 @@ public class GyroUtils {
         return degree;
     }
 
+    // -180 to 180
     public static double temporaryZero(AHRS navx, double zeroDegree) {
         double formattedDegree = navx.getYaw();
         DbgLog.msg("Degree: " + String.valueOf(formattedDegree));
@@ -113,9 +114,10 @@ public class GyroUtils {
         private AHRS navx;
 
         /**
-         * Constructor for GyroDetail
+         * Constructor for GyroDetail which gives useful data about about getting to a certain degree for gyro.
+         * This was made for the navX mxp for micro
          * @param navx navX device
-         * @param degree the degree you want to get data about (0-360)
+         * @param degree the degree you want to get data about (-180 - 180)
          */
         public GyroDetail(AHRS navx, double degree) {
             this.targetDegree = degree;
@@ -129,10 +131,6 @@ public class GyroUtils {
         }
 
         public void updateData() {
-            if (initialDegreesOff == -1) {
-                initialDegreesOff = degreesOff;
-            }
-
             if (initialTurnDirection == null) {
                 initialTurnDirection = turnDirection;
             }
@@ -146,6 +144,11 @@ public class GyroUtils {
             if (movedZero >= 180 && movedZero < 360) { // We need to turn clockwise
                 degreesOff = Math.abs(90 - (movedZero - 270)); // We need to find abs of 90 - (degree - 270) to get the degrees off
                 turnDirection = CLOCKWISE;
+            }
+
+            if (initialDegreesOff == -1) {
+                initialDegreesOff = degreesOff;
+                DbgLog.msg("Initial degrees off: " + initialDegreesOff);
             }
 
             percentComplete = 100 - Range.clip((degreesOff / initialDegreesOff) * 100, 0, 100);

@@ -65,7 +65,9 @@ public class PIDGyroTurn implements Routine {
 
         /* Create a PID Controller which uses the Yaw Angle as input. */
         yawPIDController = new navXPIDController(navx,
-                navXPIDController.navXTimestampedDataSource.FUSED_HEADING);
+                navXPIDController.navXTimestampedDataSource.YAW);
+
+        yawPIDController.reset();
 
         /* Configure the PID controller */
         yawPIDController.setSetpoint(targetDegree);

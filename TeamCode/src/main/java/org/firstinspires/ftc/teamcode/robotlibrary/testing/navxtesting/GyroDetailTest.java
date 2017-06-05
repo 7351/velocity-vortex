@@ -21,7 +21,7 @@ public class GyroDetailTest extends StateMachineOpMode {
     @Override
     public void init() {
 
-        driveTrain = new DriveTrain(hardwareMap);
+        //driveTrain = new DriveTrain(hardwareMap);
         navx = AHRS.getInstance(hardwareMap);
 
     }
@@ -34,14 +34,17 @@ public class GyroDetailTest extends StateMachineOpMode {
     @Override
     public void loop() {
 
+
         if (stage == 0) {
             if (!navx.isCalibrating()) {
                 navx.zeroYaw();
                 next();
             }
+            telemetry.addData("Calibrating", navx.isCalibrating());
         }
         if (stage == 1) {
-            detail = new GyroUtils.GyroDetail(navx, 90);
+            detail = new GyroUtils.GyroDetail(navx, -90);
+            next();
         }
         if (stage == 2) {
             detail.updateData();
@@ -52,12 +55,13 @@ public class GyroDetailTest extends StateMachineOpMode {
 
         telemetry.addData("Stage", stage);
         telemetry.addData("Yaw", navx.getYaw());
-        telemetry.addData("Voltage", driveTrain.getVoltage());
+        //telemetry.addData("Voltage", driveTrain.getVoltage());
+        telemetry.addData("Connected", navx.isConnected());
 
     }
 
     @Override
     public void next() {
-
+        stage++;
     }
 }
