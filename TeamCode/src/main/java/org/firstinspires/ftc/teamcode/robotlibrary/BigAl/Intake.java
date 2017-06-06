@@ -12,9 +12,8 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.Intake.IntakeSpe
 
 public class Intake {
 
-    public static boolean NewBServos = true;
     private DcMotor IntakeA;
-    private Servo IntakeStopper;
+    public Servo IntakeStopper;
     private double OpenPosition = 10/128;
     private double ClosePosition = 1;
 

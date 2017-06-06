@@ -30,7 +30,7 @@ public class GyroTurn implements Routine {
 
     private StateMachineOpMode opMode;
     private navXPIDController.PIDResult yawPIDResult;
-    private double MinMotor = 0.0925, MaxMotor = MinMotor;
+    private double MinMotor = 0.095, MaxMotor = 0.65;
 
     /**
      * Static constructor for a GyroTurn if you want to specify the PID for

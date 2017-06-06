@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -16,7 +15,7 @@ public class Lift {
     public DcMotor LiftMotor2;
     public Servo CapBallServoLeft;
     public Servo CapBallServoRight;
-                                        // L     R
+    // L     R
     public final static double[] closed = {0.78, 0.26};
     public final static double[] open = {0.02, 0.98};
     public final static double[] grab = {0.26, 0.83};
@@ -28,9 +27,7 @@ public class Lift {
 
     public Lift(HardwareMap hardwareMap) {
         LiftMotor = hardwareMap.dcMotor.get("LiftMotor");
-        if (Intake.NewBServos) {
-            LiftMotor2 = hardwareMap.dcMotor.get("LiftMotor2");
-        }
+        LiftMotor2 = hardwareMap.dcMotor.get("LiftMotor2");
 
         CapBallServoLeft = hardwareMap.servo.get("CapBallServoLeft");
         CapBallServoRight = hardwareMap.servo.get("CapBallServoRight");
@@ -56,10 +53,7 @@ public class Lift {
 
     public void setLiftPower(double power) {
         LiftMotor.setPower(power);
-        if (Intake.NewBServos) {
-            LiftMotor2.setPower(power);
-        }
-
+        LiftMotor2.setPower(power);
     }
 
 }
