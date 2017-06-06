@@ -12,20 +12,21 @@ import com.qualcomm.robotcore.util.Range;
  * Created by Dynamic Signals on 1/16/2017.
  */
 
-public class PIDGyroTurn implements Routine {
+public class GyroTurn implements Routine {
 
-    private static PIDGyroTurn instance;
+    private static GyroTurn instance;
     private final double TOLERANCE_DEGREES = 5;
-    private final double TIMEOUT = 2;
+    private final double TIMEOUT = 0; // In seconds, 0 if you don't want a timeout
 
     public navXPIDController yawPIDController;
     public GyroUtils.GyroDetail detail;
+    public DriveTrain driveTrain;
 
     double targetDegree = 0;
     int completedCounter = 0;
 
     private ElapsedTime creationTime = new ElapsedTime(); // Used for timeout failsafe
-    private DriveTrain driveTrain;
+
     private AHRS navx;
     private StateMachineOpMode opMode;
     private navXPIDController.PIDResult yawPIDResult;
@@ -36,9 +37,9 @@ public class PIDGyroTurn implements Routine {
      * @param pid The PID instance of the class that has the P, I, and D coefficients.
      * @return the GyroTurn instance
      */
-    public static PIDGyroTurn createTurn(StateMachineOpMode opMode, double targetDegree, PID pid) {
+    public static GyroTurn createTurn(StateMachineOpMode opMode, double targetDegree, PID pid) {
         if (instance == null) {
-            instance = new PIDGyroTurn(opMode, targetDegree, pid);
+            instance = new GyroTurn(opMode, targetDegree, pid);
         }
         instance.isCompleted();
         return instance;
@@ -46,15 +47,15 @@ public class PIDGyroTurn implements Routine {
 
     /**
      * Static constructor for an OpMode style class with just the degree and opmode
-     * @param opMode the OpMode that implements StateMachineOpMode, usually just type "this"
-     * @param targetDegree the degree that you want to turn to (0-360)
+     * @param opModeArg the OpMode that implements StateMachineOpMode, usually just type "this"
+     * @param targetDegreeArg the degree that you want to turn to (0-360)
      * @return the instance of the GyroTurn class. You can check the progress using the GyroDetail detail for percentage complete.
      */
-    public static PIDGyroTurn createTurn(StateMachineOpMode opMode, double targetDegree) {
-        return createTurn(opMode, targetDegree);
+    public static GyroTurn createTurn(StateMachineOpMode opModeArg, double targetDegreeArg) {
+        return createTurn(opModeArg, targetDegreeArg, null);
     }
 
-    private PIDGyroTurn(StateMachineOpMode opMode, double targetDegree, @Nullable PID pid) {
+    private GyroTurn(StateMachineOpMode opMode, double targetDegree, @Nullable PID pid) {
         this.opMode = opMode;
         this.navx = AHRS.getInstance(opMode.hardwareMap);
         this.targetDegree = targetDegree;
@@ -95,6 +96,8 @@ public class PIDGyroTurn implements Routine {
     @Override
     public void run() {
 
+        detail.updateData();
+
         if (yawPIDController.isNewUpdateAvailable(yawPIDResult)) {
             double output = yawPIDResult.getOutput();
             double power = 0; // Temp value
@@ -119,7 +122,7 @@ public class PIDGyroTurn implements Routine {
         } else {
             completedCounter = 0;
         }
-        if (completedCounter > 25 || creationTime.time() > TIMEOUT) {
+        if (completedCounter > 25 || (TIMEOUT > 0 && creationTime.time() > TIMEOUT)) {
             completed();
         } else {
             run();

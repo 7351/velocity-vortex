@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -15,37 +15,45 @@ public class DriveTrain {
     public DcMotor LeftFrontMotor, RightFrontMotor, LeftBackMotor, RightBackMotor;
     public DcMotorController LeftMotorController, RightMotorController;
     public VoltageSensor LeftSensor, RightSensor;
+    public double LeftPower = 0, RightPower = 0;
+    boolean spoofMotors = false;
 
     public DriveTrain(HardwareMap hardwareMap) {
         if (hardwareMap != null) {
-            LeftFrontMotor = hardwareMap.dcMotor.get("LeftFrontMotor");
-            RightFrontMotor = hardwareMap.dcMotor.get("RightFrontMotor");
-            LeftBackMotor = hardwareMap.dcMotor.get("LeftBackMotor");
-            RightBackMotor = hardwareMap.dcMotor.get("RightBackMotor");
+            if (!spoofMotors) {
+                LeftFrontMotor = hardwareMap.dcMotor.get("LeftFrontMotor");
+                RightFrontMotor = hardwareMap.dcMotor.get("RightFrontMotor");
+                LeftBackMotor = hardwareMap.dcMotor.get("LeftBackMotor");
+                RightBackMotor = hardwareMap.dcMotor.get("RightBackMotor");
 
-            RightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            RightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                RightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                RightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            LeftMotorController = LeftFrontMotor.getController();
-            RightMotorController = RightFrontMotor.getController();
+                LeftMotorController = LeftFrontMotor.getController();
+                RightMotorController = RightFrontMotor.getController();
 
-            LeftSensor = (VoltageSensor) LeftMotorController;
-            RightSensor = (VoltageSensor) RightMotorController;
+                LeftSensor = (VoltageSensor) LeftMotorController;
+                RightSensor = (VoltageSensor) RightMotorController;
+            }
         }
 
     }
 
+    public DriveTrain(OpMode opMode) {
+        this(opMode.hardwareMap);
+    }
+
     /**
      * Get voltage function for getting the voltage of the robot programatically
+     *
      * @return the voltage as a double point number
      */
     public double getVoltage() {
-        double sum = LeftSensor.getVoltage() + RightSensor.getVoltage();
-        return sum/2;
-    }
-
-    public DriveTrain(OpMode opMode) {
-        this(opMode.hardwareMap);
+        double sum = 0;
+        if (!spoofMotors) {
+            sum = LeftSensor.getVoltage() + RightSensor.getVoltage();
+        }
+        return sum / 2;
     }
 
     public void driveStraight(double startingPower, double difference) {
@@ -84,17 +92,21 @@ public class DriveTrain {
     }
 
     public void powerLeft(double power) {
-        double clippedPower = Range.clip(power, -1, 1);
-        LeftFrontMotor.setPower(clippedPower);
-        LeftBackMotor.setPower(clippedPower);
-
+        if (!spoofMotors) {
+            double clippedPower = Range.clip(power, -1, 1);
+            LeftFrontMotor.setPower(clippedPower);
+            LeftBackMotor.setPower(clippedPower);
+        }
+        LeftPower = power;
     }
 
-    public void powerRight(double power) {//dont forget to turn encoders off
-        double clippedPower = Range.clip(power, -1, 1);
-        RightFrontMotor.setPower(clippedPower);
-        RightBackMotor.setPower(clippedPower);
-
+    public void powerRight(double power) {
+        if (!spoofMotors) {
+            double clippedPower = Range.clip(power, -1, 1);
+            RightFrontMotor.setPower(clippedPower);
+            RightBackMotor.setPower(clippedPower);
+        }
+        RightPower = power;
     }
 
     public void stopRobot() {
@@ -103,51 +115,21 @@ public class DriveTrain {
     }
 
     public void setMode(DcMotor.RunMode mode) {
-        LeftFrontMotor.setMode(mode);
-        LeftBackMotor.setMode(mode);
-        RightFrontMotor.setMode(mode);
-        RightBackMotor.setMode(mode);
+        if (!spoofMotors) {
+            LeftFrontMotor.setMode(mode);
+            LeftBackMotor.setMode(mode);
+            RightFrontMotor.setMode(mode);
+            RightBackMotor.setMode(mode);
+        }
+
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
-        LeftFrontMotor.setZeroPowerBehavior(behavior);
-        LeftBackMotor.setZeroPowerBehavior(behavior);
-        RightFrontMotor.setZeroPowerBehavior(behavior);
-        RightBackMotor.setZeroPowerBehavior(behavior);
-    }
-
-    /*
-    public double getVoltage() {
-        double averageVoltage = 0;
-        for (DcMotor motor : DcMotors) {
-            VoltageSensor sensor = (VoltageSensor) motor;
-            if (sensor != null) {
-                averageVoltage += sensor.getVoltage();
-            }
-        }
-        averageVoltage /= 4;
-        return averageVoltage;
-    }
-    */
-
-    public boolean isBusy() {
-        return LeftFrontMotor.isBusy() || RightFrontMotor.isBusy();
-    }
-
-    public DcMotor.ZeroPowerBehavior getZeroPowerBehavior() {
-        return LeftFrontMotor.getZeroPowerBehavior();
-    }
-
-    public void rotate(GyroUtils.Direction turnDirection, double power) {
-        switch (turnDirection) {
-            case CLOCKWISE:
-                powerLeft(power);
-                powerRight(-power);
-                break;
-            case COUNTERCLOCKWISE:
-                powerLeft(-power);
-                powerRight(power);
-                break;
+        if (!spoofMotors) {
+            LeftFrontMotor.setZeroPowerBehavior(behavior);
+            LeftBackMotor.setZeroPowerBehavior(behavior);
+            RightFrontMotor.setZeroPowerBehavior(behavior);
+            RightBackMotor.setZeroPowerBehavior(behavior);
         }
     }
 

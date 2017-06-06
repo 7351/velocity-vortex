@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroUtils.Direction.COUNTERCLOCKWISE;
@@ -151,7 +152,7 @@ public class GyroUtils {
                 DbgLog.msg("Initial degrees off: " + initialDegreesOff);
             }
 
-            percentComplete = 100 - Range.clip((degreesOff / initialDegreesOff) * 100, 0, 100);
+            percentComplete = Double.valueOf(AutonomousUtils.df.format(100 - Range.clip((degreesOff / initialDegreesOff) * 100, 0, 100)));
         }
 
         public void setData(double degree) {

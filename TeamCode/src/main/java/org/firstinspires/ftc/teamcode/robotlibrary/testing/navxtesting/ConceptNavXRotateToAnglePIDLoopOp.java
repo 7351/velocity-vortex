@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
-import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PIDGyroTurn;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
 
 import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.df;
@@ -63,7 +63,6 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
     @Override
     public void init() {
 
-        driveTrain = new DriveTrain(hardwareMap);
         AHRS.setLogging(true);
         navx_device = AHRS.getInstance(hardwareMap);
 
@@ -86,7 +85,11 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
                     0.01,
                     0.0,
                     0.0);
-            PIDGyroTurn.createTurn(this, 180, pid);
+            GyroTurn turn = GyroTurn.createTurn(this, -180, pid);
+            if (turn != null) {
+                this.driveTrain = turn.driveTrain;
+                telemetry.addData("Percent completed", turn.detail.percentComplete);
+            }
         }
 
         if (stage == 2) {
@@ -99,8 +102,10 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
         }
 
         telemetry.addData("Stage", String.valueOf(stage));
-        telemetry.addData("L", driveTrain.LeftFrontMotor.getPower());
-        telemetry.addData("R", driveTrain.RightFrontMotor.getPower());
+        if (driveTrain != null) {
+            telemetry.addData("L", driveTrain.LeftPower);
+            telemetry.addData("R", driveTrain.RightPower);
+        }
         telemetry.addData("Heading", df.format(navx_device.getYaw()));
         telemetry.addData("Connected", navx_device.isConnected());
 
