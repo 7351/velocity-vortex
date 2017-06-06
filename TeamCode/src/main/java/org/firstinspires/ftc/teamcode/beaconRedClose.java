@@ -26,7 +26,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
  * Created by Leo on 10/16/2016.
  */
 
-@Autonomous(name = "beaceonRedClose", group = "AWorking")
+@Autonomous(name = "beaconRedClose", group = "AWorking")
 public class beaconRedClose extends StateMachineOpMode {
     ColorUtils.Color actedColor;
 
@@ -298,7 +298,7 @@ public class beaconRedClose extends StateMachineOpMode {
                 if (turn == null) {
                     GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                             GyroUtils.Direction.CLOCKWISE : GyroUtils.Direction.COUNTERCLOCKWISE;
-                    turn = new EncoderTurn(driveTrain, 9, turnDirection);
+                    turn = new EncoderTurn(driveTrain, 11, turnDirection);
                     turn.run();
                 }
                 if (turn.isCompleted() || time.time() > 0.5) {
@@ -311,7 +311,7 @@ public class beaconRedClose extends StateMachineOpMode {
                 if (turn == null) {
                     GyroUtils.Direction turnDirection = (beaconUtils.getCurrentPosition().equals(BeaconUtils.ServoPosition.TRIGGER_LEFT)) ?
                             GyroUtils.Direction.COUNTERCLOCKWISE : GyroUtils.Direction.CLOCKWISE;
-                    turn = new EncoderTurn(driveTrain, 9, turnDirection);
+                    turn = new EncoderTurn(driveTrain, 11, turnDirection);
                     turn.run();
                 }
                 if (turn.isCompleted() || time.time() > 0.5) {
@@ -321,7 +321,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 19) { //Back up from Beacon 12cm with Range Sensor to prepare for turn
-                if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 15) {
+                if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 12) {
                     driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     driveTrain.powerLeft(-0.55);
                     driveTrain.powerRight(-0.55);
@@ -336,10 +336,10 @@ public class beaconRedClose extends StateMachineOpMode {
             if (stage == 20) { // Turn towards the white line of the second beacon
                 if(moveType == 0){
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 192, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 198, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 177)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 180)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -391,10 +391,10 @@ public class beaconRedClose extends StateMachineOpMode {
             if (stage == 26) { // Turn to face beacon 2
                 if(moveType == 0){
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 200, GyroUtils.Direction.CLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 190, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() < 95)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 175)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -417,8 +417,7 @@ public class beaconRedClose extends StateMachineOpMode {
                 } else {
                     RobotLog.d("Attempted to stop robot at " + rangeUtils.rangeSensor.getDistance(DistanceUnit.CM));
                     driveTrain.stopRobot();
-                    stage = 928;
-                    time.reset();
+                    next();
                 }
             }
 
@@ -469,7 +468,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 33) { //Back up 10 cm with prox to prepare for turn
-                if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 10) {
+                if (rangeUtils.getDistance(DistanceUnit.CM, -1) <= 9.5) {
                     driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     driveTrain.powerLeft(-0.55);
                     driveTrain.powerRight(-0.55);
