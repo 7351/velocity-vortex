@@ -391,10 +391,10 @@ public class beaconRedClose extends StateMachineOpMode {
             if (stage == 26) { // Turn to face beacon 2
                 if(moveType == 0){
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 300, GyroUtils.Direction.CLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 200, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() < 90)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() < 95)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
