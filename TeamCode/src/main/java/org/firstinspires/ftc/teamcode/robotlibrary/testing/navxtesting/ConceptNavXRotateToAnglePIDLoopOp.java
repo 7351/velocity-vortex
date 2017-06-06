@@ -71,12 +71,10 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
     @Override
     public void loop() {
 
-
         if (stage == 0) {
             if (!navx_device.isCalibrating()) {
                 navx_device.zeroYaw();
-                stage++;
-                time.reset();
+                next();
             }
         }
 
@@ -116,8 +114,4 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
         navx_device.close();
     }
 
-    @Override
-    public void next() {
-        stage++;
-    }
 }

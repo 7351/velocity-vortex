@@ -15,25 +15,26 @@ import com.qualcomm.robotcore.util.Range;
 public class GyroTurn implements Routine {
 
     private static GyroTurn instance;
-    private final double TOLERANCE_DEGREES = 5;
+    private final double TOLERANCE_DEGREES = 5; // The degrees positive and negative that you want to get to
     private final double TIMEOUT = 0; // In seconds, 0 if you don't want a timeout
 
     public navXPIDController yawPIDController;
-    public GyroUtils.GyroDetail detail;
-    public DriveTrain driveTrain;
+    public GyroUtils.GyroDetail detail; // Used for getting useful data and stats from a turn
+    public DriveTrain driveTrain; // DriveTrain instance, it's public so you can grab the object outside th class
+    private AHRS navx; // navX instance
 
-    double targetDegree = 0;
-    int completedCounter = 0;
+    private double targetDegree = 0;
+    private int completedCounter = 0;
 
     private ElapsedTime creationTime = new ElapsedTime(); // Used for timeout failsafe
 
-    private AHRS navx;
     private StateMachineOpMode opMode;
     private navXPIDController.PIDResult yawPIDResult;
-    private double MinMotor = 0.0925, MaxMotor = 0.25;
+    private double MinMotor = 0.0925, MaxMotor = MinMotor;
 
     /**
      * Static constructor for a GyroTurn if you want to specify the PID for
+     *
      * @param pid The PID instance of the class that has the P, I, and D coefficients.
      * @return the GyroTurn instance
      */
@@ -47,7 +48,8 @@ public class GyroTurn implements Routine {
 
     /**
      * Static constructor for an OpMode style class with just the degree and opmode
-     * @param opModeArg the OpMode that implements StateMachineOpMode, usually just type "this"
+     *
+     * @param opModeArg       the OpMode that implements StateMachineOpMode, usually just type "this"
      * @param targetDegreeArg the degree that you want to turn to (0-360)
      * @return the instance of the GyroTurn class. You can check the progress using the GyroDetail detail for percentage complete.
      */
@@ -76,12 +78,10 @@ public class GyroTurn implements Routine {
         yawPIDController.setOutputRange(-1, 1);
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
 
-        if (pid == null) {
-            yawPIDController.setPID(0.005, 0, 0);
-        } else {
-            yawPIDController.setPID(pid.p, pid.i, pid.d);
-        }
+        if (pid == null) pid = new PID(); // Use defaults if not specified a PID preference
+        yawPIDController.setPID(pid.p, pid.i, pid.d);
 
+        /* Enable the controller and send data to the navX */
         yawPIDController.enable(true);
 
         /* We want to use the RUN_USING_ENCODER run mode to get the most accurate turning power */
@@ -133,11 +133,10 @@ public class GyroTurn implements Routine {
     @Override
     public void completed() {
         driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        driveTrain.stopRobot();
-        yawPIDController.enable(false);
-        driveTrain.stopRobot();
-        opMode.next();
-        instance = null;
+        driveTrain.stopRobot(); // Stop the robot while floating into position
+        yawPIDController.enable(false); // Tell navX to stop tracking
+        opMode.next(); // Go to next stage
+        teardown();
     }
 
     public static void teardown() {
