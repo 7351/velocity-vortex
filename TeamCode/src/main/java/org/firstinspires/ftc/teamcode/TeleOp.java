@@ -52,7 +52,6 @@ public class TeleOp extends OpMode {
 
         driveTrain = new DriveTrain(hardwareMap);
         flyWheel = new FlyWheel(hardwareMap);
-        flyWheel.defaultStartingPower += 0.1;
         intake = new Intake(hardwareMap);
         lift = new Lift(hardwareMap);
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
