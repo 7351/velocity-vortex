@@ -1,12 +1,20 @@
 package org.firstinspires.ftc.teamcode.robotlibrary.BigAl;
 
+import android.os.Environment;
 import android.support.annotation.Nullable;
 
+import com.google.common.io.Files;
 import com.kauailabs.navx.ftc.AHRS;
 import com.kauailabs.navx.ftc.navXPIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Dynamic Signals on 1/16/2017.
@@ -15,7 +23,7 @@ import com.qualcomm.robotcore.util.Range;
 public class GyroTurn implements Routine {
 
     private static GyroTurn instance;
-    private final double TOLERANCE_DEGREES = 5; // The degrees positive and negative that you want to get to
+    private final double TOLERANCE_DEGREES = 2; // The degrees positive and negative that you want to get to
     private final double TIMEOUT = 0; // In seconds, 0 if you don't want a timeout
 
     public navXPIDController yawPIDController;
@@ -30,7 +38,11 @@ public class GyroTurn implements Routine {
 
     private StateMachineOpMode opMode;
     private navXPIDController.PIDResult yawPIDResult;
-    private double MinMotor = 0.095, MaxMotor = 0.65;
+    private double MinMotor = 0.095, MaxMotor = 0.7;
+
+    private boolean recordData = false;
+    private File chartLocation = new File(Environment.getExternalStorageDirectory() + File.separator + "FIRST" + File.separator + "GyroTurnData.html");
+    private List<String> gyroData;
 
     /**
      * Static constructor for a GyroTurn if you want to specify the PID for
@@ -63,6 +75,11 @@ public class GyroTurn implements Routine {
         this.targetDegree = targetDegree;
 
         driveTrain = new DriveTrain(opMode.hardwareMap);
+
+        if (pid != null) recordData = true;
+        if (recordData) {
+            gyroData = new ArrayList<>();
+        }
 
         creationTime.reset();
 
@@ -111,6 +128,11 @@ public class GyroTurn implements Routine {
             driveTrain.powerRight(-power);
         }
 
+        if (recordData) {
+            double timestamp = (double) Math.round(creationTime.time() * 100) / 100;
+            double degree = targetDegree - (double) Math.round(detail.degreesOff * 100) / 100;
+            gyroData.add("\n[" + timestamp + ", " + degree + "],");
+        }
 
     }
 
@@ -135,11 +157,26 @@ public class GyroTurn implements Routine {
         driveTrain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         driveTrain.stopRobot(); // Stop the robot while floating into position
         yawPIDController.enable(false); // Tell navX to stop tracking
+        // Write our data to a google chart
         opMode.next(); // Go to next stage
+        if (recordData) writeGyroData();
         teardown();
     }
 
     public static void teardown() {
         instance = null;
     }
+
+    public void writeGyroData() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script><script type=\"text/javascript\">google.charts.load('current', {packages: ['corechart', 'line']});google.charts.setOnLoadCallback(drawBackgroundColor);function drawBackgroundColor() {var data = new google.visualization.DataTable();data.addColumn('number', 'Time (seconds)');data.addColumn('number', 'Degrees');data.addRows([");
+        for (String arrayString : gyroData) sb.append(arrayString);
+        sb.append("\n]);var options = {hAxis: {title: 'Time'},vAxis: {title: 'Degrees to target'}};var chart = new google.visualization.LineChart(document.getElementById('chart_div'));chart.draw(data, options);}</script><div id=\"chart_div\"></div>");
+        try {
+            Files.write(sb.toString().getBytes(Charset.defaultCharset()), chartLocation); // Write to the html location
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

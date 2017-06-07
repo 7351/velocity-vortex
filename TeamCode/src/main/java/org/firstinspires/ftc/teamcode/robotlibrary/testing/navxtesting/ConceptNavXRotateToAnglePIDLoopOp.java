@@ -84,7 +84,7 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
                     0.01,
                     0.0,
                     0.01);
-            GyroTurn turn = GyroTurn.createTurn(this, 90, pid);
+            GyroTurn turn = GyroTurn.createTurn(this, -90, pid);
             if (turn != null) {
                 this.driveTrain = turn.driveTrain;
                 telemetry.addData("Percent completed", turn.detail.percentComplete);

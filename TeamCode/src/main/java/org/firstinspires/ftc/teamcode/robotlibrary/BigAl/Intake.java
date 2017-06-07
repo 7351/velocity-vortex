@@ -14,7 +14,7 @@ public class Intake {
 
     private DcMotor IntakeA;
     public Servo IntakeStopper;
-    private double OpenPosition = 10/128;
+    private double OpenPosition = 30/128;
     private double ClosePosition = 1;
 
     public Intake(HardwareMap hardwareMap) {

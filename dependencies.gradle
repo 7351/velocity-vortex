@@ -1,5 +1,5 @@
 dependencies {
-
+    compile 'com.google.guava:guava:20.0'
 }
 
 // You must perform a gradle sync after you add or remove a dependency
