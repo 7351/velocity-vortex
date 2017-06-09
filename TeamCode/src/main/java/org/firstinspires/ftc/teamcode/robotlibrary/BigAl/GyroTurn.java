@@ -38,7 +38,7 @@ public class GyroTurn implements Routine {
 
     private StateMachineOpMode opMode;
     private navXPIDController.PIDResult yawPIDResult;
-    private double MinMotor = 0.095, MaxMotor = 0.7;
+    private double MinMotor = 0.0925, MaxMotor = 1;
 
     private boolean recordData = false;
     private File chartLocation = new File(Environment.getExternalStorageDirectory() + File.separator + "FIRST" + File.separator + "GyroTurnData.html");

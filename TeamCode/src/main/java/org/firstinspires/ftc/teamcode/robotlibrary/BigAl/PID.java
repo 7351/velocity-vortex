@@ -17,8 +17,8 @@ public class PID {
      * Default PID variables, to be tweaked after the correct variables are found
      */
     public PID() {
-        this.p = 0.005;
+        this.p = 0.02;
         this.i = 0;
-        this.d = 0;
+        this.d = 0.05;
     }
 }
