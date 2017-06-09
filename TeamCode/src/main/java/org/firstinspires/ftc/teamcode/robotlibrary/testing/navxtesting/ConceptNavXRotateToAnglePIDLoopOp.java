@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DriveTrain;
+import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.DynamicAutonomousSelector;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.PID;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.GyroTurn;
 import org.firstinspires.ftc.teamcode.robotlibrary.BigAl.StateMachineOpMode;
@@ -81,10 +82,11 @@ public class ConceptNavXRotateToAnglePIDLoopOp extends StateMachineOpMode {
 
         if (stage == 1) {
             PID pid = new PID(
-                    0.01,
+                    0.02,
                     0.0,
-                    0.01);
-            GyroTurn turn = GyroTurn.createTurn(this, -90, pid);
+                    0.05
+            );
+            GyroTurn turn = GyroTurn.createTurn(this, 90, pid);
             if (turn != null) {
                 this.driveTrain = turn.driveTrain;
                 telemetry.addData("Percent completed", turn.detail.percentComplete);
