@@ -238,6 +238,7 @@ public class capBallRedFar extends StateMachineOpMode {
         telemetry.addData("Right Back Position: ", driveTrain.RightBackMotor.getCurrentPosition());
         telemetry.addData("FlyWheel", String.valueOf(flyWheel.FlyWheelMotor.getPower()));
         telemetry.addData("Stage", String.valueOf(stage));
+        telemetry.addData("Heading", gyroUtils.gyro.getHeading());
     }
 
     @Override
