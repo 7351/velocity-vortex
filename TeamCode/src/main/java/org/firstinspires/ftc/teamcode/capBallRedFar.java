@@ -36,6 +36,7 @@ public class capBallRedFar extends StateMachineOpMode {
     //0 is for just encoders
     //1 is for encoders and gyro
     //2 is for encoders and navX
+    private double wheelPower = 0;
 
     @Override
     public void init() {
@@ -56,7 +57,16 @@ public class capBallRedFar extends StateMachineOpMode {
     public void loop() {
 
         if (stage == 0) {
-            next(); // Save this for where the gyro should go
+            if (!gyroUtils.gyro.isCalibrating()) {
+                stage++;
+                time.reset();
+            }
+            telemetry.addData("Calibrating", String.valueOf(gyroUtils.gyro.isCalibrating()));
+            if (driveTrain.getVoltage() > 12)
+                wheelPower = .7;
+            else
+                wheelPower = .8;
+            // Save this for where the gyro should go
         }
 
         if (stage == 1) {
@@ -81,10 +91,10 @@ public class capBallRedFar extends StateMachineOpMode {
         if (stage == 3) {
             if(moveType == 0){
                 if (turn == null) {
-                    turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    turn = new EncoderTurn(driveTrain, 90, GyroUtils.Direction.COUNTERCLOCKWISE);
                     turn.run();
                 }
-                if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 45)) || turn.isCompleted()) {
+                if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 50)) || turn.isCompleted()) {
                     driveTrain.stopRobot();
                     stage++;
                     time.reset();
@@ -100,10 +110,10 @@ public class capBallRedFar extends StateMachineOpMode {
         if (stage == 5) {
             if (moveType == 0) {
                 if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 1250, 0.5);
+                    drive = new EncoderDrive(driveTrain, 1000, .5);//1250, 0.5);
                     drive.run();
                     if (shoot > 0) {
-                        flyWheel.currentPower = flyWheel.defaultStartingPower;
+                        flyWheel.currentPower = wheelPower;
                         flyWheel.currentlyRunning = true;
                     }
                 }
@@ -167,7 +177,7 @@ public class capBallRedFar extends StateMachineOpMode {
         }
 
         if (target.equals("Corner")) {
-            if (moveType ==0){
+            if (moveType == 0){
                 if (stage == 7) {
                     if (time.time() > 10) {
                         next();
@@ -180,7 +190,7 @@ public class capBallRedFar extends StateMachineOpMode {
                             turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
                             turn.run();
                         }
-                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 90)) || turn.isCompleted()) {
+                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 85)) || turn.isCompleted()) {
                             driveTrain.stopRobot();
                             stage++;
                             time.reset();
@@ -190,7 +200,7 @@ public class capBallRedFar extends StateMachineOpMode {
                 }
 
                 if (stage == 9) {
-                    NewEncoderDrive.createDrive(this, 2900);
+                    NewEncoderDrive.createDrive(this, 2800);
                 }
 
                 if (stage == 10) {
@@ -199,7 +209,7 @@ public class capBallRedFar extends StateMachineOpMode {
                             turn = new EncoderTurn(driveTrain, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
                             turn.run();
                         }
-                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 135)) || turn.isCompleted()) {
+                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 145)) || turn.isCompleted()) {
                             driveTrain.stopRobot();
                             stage++;
                             time.reset();
@@ -209,7 +219,7 @@ public class capBallRedFar extends StateMachineOpMode {
                 }
 
                 if (stage == 11) {
-                    NewEncoderDrive.createDrive(this, 2900);
+                    NewEncoderDrive.createDrive(this, 3000);
                 }
 
                 if (stage == 12) {

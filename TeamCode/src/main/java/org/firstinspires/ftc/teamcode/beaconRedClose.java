@@ -133,10 +133,10 @@ public class beaconRedClose extends StateMachineOpMode {
             if (stage == 4) {
                 if(moveType == 0){
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 170, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 200, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 95)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 50)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -146,16 +146,16 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 5) {
-                NewEncoderDrive.createDrive(this, 1500);
+                NewEncoderDrive.createDrive(this, 1600);
             }
 
             if (stage == 6) {
                 if(moveType == 0){
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 120, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 140)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 185)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -359,7 +359,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
             if (stage == 22) { // Drive until the color sensor sees the white line of Beacon 2
                 if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, -3100, 0.7);
+                    drive = new EncoderDrive(driveTrain, -3100, 0.6);
                 }
                 drive.runWithDecrementPower(0.0125); // slows down gradually to hit white line
                 if (colorUtils.aboveWhiteLine() && Math.abs(driveTrain.RightFrontMotor.getCurrentPosition()) > 1000) {
@@ -489,7 +489,7 @@ public class beaconRedClose extends StateMachineOpMode {
                         turn = new EncoderTurn(driveTrain, 300, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 220)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 210)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
