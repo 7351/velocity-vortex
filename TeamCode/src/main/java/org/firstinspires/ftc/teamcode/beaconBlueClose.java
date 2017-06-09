@@ -44,7 +44,11 @@ public class beaconBlueClose extends StateMachineOpMode {
     /* Selector variables */
     private String alliance = "Blue";
     private String beaconAmount = "2";
-    private int shoot = 2;
+    private int shoot = 2;;
+    private int moveType = 0;
+    //0 is for gyro with encoder backup
+    //1 is for encoders and gyro
+    //2 is for encoders and navX
 
     @Override
     public void init() {
