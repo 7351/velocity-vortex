@@ -175,7 +175,18 @@ public class capBallRedFar extends StateMachineOpMode {
                 }
 
                 if (stage == 8) {
-                    NewEncoderTurn.createTurn(this, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    if(moveType == 0){
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                            turn.run();
+                        }
+                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 90)) || turn.isCompleted()) {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    //NewEncoderTurn.createTurn(this, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
                 }
 
                 if (stage == 9) {
@@ -183,7 +194,18 @@ public class capBallRedFar extends StateMachineOpMode {
                 }
 
                 if (stage == 10) {
-                    NewEncoderTurn.createTurn(this, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    if(moveType == 0){
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
+                            turn.run();
+                        }
+                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 135)) || turn.isCompleted()) {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    //NewEncoderTurn.createTurn(this, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
                 }
 
                 if (stage == 11) {
