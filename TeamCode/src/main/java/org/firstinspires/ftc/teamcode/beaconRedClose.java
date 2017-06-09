@@ -66,6 +66,7 @@ public class beaconRedClose extends StateMachineOpMode {
         new Lift(hardwareMap);
         gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
         gyroUtils.gyro.calibrate();
+        intake.openStopper();
 
     }
 
@@ -106,15 +107,15 @@ public class beaconRedClose extends StateMachineOpMode {
 
         if (stage == 2) {//shoot particles and wait 2.5 seconds
             if (shoot == 1) {
-                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                intake.setIntakePower(Intake.IntakeSpec.A, 1);
             }
             if (shoot == 2) {
-                intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                intake.setIntakePower(Intake.IntakeSpec.A, 1);
             }
             if (time.time() > 2.5 || shoot <= 0) {
                 next();
-                intake.stopIntake(Intake.IntakeSpec.BOTH);
-                intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
+                intake.stopIntake(Intake.IntakeSpec.A);
+                intake.setIntakePower(Intake.IntakeSpec.A, -1);
                 flyWheel.currentlyRunning = false;
             }
         }
@@ -169,7 +170,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
             if (stage == 8) {
                 if (time.time() > 2) {
-                    intake.stopIntake(Intake.IntakeSpec.BOTH);
+                    intake.stopIntake(Intake.IntakeSpec.A);
                 }
             }
         }
@@ -229,6 +230,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
             if (stage == 10) { // Backup to line
                 NewEncoderDrive.createDrive(this, -100, 0.2);
+                intake.stopIntake(Intake.IntakeSpec.A);
             }
 
             if (stage == 11) { // Turn to face beacon 1
@@ -336,10 +338,10 @@ public class beaconRedClose extends StateMachineOpMode {
             if (stage == 20) { // Turn towards the white line of the second beacon
                 if(moveType == 0){
                     if (turn == null) {
-                        turn = new EncoderTurn(driveTrain, 198, GyroUtils.Direction.COUNTERCLOCKWISE);
+                        turn = new EncoderTurn(driveTrain, 188, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 180)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 170)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -394,7 +396,7 @@ public class beaconRedClose extends StateMachineOpMode {
                         turn = new EncoderTurn(driveTrain, 190, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 175)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() < 90)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -487,7 +489,7 @@ public class beaconRedClose extends StateMachineOpMode {
                         turn = new EncoderTurn(driveTrain, 300, GyroUtils.Direction.COUNTERCLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 225)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 220)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -498,7 +500,7 @@ public class beaconRedClose extends StateMachineOpMode {
             }
 
             if (stage == 35) {//drive to X cm/2700 ticks to hit cap ball and park
-                NewEncoderDrive.createDrive(this, 3800, 1);
+                NewEncoderDrive.createDrive(this, 3500, 1);
             }
         }
 

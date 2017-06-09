@@ -25,6 +25,7 @@ public class capBallRedFar extends StateMachineOpMode {
     // Completed on 3/26/17 12:45PM
     DriveTrain driveTrain;
     ColorUtils colorUtils;
+    GyroUtils gyroUtils;
     Intake intake;
     FlyWheel flyWheel;
     EncoderDrive drive;
@@ -45,6 +46,9 @@ public class capBallRedFar extends StateMachineOpMode {
         intake = new Intake(hardwareMap);
         new Lift(hardwareMap);
         new BeaconUtils(hardwareMap, colorUtils);
+        gyroUtils = new GyroUtils(hardwareMap, driveTrain, telemetry);
+        gyroUtils.gyro.calibrate();
+        intake.openStopper();
 
     }
 
@@ -75,15 +79,15 @@ public class capBallRedFar extends StateMachineOpMode {
             }
         }
         if (stage == 3) {
-            if (moveType == 0)
-            {
+            if(moveType == 0){
                 if (turn == null) {
-                    turn = new EncoderTurn(driveTrain, 79, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    turn = new EncoderTurn(driveTrain, 80, GyroUtils.Direction.COUNTERCLOCKWISE);
                     turn.run();
                 }
-                if (turn.isCompleted()) {
-                    turn.completed();
-                    next();
+                if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 45)) || turn.isCompleted()) {
+                    driveTrain.stopRobot();
+                    stage++;
+                    time.reset();
                 }
             }
         }
@@ -115,15 +119,15 @@ public class capBallRedFar extends StateMachineOpMode {
         if (stage == 6) {
             if (time.time() > .25) {
                 if (shoot == 1) {
-                    intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.IN);
+                    intake.setIntakePower(Intake.IntakeSpec.A, 1);
                 }
                 if (shoot == 2) {
-                    intake.setIntake(Intake.IntakeSpec.BOTH, Intake.IntakeDirection.IN);
+                    intake.setIntakePower(Intake.IntakeSpec.A, 1);
                 }
                 if (time.time() > 3.5 || shoot <= 0) {
                     next();
-                    intake.stopIntake(Intake.IntakeSpec.BOTH);
-                    intake.setIntake(Intake.IntakeSpec.A, Intake.IntakeDirection.OUT);
+                    intake.stopIntake(Intake.IntakeSpec.A);
+                    intake.setIntakePower(Intake.IntakeSpec.A, -1);
                     flyWheel.currentlyRunning = false;
                 }
             }
@@ -171,7 +175,18 @@ public class capBallRedFar extends StateMachineOpMode {
                 }
 
                 if (stage == 8) {
-                    NewEncoderTurn.createTurn(this, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    if(moveType == 0){
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
+                            turn.run();
+                        }
+                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 90)) || turn.isCompleted()) {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    //NewEncoderTurn.createTurn(this, 70, GyroUtils.Direction.COUNTERCLOCKWISE);
                 }
 
                 if (stage == 9) {
@@ -179,7 +194,18 @@ public class capBallRedFar extends StateMachineOpMode {
                 }
 
                 if (stage == 10) {
-                    NewEncoderTurn.createTurn(this, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
+                    if(moveType == 0){
+                        if (turn == null) {
+                            turn = new EncoderTurn(driveTrain, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
+                            turn.run();
+                        }
+                        if (((gyroUtils.gyro.getHeading() < 350) && (gyroUtils.gyro.getHeading() > 135)) || turn.isCompleted()) {
+                            driveTrain.stopRobot();
+                            stage++;
+                            time.reset();
+                        }
+                    }
+                    //NewEncoderTurn.createTurn(this, 47, GyroUtils.Direction.COUNTERCLOCKWISE);
                 }
 
                 if (stage == 11) {
