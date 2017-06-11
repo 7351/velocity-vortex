@@ -548,7 +548,7 @@ public class beaconBlueClose extends StateMachineOpMode {
                 driveTrain.stopRobot();
                 next();
             }
-            if (drive.isCompleted()) { //fail safe if we miss white line
+            if (drive.isCompleted()) { //fail safe if we miss the second white line
                 stage = 9922;
                 drive = null;
                 turn = null;
