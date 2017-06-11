@@ -78,9 +78,9 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(gyroUtils.gyro.isCalibrating()));
             if (driveTrain.getVoltage() > 12)
-                wheelPower = .85;
+                wheelPower = .82;
             else
-                wheelPower = .95;
+                wheelPower = .92;
         }
 
         if (stage == 1) {//drive forward X cm/825 ticks to shooting position&start flywheel
@@ -362,7 +362,7 @@ public class beaconBlueClose extends StateMachineOpMode {
                     time.reset();
                 }
                 if (drive.isCompleted()) { //fail safe if we miss white line
-                    stage = AutonomousUtils.DEADBEEF;
+                    stage = 922;
                     driveTrain.stopRobot();
                     AutonomousUtils.failSafeError(hardwareMap);
                 }
@@ -375,7 +375,7 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
 
             if (stage == 24) { // Back up x cm/75 Ticks since we ran past the while line
-                NewEncoderDrive.createDrive(this, -185, 0.3);
+                NewEncoderDrive.createDrive(this, -105, 0.3);
             }
 
             if (stage == 25) { // Wait
@@ -482,7 +482,7 @@ public class beaconBlueClose extends StateMachineOpMode {
                         turn = new EncoderTurn(driveTrain, 400, GyroUtils.Direction.CLOCKWISE);
                         turn.run();
                     }
-                    if (((gyroUtils.gyro.getHeading() > 10) && (gyroUtils.gyro.getHeading() < 165)) || turn.isCompleted()) {
+                    if (((gyroUtils.gyro.getHeading() > 10) && (gyroUtils.gyro.getHeading() < 163)) || turn.isCompleted()) {
                         driveTrain.stopRobot();
                         stage++;
                         time.reset();
@@ -492,7 +492,7 @@ public class beaconBlueClose extends StateMachineOpMode {
                 //NewEncoderDrive.teardown();
             }
             if (stage == 35) {//drive to X cm/-3100 ticks to hit cap ball and park
-                NewEncoderDrive.createDrive(this, 4000, 1);
+                NewEncoderDrive.createDrive(this, 3500, 1);
             }
         }
 
@@ -537,6 +537,34 @@ public class beaconBlueClose extends StateMachineOpMode {
                 drive = null;
                 turn = null;
                 stage = 12;
+            }
+        }
+        if (stage == 922) {
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, -3600, 0.25);
+                drive.run();
+            }
+            if (colorUtils.aboveWhiteLine()) {
+                driveTrain.stopRobot();
+                next();
+            }
+            if (drive.isCompleted()) { //fail safe if we miss white line
+                stage = 9922;
+                drive = null;
+                turn = null;
+                driveTrain.stopRobot();
+                AutonomousUtils.failSafeError(hardwareMap);
+            }
+        }
+        if (stage == 921){
+            if (drive == null){
+                drive = new EncoderDrive(driveTrain, 200, .25);
+                drive.run();
+            }
+            if (drive.isCompleted()){
+                drive.completed();
+                stage = 25;
+                time.reset();
             }
         }
 
