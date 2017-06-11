@@ -57,6 +57,7 @@ public class TeleOp extends OpMode {
         teleOpUtils = new TeleOpUtils(gamepad1, gamepad2);
         colorUtils = new ColorUtils(hardwareMap);
         beaconUtils = new BeaconUtils(hardwareMap, colorUtils, "NS");
+        intake.closeStopper();
 
     }
 

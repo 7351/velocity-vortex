@@ -28,6 +28,7 @@ import static org.firstinspires.ftc.teamcode.robotlibrary.AutonomousUtils.COMPLE
 
 @Autonomous(name = "beaconRedClose", group = "AWorking")
 public class beaconRedClose extends StateMachineOpMode {
+
     ColorUtils.Color actedColor;
 
     DriveTrain driveTrain;
@@ -41,7 +42,6 @@ public class beaconRedClose extends StateMachineOpMode {
 
     EncoderDrive drive;
     EncoderTurn turn;
-
     boolean capBallGet = false;
     boolean corner = false;
     /* Selector variables */
@@ -359,7 +359,7 @@ public class beaconRedClose extends StateMachineOpMode {
 
             if (stage == 22) { // Drive until the color sensor sees the white line of Beacon 2
                 if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, -3100, 0.6);
+                    drive = new EncoderDrive(driveTrain, -3100, 0.7);
                 }
                 drive.runWithDecrementPower(0.0125); // slows down gradually to hit white line
                 if (colorUtils.aboveWhiteLine() && Math.abs(driveTrain.RightFrontMotor.getCurrentPosition()) > 1000) {

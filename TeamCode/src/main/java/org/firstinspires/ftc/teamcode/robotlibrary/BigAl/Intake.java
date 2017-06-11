@@ -14,8 +14,8 @@ public class Intake {
 
     private DcMotor IntakeA;
     public Servo IntakeStopper;
-    private double OpenPosition = 30/128;
-    private double ClosePosition = 1;
+    private double OpenPosition = .48;
+    private double ClosePosition = .92;
 
     public Intake(HardwareMap hardwareMap) {
         IntakeA = hardwareMap.dcMotor.get("IntakeA");
