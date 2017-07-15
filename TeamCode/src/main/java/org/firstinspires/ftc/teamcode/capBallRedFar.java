@@ -63,9 +63,9 @@ public class capBallRedFar extends StateMachineOpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(gyroUtils.gyro.isCalibrating()));
             if (driveTrain.getVoltage() > 12)
-                wheelPower = .7;
+                wheelPower = .9;
             else
-                wheelPower = .8;
+                wheelPower = .9;
             // Save this for where the gyro should go
         }
 
@@ -110,7 +110,7 @@ public class capBallRedFar extends StateMachineOpMode {
         if (stage == 5) {
             if (moveType == 0) {
                 if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 1000, .5);//1250, 0.5);
+                    drive = new EncoderDrive(driveTrain, 1100, .5);//1250, 0.5);
                     drive.run();
                     if (shoot > 0) {
                         flyWheel.currentPower = wheelPower;
@@ -146,7 +146,7 @@ public class capBallRedFar extends StateMachineOpMode {
             if (moveType == 0){
                 if (stage == 7) {
                     if (drive == null) {
-                        drive = new EncoderDrive(driveTrain, 2300, 0.5);
+                        drive = new EncoderDrive(driveTrain, 2400, 0.5);
                         drive.run();
                     }
                     if (drive.isCompleted() || colorUtils.aboveRedLine()) {

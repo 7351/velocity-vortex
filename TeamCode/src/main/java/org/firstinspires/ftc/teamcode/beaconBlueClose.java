@@ -78,24 +78,31 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(gyroUtils.gyro.isCalibrating()));
             if (driveTrain.getVoltage() > 12)
-                wheelPower = .82;
+                wheelPower = .9;
             else
-                wheelPower = .92;
+                wheelPower = .9;
         }
 
         if (stage == 1) {//drive forward X cm/825 ticks to shooting position&start flywheel
             if (drive == null) {
                 drive = new EncoderDrive(driveTrain, 500, 0.5);
                 drive.run();
-                if (shoot > 0) {
-                    flyWheel.currentPower = flyWheel.defaultStartingPower;
-                    flyWheel.currentlyRunning = true;
-                }
             }
             if (drive.isCompleted()) {
                 driveTrain.stopRobot();
                 time.reset();
-                stage++;
+                stage += .5;
+            }
+        }
+
+        if (stage == 1.5){
+            if (shoot > 0) {
+                flyWheel.currentPower = flyWheel.defaultStartingPower;
+                flyWheel.currentlyRunning = true;
+            }
+            if (time.time() > 1){
+                time.reset();
+                stage += .5;
             }
         }
 

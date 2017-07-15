@@ -80,9 +80,9 @@ public class beaconRedClose extends StateMachineOpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(gyroUtils.gyro.isCalibrating()));
             if (driveTrain.getVoltage() > 12)
-                wheelPower = .82;
+                wheelPower = 1;
             else
-                wheelPower = .92;
+                wheelPower = 1;
         }
 
         if (stage == 1) {//drive forward X cm/725 ticks to shooting position&start flywheel
@@ -90,16 +90,23 @@ public class beaconRedClose extends StateMachineOpMode {
                 if (drive == null) {
                     drive = new EncoderDrive(driveTrain, 500, 0.5);
                     drive.run();
-                    if (shoot > 0) {
-                        flyWheel.currentPower = wheelPower;
-                        flyWheel.currentlyRunning = true;
-                    }
                 }
                 if (drive.isCompleted()) {
                     driveTrain.stopRobot();
                     time.reset();
-                    stage++;
+                    stage += .5;
                 }
+            }
+        }
+
+        if (stage == 1.5){
+            if (shoot > 0) {
+                flyWheel.currentPower = flyWheel.defaultStartingPower;
+                flyWheel.currentlyRunning = true;
+            }
+            if (time.time() > 1){
+                time.reset();
+                stage += .5;
             }
         }
 

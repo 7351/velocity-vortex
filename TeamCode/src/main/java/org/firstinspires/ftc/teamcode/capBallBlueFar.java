@@ -64,9 +64,9 @@ public class capBallBlueFar extends StateMachineOpMode {
             }
             telemetry.addData("Calibrating", String.valueOf(gyroUtils.gyro.isCalibrating()));
             if (driveTrain.getVoltage() > 12)
-                wheelPower = .7;
+                wheelPower = .9;
             else
-                wheelPower = .8;
+                wheelPower = .9;
             // Save this for where the gyro should go
         }
 
