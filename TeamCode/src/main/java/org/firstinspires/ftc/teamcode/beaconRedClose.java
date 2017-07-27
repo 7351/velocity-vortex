@@ -90,6 +90,10 @@ public class beaconRedClose extends StateMachineOpMode {
                 if (drive == null) {
                     drive = new EncoderDrive(driveTrain, 500, 0.5);
                     drive.run();
+                    if (shoot > 0) {
+                        flyWheel.currentPower = wheelPower;
+                        flyWheel.currentlyRunning = true;
+                    }
                 }
                 if (drive.isCompleted()) {
                     driveTrain.stopRobot();

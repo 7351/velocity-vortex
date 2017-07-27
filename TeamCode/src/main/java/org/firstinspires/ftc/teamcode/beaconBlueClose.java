@@ -85,7 +85,7 @@ public class beaconBlueClose extends StateMachineOpMode {
 
         if (stage == 1) {//drive forward X cm/825 ticks to shooting position&start flywheel
             if (drive == null) {
-                drive = new EncoderDrive(driveTrain, 500, 0.5);
+                drive = new EncoderDrive(driveTrain, 650, 0.5);
                 drive.run();
             }
             if (drive.isCompleted()) {
@@ -116,10 +116,23 @@ public class beaconBlueClose extends StateMachineOpMode {
                 intake.setIntakePower(Intake.IntakeSpec.A, 1);
             }
             if (time.time() > 2.5 || shoot <= 0) {
-                next();
+                time.reset();
+                stage += .5;
                 intake.stopIntake(Intake.IntakeSpec.A);
                 intake.setIntakePower(Intake.IntakeSpec.A, -1);
                 flyWheel.currentlyRunning = false;
+            }
+        }
+
+        if (stage == 2.5){
+            if (drive == null) {
+                drive = new EncoderDrive(driveTrain, -150, 0.5);
+                drive.run();
+            }
+            if (drive.isCompleted()) {
+                driveTrain.stopRobot();
+                time.reset();
+                stage += .5;
             }
         }
 
@@ -210,7 +223,7 @@ public class beaconBlueClose extends StateMachineOpMode {
             }
             if (stage == 8) { // Drive until the color sensor sees the white line of Beacon 1
                 if (drive == null) {
-                    drive = new EncoderDrive(driveTrain, 3900, 0.45);
+                    drive = new EncoderDrive(driveTrain, 4500, 0.45);
                 }
                 drive.runWithDecrementPower(0.0003); //slows down gradually to hit white line
                 if (colorUtils.aboveWhiteLine()) {
