@@ -33,6 +33,32 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 **************************************************************************************
 
+Version 3.10 (built on 17.05.09)
+
+This version of the software provides support for the REV Robotics Expansion Hub.  This version also includes improvements in the USB communication layer in an effort to enhance system resiliency.  If you were using a 2.x version of the software previously, updating to version 3.1 requires that you also update your Driver Station software in addition to updating the Robot Controller software.
+
+Also note that in version 3.10 software, the setMaxSpeed and getMaxSpeed methods are no longer available (not deprecated, they have been removed from the SDK). Also note that the the new 3.x software incorporates motor profiles that a user can select as he/she configures the robot.
+
+Changes include:
+ * Blocks changes
+    - Added VuforiaTrackableDefaultListener.getPose and Vuforia.trackPose blocks.
+    - Added optimized blocks support for Vuforia extended tracking.
+    - Added atan2 block to the math category.
+    - Added useCompetitionFieldTargetLocations parameter to Vuforia.initialize block.  If set to false, the target locations are placed at (0,0,0) with target orientation as specified in https://github.com/gearsincorg/FTCVuforiaDemo/blob/master/Robot_Navigation.java tutorial op mode.
+ * Incorporates additional improvements to USB comm layer to improve system resiliency (to recover from a greater number of communication disruptions).
+
+**************************************************************************************
+
+Additional Notes Regarding Version 3.00 (built on 17.04.13)
+
+In addition to the release changes listed below (see section labeled "Version 3.00 (built on 17.04.013)"), version 3.00 has the following important changes:
+
+1. Version 3.00 software uses a new version of the FTC Robocol (robot protocol).  If you upgrade to v3.0 on the Robot Controller and/or Android Studio side, you must also upgrade the Driver Station software to match the new Robocol.
+2. Version 3.00 software removes the setMaxSpeed and getMaxSpeed methods from the DcMotor class.  If you have an op mode that formerly used these methods, you will need to remove the references/calls to these methods.  Instead, v3.0 provides the max speed information through the use of motor profiles that are selected by the user during robot configuration.
+3. Version 3.00 software currently does not have a mechanism to disable extra i2c sensors.  We hope to re-introduce this function with a release in the near future.
+
+**************************************************************************************
+
 Version 3.00 (built on 17.04.13)
 
 *** Use this version of the software at YOUR OWN RISK!!! ***
