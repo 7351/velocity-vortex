@@ -46,15 +46,10 @@ public class TeleOpREVBoard extends OpMode {
     @Override
     public void loop() {
 
-
         /*
          * Controller 1 Controls --------------------------------------------------
          */
-        boolean RightStickMovement = gamepad1.right_stick_x != 0 || gamepad1.right_stick_y != 0;
-        if (RightStickMovement) { // We prefer the left joystick over the right
-            motorPower = ((-gamepad1.right_stick_x) - (gamepad1.right_stick_y));
-        }
-        motor_1.setPower(motorPower);
+        motor_1.setPower(-gamepad1.right_stick_y);
 
         if(gamepad1.a){
             servo_1.setPosition(servoPostion1);
@@ -62,8 +57,6 @@ public class TeleOpREVBoard extends OpMode {
         if (gamepad1.y){
             servo_1.setPosition(servoPostion2);
         }
-
-
 
         //telemetry.addData("Beacon Servo", beaconUtils.BeaconServo.getPosition());
         telemetry.addData("Servo:", servo_1.getPosition());
