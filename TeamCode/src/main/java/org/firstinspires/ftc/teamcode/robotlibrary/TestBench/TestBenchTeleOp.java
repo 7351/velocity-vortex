@@ -23,8 +23,12 @@ public class TestBenchTeleOp extends OpMode {
     DcMotor LeftMotor;
     DcMotor RightMotor;
     int selectionStage = 0;
+    double scalingPower = 1;
+    double delta = 10;
 
     boolean RightDPad = false;
+    boolean DPadDown = false;
+    boolean DPadUp = false;
 
 
     @Override
@@ -53,7 +57,7 @@ public class TestBenchTeleOp extends OpMode {
                 selectionStage++;
             }
 
-            telemetry.addData("Motor mode", (twoMotors ? "Two Motors": "Four Motors"));
+            telemetry.addData("Motor mode", (twoMotors ? "Two Motors" : "Four Motors"));
             telemetry.addData("", "Change motor mode by right dpad");
             telemetry.addData(".", "Dpad up to go to next stage");
         }
@@ -70,7 +74,7 @@ public class TestBenchTeleOp extends OpMode {
             } else {
                 RightDPad = false;
             }
-            telemetry.addData("Drive mode", (tankDrive ? "Tank": "Arcade"));
+            telemetry.addData("Drive mode", (tankDrive ? "Tank" : "Arcade"));
             telemetry.addData("", "Change drive mode by right dpad");
         }
     }
@@ -88,7 +92,23 @@ public class TestBenchTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        if (gamepad1.dpad_down) {
+            if (!DPadDown) {
+                scalingPower = Range.clip(scalingPower - (delta / 100), 0.1, 1);
+                DPadDown = true;
+            }
+        } else {
+            DPadDown = false;
+        }
 
+        if (gamepad1.dpad_up) {
+            if (!DPadUp) {
+                scalingPower = Range.clip(scalingPower + (delta / 100), 0.1, 1);
+                DPadUp = true;
+            }
+        } else {
+            DPadUp = false;
+        }
 
         float left = 0;
         float right = 0;
@@ -121,14 +141,15 @@ public class TestBenchTeleOp extends OpMode {
 
         // write the values to the motors
         if (!twoMotors) {
-            driveTrain.powerLeft(left);
-            driveTrain.powerRight(right);
+            driveTrain.powerLeft(left * scalingPower);
+            driveTrain.powerRight(right * scalingPower);
         } else {
-            LeftMotor.setPower(Range.clip(left, -1, 1));
-            RightMotor.setPower(Range.clip(right, -1, 1));
+            LeftMotor.setPower(Range.clip(left * scalingPower, -1, 1));
+            RightMotor.setPower(Range.clip(right * scalingPower, -1, 1));
         }
 
         /* Controller 1 telemetry data */
         telemetry.addData("Drive power", "L: " + String.valueOf(left) + ", R: " + String.valueOf(right));
+        telemetry.addData("Scaling power", Math.round(scalingPower * 100) + "%");
     }
 }
