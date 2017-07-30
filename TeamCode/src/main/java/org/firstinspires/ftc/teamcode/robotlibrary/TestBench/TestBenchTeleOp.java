@@ -30,7 +30,6 @@ public class TestBenchTeleOp extends OpMode {
     boolean DPadDown = false;
     boolean DPadUp = false;
 
-
     @Override
     public void init() {
 
