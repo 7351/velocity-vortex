@@ -39,10 +39,10 @@ public class AutonomousREV extends StateMachineOpMode {
     @Override
     public void init() {
 
-        motor_1 = hardwareMap.dcMotor.get("Motor_1");
+        motor_1 = hardwareMap.dcMotor.get("motor");
         motor_1.setDirection(DcMotor.Direction.REVERSE);
-        servo_1 = hardwareMap.servo.get("Servo_1");
-        color = hardwareMap.colorSensor.get("Color");
+        servo_1 = hardwareMap.servo.get("servo");
+        color = hardwareMap.colorSensor.get("color");
 
     }
 
@@ -88,7 +88,7 @@ public class AutonomousREV extends StateMachineOpMode {
 
         if (stage == 4){
             if (time.time() < 5)
-                motor_1.setPower(-1);
+                motor_1.setPower(-.5);
             else {
                 stage++;
                 time.reset();
